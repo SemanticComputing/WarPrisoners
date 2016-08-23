@@ -40,8 +40,18 @@ PROPERTY_MAPPING = {
     'kuolinpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_place'), 'name_fi': 'kuolinpaikka'},
     'hautauspaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'burial_place'), 'name_fi': 'Hautauspaikka'},
     'leirit / sairaalat': {'uri': URIRef(SCHEMA_NAMESPACE + 'camps_and_hospitals'), 'name_fi': 'Leirit ja sairaalat'},
-    '': {'uri': URIRef(SCHEMA_NAMESPACE + ''), 'name_fi': ''},
-    '': {'uri': URIRef(SCHEMA_NAMESPACE + ''), 'name_fi': ''},
+    ' muita tietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'additional_information'), 'name_fi': 'Muita tietoja'},
+    'palanneiden kuolinaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date_of_returned'), 'name_fi': 'Palanneen kuolinaika'},
+    'työsarake': {'uri': URIRef(SCHEMA_NAMESPACE + 'workspace'), 'name_fi': 'Työsarake'},
+    'valokuva': {'uri': URIRef(SCHEMA_NAMESPACE + 'photograph'), 'name_fi': 'Valokuva'},
+    'paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä':
+        {'uri': URIRef(SCHEMA_NAMESPACE + 'minutes'), 'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
+    'kantakortti': {'uri': URIRef(SCHEMA_NAMESPACE + 'military_record'), 'name_fi': 'Kantakortti'},
+    'radiokatsaus': {'uri': URIRef(SCHEMA_NAMESPACE + 'radio_report'), 'name_fi': 'Radiokatsaus'},
+    'katoamis-dokumentit': {'uri': URIRef(SCHEMA_NAMESPACE + 'missing_person_documents'), 'name_fi': 'Katoamisdokumentit'},
+    'kuulustelija': {'uri': URIRef(SCHEMA_NAMESPACE + 'interrogator'), 'name_fi': 'Kuulustelija'},
+    'takavarikoitu omaisuus, arvo markoissa':
+        {'uri': URIRef(SCHEMA_NAMESPACE + 'confiscated_possessions'), 'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
 }
 
 INPUT_FILE_DIRECTORY = 'data/'
@@ -58,7 +68,8 @@ logging.basicConfig(filename='Prisoners.log',
 
 log = logging.getLogger(__name__)
 
-table = pd.read_csv(INPUT_FILE_DIRECTORY + 'vangit.csv', encoding='UTF-8', index_col=False, sep='\t', quotechar='"', na_values=['  '])
+table = pd.read_csv(INPUT_FILE_DIRECTORY + 'vangit.csv', encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+                    na_values=[' '])
 
 data = Graph()
 
