@@ -19,6 +19,8 @@ import pandas as pd
 DATA_NAMESPACE = 'http://ldf.fi/warsa/prisoners/'
 SCHEMA_NAMESPACE = 'http://ldf.fi/schema/warsa/prisoners/'
 
+INSTANCE_CLASS = URIRef(SCHEMA_NAMESPACE + 'PrisonerOfWar')
+
 PROPERTY_MAPPING = {
     'suku- ja etunimet': {'uri': URIRef(SCHEMA_NAMESPACE + 'name_fi'), 'name_fi': 'Nimi'},
     'syntymäaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'birth_date'), 'name_fi': 'Syntymäaika'},
@@ -75,12 +77,13 @@ data = Graph()
 
 column_headers = list(table)
 
-print(column_headers)
-
 for index in range(len(table)):
     for column in range(len(column_headers)):
+
         column_name = column_headers[column]
         prisoner_uri = URIRef(DATA_NAMESPACE + 'prisoner_' + str(index))
+
+        data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
 
         if column_name in PROPERTY_MAPPING:
             value = table.ix[index][column] if pd.notnull(table.ix[index][column]) else None
