@@ -22,13 +22,13 @@ SCHEMA_NAMESPACE = 'http://ldf.fi/schema/warsa/prisoners/'
 INSTANCE_CLASS = URIRef(SCHEMA_NAMESPACE + 'PrisonerOfWar')
 
 PROPERTY_MAPPING = {
-    'suku- ja etunimet': {'uri': URIRef(SCHEMA_NAMESPACE + 'name_fi'), 'name_fi': 'Nimi'},
+    'suku- ja etunimet': {'uri': URIRef('http://www.w3.org/2004/02/skos/core#prefLabel')},
     'syntymäaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'birth_date'), 'name_fi': 'Syntymäaika'},
     'syntymäpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'birth_place'), 'name_fi': 'Syntymäpaikka'},
     'kotipaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'home_place'), 'name_fi': 'Kotipaikka'},
     'asuinpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'residence_place'), 'name_fi': 'Asuinpaikka'},
     'ammatti': {'uri': URIRef(SCHEMA_NAMESPACE + 'occupation'), 'name_fi': 'Ammatti'},
-    'siviilisääty': {'uri': URIRef(SCHEMA_NAMESPACE + 'martial_status'), 'name_fi': 'Siviilisääty'},
+    'siviilisääty': {'uri': URIRef(SCHEMA_NAMESPACE + 'marital_status'), 'name_fi': 'Siviilisääty'},
     'lasten lkm': {'uri': URIRef(SCHEMA_NAMESPACE + 'amount_children'), 'name_fi': 'Lasten lukumäärä'},
     'sotilas- arvo': {'uri': URIRef(SCHEMA_NAMESPACE + 'rank'), 'name_fi': 'Sotilasarvo'},
     'joukko-osasto': {'uri': URIRef(SCHEMA_NAMESPACE + 'unit'), 'name_fi': 'Joukko-osasto'},
@@ -93,8 +93,9 @@ for index in range(len(table)):
 
 schema = Graph()
 for prop in PROPERTY_MAPPING.values():
-    schema.add((prop['uri'], RDFS.label, Literal(prop['name_fi'], lang='fi')))
-    schema.add((prop['uri'], RDF.type, RDF.Property))
+    if 'name_fi' in prop:
+        schema.add((prop['uri'], RDFS.label, Literal(prop['name_fi'], lang='fi')))
+        schema.add((prop['uri'], RDF.type, RDF.Property))
 
 data.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "prisoners.ttl")
 schema.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "schema.ttl")
