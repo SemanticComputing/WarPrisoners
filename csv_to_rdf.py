@@ -13,6 +13,7 @@ import iso8601
 
 from rdflib import *
 import pandas as pd
+import numpy as np
 
 #################################
 
@@ -71,7 +72,9 @@ logging.basicConfig(filename='Prisoners.log',
 log = logging.getLogger(__name__)
 
 table = pd.read_csv(INPUT_FILE_DIRECTORY + 'vangit.csv', encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
-                    na_values=[' '])
+                    na_values=[' '], converters={'ammatti': lambda x: x.lower()})
+
+table = table.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
 
 data = Graph()
 
@@ -86,7 +89,10 @@ for index in range(len(table)):
         data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
 
         if column_name in PROPERTY_MAPPING:
-            value = table.ix[index][column] if pd.notnull(table.ix[index][column]) else None
+            value = table.ix[index][column]
+
+            if value and column_name == 'lasten lkm':
+                value = int(value)  # This cannot be directly converted on the DataFrame because of missing values.
 
             if value:
                 data.add((prisoner_uri, PROPERTY_MAPPING[column_name]['uri'], Literal(value)))
