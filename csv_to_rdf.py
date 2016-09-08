@@ -37,13 +37,14 @@ PROPERTY_MAPPING = {
     'vangiksi paikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'place_captured'), 'name_fi': 'Vangiksi jäämisen paikka'},
     'selvitys vangiksi jäämisestä': {'uri': URIRef(SCHEMA_NAMESPACE + 'explanation'),
                                      'name_fi': 'Selvitys vangiksi jäämisestä'},
-    'palannut': {'uri': URIRef(SCHEMA_NAMESPACE + 'returned_date'), 'name_fi': 'Palaamisen päivämäärä'},
-    'kuollut': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date'), 'name_fi': 'Kuolinpäivämäärä'},
+    'palannut': {'uri': URIRef(SCHEMA_NAMESPACE + 'returned_date'), 'name_fi': 'Palaamisaika'},
+    'kuollut': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date'), 'name_fi': 'Kuolinaika'},
     'kuolinsyy': {'uri': URIRef(SCHEMA_NAMESPACE + 'cause_of_death'), 'name_fi': 'Kuolinsyy'},
     'kuolinpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_place'), 'name_fi': 'kuolinpaikka'},
     'hautauspaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'burial_place'), 'name_fi': 'Hautauspaikka'},
     'leirit / sairaalat': {'uri': URIRef(SCHEMA_NAMESPACE + 'camps_and_hospitals'), 'name_fi': 'Leirit ja sairaalat'},
-    ' muita tietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'additional_information'), 'name_fi': 'Muita tietoja'},
+    ' muita tietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'other_information'), 'name_fi': 'Muita tietoja'},
+    'lisätietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'additional_information'), 'name_fi': 'Lisätietoja'},
     'palanneiden kuolinaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date_of_returned'), 'name_fi': 'Palanneen kuolinaika'},
     'työsarake': {'uri': URIRef(SCHEMA_NAMESPACE + 'workspace'), 'name_fi': 'Työsarake'},
     'valokuva': {'uri': URIRef(SCHEMA_NAMESPACE + 'photograph'), 'name_fi': 'Valokuva'},
@@ -59,8 +60,6 @@ PROPERTY_MAPPING = {
 
 INPUT_FILE_DIRECTORY = 'data/'
 OUTPUT_FILE_DIRECTORY = 'data/new/'
-
-DATA_FILE = 'surma.ttl'
 
 #################################
 
