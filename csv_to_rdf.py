@@ -17,45 +17,44 @@ import numpy as np
 
 #################################
 
-DATA_NAMESPACE = 'http://ldf.fi/warsa/prisoners/'
-SCHEMA_NAMESPACE = 'http://ldf.fi/schema/warsa/prisoners/'
+DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
+SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 
-INSTANCE_CLASS = URIRef(SCHEMA_NAMESPACE + 'PrisonerOfWar')
+INSTANCE_CLASS = SCHEMA_NS.PrisonerOfWar
 
 PROPERTY_MAPPING = {
-    'suku- ja etunimet': {'uri': URIRef('http://www.w3.org/2004/02/skos/core#prefLabel')},
-    'syntymäaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'birth_date'), 'name_fi': 'Syntymäaika'},
-    'syntymäpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'birth_place'), 'name_fi': 'Syntymäpaikka'},
-    'kotipaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'home_place'), 'name_fi': 'Kotipaikka'},
-    'asuinpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'residence_place'), 'name_fi': 'Asuinpaikka'},
-    'ammatti': {'uri': URIRef(SCHEMA_NAMESPACE + 'occupation'), 'name_fi': 'Ammatti'},
-    'siviilisääty': {'uri': URIRef(SCHEMA_NAMESPACE + 'marital_status'), 'name_fi': 'Siviilisääty'},
-    'lasten lkm': {'uri': URIRef(SCHEMA_NAMESPACE + 'amount_children'), 'name_fi': 'Lasten lukumäärä'},
-    'sotilas- arvo': {'uri': URIRef(SCHEMA_NAMESPACE + 'rank'), 'name_fi': 'Sotilasarvo'},
-    'joukko-osasto': {'uri': URIRef(SCHEMA_NAMESPACE + 'unit'), 'name_fi': 'Joukko-osasto'},
-    'vangiksi aika': {'uri': URIRef(SCHEMA_NAMESPACE + 'time_captured'), 'name_fi': 'Vangiksi jäämisen päivämäärä'},
-    'vangiksi paikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'place_captured'), 'name_fi': 'Vangiksi jäämisen paikka'},
-    'selvitys vangiksi jäämisestä': {'uri': URIRef(SCHEMA_NAMESPACE + 'explanation'),
-                                     'name_fi': 'Selvitys vangiksi jäämisestä'},
-    'palannut': {'uri': URIRef(SCHEMA_NAMESPACE + 'returned_date'), 'name_fi': 'Palaamisaika'},
-    'kuollut': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date'), 'name_fi': 'Kuolinaika'},
-    'kuolinsyy': {'uri': URIRef(SCHEMA_NAMESPACE + 'cause_of_death'), 'name_fi': 'Kuolinsyy'},
-    'kuolinpaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_place'), 'name_fi': 'kuolinpaikka'},
-    'hautauspaikka': {'uri': URIRef(SCHEMA_NAMESPACE + 'burial_place'), 'name_fi': 'Hautauspaikka'},
-    'leirit / sairaalat': {'uri': URIRef(SCHEMA_NAMESPACE + 'camps_and_hospitals'), 'name_fi': 'Leirit ja sairaalat'},
-    ' muita tietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'other_information'), 'name_fi': 'Muita tietoja'},
-    'lisätietoja': {'uri': URIRef(SCHEMA_NAMESPACE + 'additional_information'), 'name_fi': 'Lisätietoja'},
-    'palanneiden kuolinaika': {'uri': URIRef(SCHEMA_NAMESPACE + 'death_date_of_returned'), 'name_fi': 'Palanneen kuolinaika'},
-    'työsarake': {'uri': URIRef(SCHEMA_NAMESPACE + 'workspace'), 'name_fi': 'Työsarake'},
-    'valokuva': {'uri': URIRef(SCHEMA_NAMESPACE + 'photograph'), 'name_fi': 'Valokuva'},
+    # 'suku- ja etunimet': {'uri': URIRef('http://www.w3.org/2004/02/skos/core#prefLabel')},
+    'syntymäaika': {'uri': SCHEMA_NS.birth_date, 'name_fi': 'Syntymäaika'},
+    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place, 'name_fi': 'Syntymäpaikka'},
+    'kotipaikka': {'uri': SCHEMA_NS.home_place, 'name_fi': 'Kotipaikka'},
+    'asuinpaikka': {'uri': SCHEMA_NS.residence_place, 'name_fi': 'Asuinpaikka'},
+    'ammatti': {'uri': SCHEMA_NS.occupation, 'name_fi': 'Ammatti'},
+    'siviilisääty': {'uri': SCHEMA_NS.marital_status, 'name_fi': 'Siviilisääty'},
+    'lasten lkm': {'uri': SCHEMA_NS.amount_children, 'name_fi': 'Lasten lukumäärä'},
+    'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo'},
+    'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto'},
+    'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'name_fi': 'Vangiksi jäämisen päivämäärä'},
+    'vangiksi paikka': {'uri': SCHEMA_NS.place_captured, 'name_fi': 'Vangiksi jäämisen paikka'},
+    'selvitys vangiksi jäämisestä': {'uri': SCHEMA_NS.explanation, 'name_fi': 'Selvitys vangiksi jäämisestä'},
+    'palannut': {'uri': SCHEMA_NS.returned_date, 'name_fi': 'Palaamisaika'},
+    'kuollut': {'uri': SCHEMA_NS.death_date, 'name_fi': 'Kuolinaika'},
+    'kuolinsyy': {'uri': SCHEMA_NS.cause_of_death, 'name_fi': 'Kuolinsyy'},
+    'kuolinpaikka': {'uri': SCHEMA_NS.death_place, 'name_fi': 'kuolinpaikka'},
+    'hautauspaikka': {'uri': SCHEMA_NS.burial_place, 'name_fi': 'Hautauspaikka'},
+    'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'name_fi': 'Leirit ja sairaalat'},
+    ' muita tietoja': {'uri': SCHEMA_NS.other_information, 'name_fi': 'Muita tietoja'},
+    'lisätietoja': {'uri': SCHEMA_NS.additional_information, 'name_fi': 'Lisätietoja'},
+    'palanneiden kuolinaika': {'uri': SCHEMA_NS.death_date_of_returned, 'name_fi': 'Palanneen kuolinaika'},
+    'työsarake': {'uri': SCHEMA_NS.workspace, 'name_fi': 'Työsarake'},
+    'valokuva': {'uri': SCHEMA_NS.photograph, 'name_fi': 'Valokuva'},
     'paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä':
-        {'uri': URIRef(SCHEMA_NAMESPACE + 'minutes'), 'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
-    'kantakortti': {'uri': URIRef(SCHEMA_NAMESPACE + 'military_record'), 'name_fi': 'Kantakortti'},
-    'radiokatsaus': {'uri': URIRef(SCHEMA_NAMESPACE + 'radio_report'), 'name_fi': 'Radiokatsaus'},
-    'katoamis-dokumentit': {'uri': URIRef(SCHEMA_NAMESPACE + 'missing_person_documents'), 'name_fi': 'Katoamisdokumentit'},
-    'kuulustelija': {'uri': URIRef(SCHEMA_NAMESPACE + 'interrogator'), 'name_fi': 'Kuulustelija'},
+        {'uri': SCHEMA_NS.minutes, 'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
+    'kantakortti': {'uri': SCHEMA_NS.military_record, 'name_fi': 'Kantakortti'},
+    'radiokatsaus': {'uri': SCHEMA_NS.radio_report, 'name_fi': 'Radiokatsaus'},
+    'katoamis-dokumentit': {'uri': SCHEMA_NS.missing_person_documents, 'name_fi': 'Katoamisdokumentit'},
+    'kuulustelija': {'uri': SCHEMA_NS.interrogator, 'name_fi': 'Kuulustelija'},
     'takavarikoitu omaisuus, arvo markoissa':
-        {'uri': URIRef(SCHEMA_NAMESPACE + 'confiscated_possessions'), 'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
+        {'uri': SCHEMA_NS.confiscated_possessions, 'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
 }
 
 INPUT_FILE_DIRECTORY = 'data/'
@@ -83,7 +82,7 @@ for index in range(len(table)):
     for column in range(len(column_headers)):
 
         column_name = column_headers[column]
-        prisoner_uri = URIRef(DATA_NAMESPACE + 'prisoner_' + str(index))
+        prisoner_uri = DATA_NS['prisoner_' + str(index)]
 
         data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
 
@@ -95,6 +94,31 @@ for index in range(len(table)):
 
             if value:
                 data.add((prisoner_uri, PROPERTY_MAPPING[column_name]['uri'], Literal(value)))
+
+        elif column_name == 'suku- ja etunimet':
+            fullname = table.ix[index][column].upper()
+
+            name_parts = fullname.split()
+
+            namematch = re.search('([A-ZÅÄÖ/\-]+(?:\s\(?E(?:NT)?\.\s\w+)?\)?)\s(?:(VON)?,?\s?)(.+)', fullname)
+            (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
+
+            lastname = lastname.title()
+            firstnames = firstnames.title()
+
+            # Unify syntax for previous names
+            lastname = re.sub(r'(\w\w +)\(?(E(?:nt)?\.)\)?\s?(\w+)', r'\1(ent \3)', str(lastname))
+
+            if extra:
+                extra = extra.lower()
+                lastname = ' '.join([extra, lastname])
+
+            fullname = lastname.title() + ', ' + firstnames.title()
+
+            data.add((prisoner_uri, SCHEMA_NS.lastname, Literal(lastname)))
+            data.add((prisoner_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
+            data.add((prisoner_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
+
 
 schema = Graph()
 for prop in PROPERTY_MAPPING.values():
