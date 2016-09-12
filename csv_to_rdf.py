@@ -100,23 +100,28 @@ for index in range(len(table)):
 
             name_parts = fullname.split()
 
-            namematch = re.search('([A-ZÅÄÖ/\-]+(?:\s\(?E(?:NT)?\.\s\w+)?\)?)\s(?:(VON)?,?\s?)(.+)', fullname)
+            name_regex = r'([A-ZÅÄÖ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖ/\-]*)'
+            namematch = re.search(name_regex, fullname)
             (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
 
             lastname = lastname.title()
             firstnames = firstnames.title()
 
             # Unify syntax for previous names
-            lastname = re.sub(r'(\w\w +)\(?(E(?:nt)?\.)\)?\s?(\w+)', r'\1(ent \3)', str(lastname))
+            prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
+            lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
 
             if extra:
                 extra = extra.lower()
                 lastname = ' '.join([extra, lastname])
 
-            fullname = lastname.title() + ', ' + firstnames.title()
+            fullname = lastname
+
+            if firstnames:
+                data.add((prisoner_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
+                fullname += ', ' + firstnames.title()
 
             data.add((prisoner_uri, SCHEMA_NS.lastname, Literal(lastname)))
-            data.add((prisoner_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
             data.add((prisoner_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
 
 
