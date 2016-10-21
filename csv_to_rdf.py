@@ -57,46 +57,65 @@ def convert_dates(raw_date):
 
 
 PROPERTY_MAPPING = {
-    'syntymäaika': {'uri': SCHEMA_NS.birth_date, 'converter': convert_dates,
+    'syntymäaika': {'uri': SCHEMA_NS.birth_date, 'converter': convert_dates, 'slash_separated': True,
                     'name_fi': 'Syntymäaika',
                     'name_en': 'Date of birth'},
-    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place, 'name_fi': 'Syntymäpaikka'},
-    'kotipaikka': {'uri': SCHEMA_NS.home_place, 'name_fi': 'Kotipaikka'},
-    'asuinpaikka': {'uri': SCHEMA_NS.residence_place, 'name_fi': 'Asuinpaikka'},
-    'ammatti': {'uri': SCHEMA_NS.occupation, 'name_fi': 'Ammatti'},
-    'siviilisääty': {'uri': SCHEMA_NS.marital_status, 'name_fi': 'Siviilisääty'},
+    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place, 'slash_separated': True,
+                      'name_fi': 'Syntymäkunta',
+                      'name_en': 'Municipality of birth'
+                      },
+    'kotipaikka': {'uri': SCHEMA_NS.home_place, 'slash_separated': True,
+                   'name_fi': 'Kotikunta',
+                   'name_en': 'Municipality of home'
+                   },
+    'asuinpaikka': {'uri': SCHEMA_NS.residence_place, 'name_fi': 'Asuinpaikka', 'slash_separated': True},
+    'ammatti': {'uri': SCHEMA_NS.occupation, 'name_fi': 'Ammatti', 'slash_separated': True},
+    'siviilisääty': {'uri': SCHEMA_NS.marital_status, 'name_fi': 'Siviilisääty', 'slash_separated': True},
     'lasten lkm': {'uri': SCHEMA_NS.amount_children, #'converter': convert_int,
-                   'name_fi': 'Lasten lukumäärä'},
-    'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo'},
-    'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto'},
-    'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'converter': convert_dates,
+                   'name_fi': 'Lasten lukumäärä', 'slash_separated': True},
+    'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo', 'slash_separated': True},
+    'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
+    'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'converter': convert_dates, 'slash_separated': True,
                       'name_fi': 'Vangiksi jäämisen päivämäärä'},
-    'vangiksi paikka': {'uri': SCHEMA_NS.place_captured, 'name_fi': 'Vangiksi jäämisen paikka'},
-    'selvitys vangiksi jäämisestä': {'uri': SCHEMA_NS.explanation, 'name_fi': 'Selvitys vangiksi jäämisestä'},
-    'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates,
+    'vangiksi paikka': {'uri': SCHEMA_NS.place_captured, 'slash_separated': True,
+                        'name_fi': 'Vangiksi jäämisen paikka'},
+    'selvitys vangiksi jäämisestä': {'uri': SCHEMA_NS.explanation, 'slash_separated': False,
+                                     'name_fi': 'Selvitys vangiksi jäämisestä'},
+    'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates, 'slash_separated': True,
                  'name_fi': 'Palaamisaika'},
-    'kuollut': {'uri': SCHEMA_NS.death_date, 'converter': convert_dates,
+    'kuollut': {'uri': SCHEMA_NS.death_date, 'converter': convert_dates, 'slash_separated': True,
                 'name_fi': 'Kuolinaika'},
-    'kuolinsyy': {'uri': SCHEMA_NS.cause_of_death, 'name_fi': 'Kuolinsyy'},
-    'kuolinpaikka': {'uri': SCHEMA_NS.death_place, 'name_fi': 'kuolinpaikka'},
-    'hautauspaikka': {'uri': SCHEMA_NS.burial_place, 'name_fi': 'Hautauspaikka'},
-    'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'name_fi': 'Leirit ja sairaalat'},
-    ' muita tietoja': {'uri': SCHEMA_NS.other_information, 'name_fi': 'Muita tietoja'},
-    'lisätietoja': {'uri': SCHEMA_NS.additional_information, 'name_fi': 'Lisätietoja'},
+    'kuolinsyy': {'uri': SCHEMA_NS.cause_of_death, 'slash_separated': False,
+                  'name_fi': 'Kuolinsyy'},
+    'kuolinpaikka': {'uri': SCHEMA_NS.death_place, 'slash_separated': False,  # epämääräinen muotoilu
+                     'name_fi': 'kuolinpaikka'},
+    'hautauspaikka': {'uri': SCHEMA_NS.burial_place, 'slash_separated': False, 'name_fi': 'Hautauspaikka'},
+    'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'slash_separated': False,
+                           'name_fi': 'Leirit ja sairaalat'},
+    ' muita tietoja': {'uri': SCHEMA_NS.other_information, 'slash_separated': False,
+                       'name_fi': 'Muita tietoja'},
+    'lisätietoja': {'uri': SCHEMA_NS.additional_information, 'slash_separated': False,
+                    'name_fi': 'Lisätietoja'},
     'palanneiden kuolinaika': {'uri': SCHEMA_NS.death_date_of_returned, 'converter': convert_dates,
+                               'slash_separated': False,
                                'name_fi': 'Palanneen kuolinaika'},
-    'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.workspace, 'name_fi': 'Sotavangit ry:n jäsen'},
-    'valokuva': {'uri': SCHEMA_NS.photograph, 'name_fi': 'Valokuva'},
+    'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.workspace, 'slash_separated': True,
+                              'name_fi': 'Sotavangit ry:n jäsen'},
+    'valokuva': {'uri': SCHEMA_NS.photograph, 'slash_separated': False, 'name_fi': 'Valokuva'},
     'paluukuulustelu-pöytäkirja; kjan lausunto; ilmoitus jääneistä sotavangeista; yht. sivumäärä':
-        {'uri': SCHEMA_NS.minutes, 'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
-    'kantakortti': {'uri': SCHEMA_NS.military_record, 'name_fi': 'Kantakortti'},
-    'radiokatsaus': {'uri': SCHEMA_NS.radio_report, 'name_fi': 'Radiokatsaus'},
-    'katoamis-dokumentit': {'uri': SCHEMA_NS.missing_person_documents, 'name_fi': 'Katoamisdokumentit'},
-    'kuulustelija': {'uri': SCHEMA_NS.interrogator, 'name_fi': 'Kuulustelija'},
+        {'uri': SCHEMA_NS.minutes, 'slash_separated': True,
+         'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
+    'kantakortti': {'uri': SCHEMA_NS.military_record, 'slash_separated': False, 'name_fi': 'Kantakortti'},
+    'radiokatsaus': {'uri': SCHEMA_NS.radio_report, 'slash_separated': False, 'name_fi': 'Radiokatsaus'},
+    'katoamis-dokumentit': {'uri': SCHEMA_NS.missing_person_documents, 'slash_separated': False,
+                            'name_fi': 'Katoamisdokumentit'},
+    'kuulustelija': {'uri': SCHEMA_NS.interrogator, 'slash_separated': False, 'name_fi': 'Kuulustelija'},
     'takavarikoitu omaisuus, arvo markoissa':
-        {'uri': SCHEMA_NS.confiscated_possessions, 'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
+        {'uri': SCHEMA_NS.confiscated_possessions, 'slash_separated': True,
+         'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
     'suomenruotsalainen':
-        {'uri': SCHEMA_NS.confiscated_possessions, 'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
+        {'uri': SCHEMA_NS.confiscated_possessions, 'slash_separated': True,
+         'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
 }
 
 # Some numbers and parentheses are also present in names
@@ -139,16 +158,54 @@ for index in range(len(table)):
         data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
 
         if column_name in PROPERTY_MAPPING:
+            slash_separated = PROPERTY_MAPPING[column_name].get('slash_separated')
 
-            # if value:
-            for single_value in (val.strip() for val in str(value).split(sep='/')):
+            # Make an iterable of all values in this field
+
+            values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
+
+            for single_value in values:
+
+                # TODO: Handle columns separated by ;
+
+                # Take sources for each value if present
+
+                if slash_separated:
+                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'  # TODO: Fix
+                    sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
+                    (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
+
+                    sources = (s.strip() for s in sources.split(',')) if sources else []
+
+                    for source in sources:
+                        log.debug('Found source %s' % source)
+                        data.add((prisoner_uri,
+                                  SKOS.note,
+                                  Literal('Tieto {prop} = {val} on peräisin lähteestä {source}'
+                                          .format(prop=PROPERTY_MAPPING[column_name].get('name_fi'),
+                                                  val=value, source=source.strip()), lang='fi')))
+
+                        data.add((prisoner_uri,
+                                  SKOS.note,
+                                  Literal('Information {prop} = {val} comes from source {source}'
+                                          .format(prop=PROPERTY_MAPPING[column_name].get('name_en'),
+                                                  val=value, source=source.strip()), lang='en')))
+
+                        # TODO: Add also dc:source property
+
+                    if trash:
+                        log.warning('Found some content after sources: %s' % trash)
+
+                # Convert value to some format
 
                 converter = PROPERTY_MAPPING[column_name].get('converter')
                 single_value = converter(single_value) if converter else single_value
 
-                # print(type(value))
+                # Create literal
+
                 liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
                     else Literal(single_value)
+
                 data.add((prisoner_uri,
                           PROPERTY_MAPPING[column_name]['uri'],
                           Literal(single_value)))
@@ -187,6 +244,13 @@ for prop in PROPERTY_MAPPING.values():
     if 'name_fi' in prop:
         schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
         schema.add((prop['uri'], RDF.type, RDF.Property))
+
+data.bind("p", "http://ldf.fi/warsa/prisoners/")
+data.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
+data.bind("skos", "http://www.w3.org/2004/02/skos/core#")
+
+schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
+schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
 
 data.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "prisoners.ttl")
 schema.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "schema.ttl")
