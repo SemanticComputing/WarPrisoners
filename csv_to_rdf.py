@@ -26,8 +26,6 @@ DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 
-INSTANCE_CLASS = SCHEMA_NS.PrisonerOfWar
-
 INPUT_FILE_DIRECTORY = 'data/'
 OUTPUT_FILE_DIRECTORY = 'data/new/'
 
@@ -59,7 +57,7 @@ def convert_dates(raw_date):
         return raw_date
 
 
-def create_event(uri_suffix, event_type, participant_prop, participant, participant_name, timespan=None, place=None, timespan_source=None,
+def create_event(uri_suffix, event_type, participant_prop, participant, participant_name, labels, timespan=None, place=None, timespan_source=None,
                  place_source=None, event_source=None, extra_information=None):
     """
     Create an event or add information to an existing one (by using a previously used URI).
@@ -82,16 +80,8 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
     data.add((uri, RDF.type, event_type))
     data.add((uri, participant_prop, participant))
 
-    labels = ()
-    if event_type == CIDOC.E67_Birth:
-        labels = (Literal('Henkilö {name} syntyi'.format(name=participant_name), lang='fi'),
-                  Literal('Person {name} was born'.format(name=participant_name), lang='en'))
-    elif event_type == CIDOC.E69_Death:
-        labels = (Literal('Henkilö {name} kuoli'.format(name=participant_name), lang='fi'),
-                  Literal('Person {name} died'.format(name=participant_name), lang='en'))
-    elif event_type == CIDOC.E85_Joining:
-        labels = (Literal('Henkilö {name} liittyi ryhmään'.format(name=participant_name), lang='fi'),
-                  Literal('Person {name} joined group'.format(name=participant_name), lang='en'))
+    labels = (Literal(labels[0].format(name=participant_name), lang='fi'),
+              Literal(labels[1].format(name=participant_name), lang='en'))
 
     for label in labels:
         data.add((uri, SKOS.prefLabel, label))
@@ -131,26 +121,125 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
 
         data.add((uri, property_uri, place))
 
-# def map_row_to_rdf(row):
-#     return
+class RDFMapper:
+
+    def __init__(self, mapping, instance_class):
+        self.mapping = mapping
+        self.instance_class = instance_class
+
+    def _unify_name(self, original_name):
+
+        fullname = original_name.upper()
+
+        namematch = re.search(RE_NAME_SPLIT, fullname)
+        (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
+
+        lastname = lastname.title()
+        firstnames = firstnames.title()
+
+        # Unify syntax for previous names
+        prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
+        lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
+
+        if extra:
+            extra = extra.lower()
+            lastname = ' '.join([extra, lastname])
+
+        fullname = lastname
+
+        if firstnames:
+            fullname += ', ' + firstnames.title()
+
+        log.debug('Name %s was unified to form %s' % (original_name, fullname))
+        return firstnames, lastname, fullname
+
+    def map_row_to_rdf(self, entity_uri, row):
+
+        (firstnames, lastname, fullname) = self._unify_name(row[0])
+
+        if firstnames:
+            data.add((entity_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
+
+        data.add((entity_uri, SCHEMA_NS.lastname, Literal(lastname)))
+        data.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
+
+        for column_name in self.mapping:
+
+            value = row[column_name]
+
+            data.add((entity_uri, RDF.type, self.instance_class))
+
+            slash_separated = self.mapping[column_name].get('slash_separated')
+
+            # Make an iterable of all values in this field
+            # TODO: Handle columns separated by ;
+
+            values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
+
+            for single_value in values:
+
+                # Take sources for each value if present
+
+                if slash_separated:
+                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'
+                    sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
+                    (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
+
+                    sources = (s.strip() for s in sources.split(',')) if sources else []
+
+                    if trash:
+                        log.warning('Found some content after sources: %s' % trash)
+
+                # Convert value to some format
+
+                converter = self.mapping[column_name].get('converter')
+                single_value = converter(single_value) if converter else single_value
+
+                if single_value:
+                    event = self.mapping[column_name].get('event')
+
+                    if event:
+
+                        # Create event
+
+                        event_prop = self.mapping[column_name].get('event_prop')
+                        event_uri_suffix = self.mapping[column_name].get('event_uri_suffix')
+                        participant_prop = self.mapping[column_name].get('participant_prop')
+                        event_labels = self.mapping[column_name].get('event_labels')
+                        event_information = self.mapping[column_name].get('event_information')
+
+                        create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
+                                     entity_uri, fullname, event_labels, **{event_prop: single_value,
+                                     'extra_information': event_information})
+
+                    else:
+
+                        # Create literal
+
+                        liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
+                            else Literal(single_value)
+
+                        data.add((entity_uri,
+                                  self.mapping[column_name]['uri'],
+                                  Literal(liter)))
 
 
 PROPERTY_MAPPING = {
-    'syntymäaika': {'uri': SCHEMA_NS.birth_date,
-                    'converter': convert_dates,
+    'syntymäaika': {'converter': convert_dates,
                     'slash_separated': True,
                     'event': CIDOC.E67_Birth,
                     'event_prop': 'timespan',
                     'participant_prop': CIDOC.P98_brought_into_life,
                     'event_uri_suffix': '_birth',
+                    'event_labels': ('Henkilö {name} syntyi', 'Person {name} was born'),
                     },
-    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place,
-                      'converter': Literal,
+    'syntymäpaikka': {'converter': Literal,
                       'slash_separated': True,
                       'event': CIDOC.E67_Birth,
                       'event_prop': 'place',
                       'participant_prop': CIDOC.P98_brought_into_life,
                       'event_uri_suffix': '_birth',
+                      'event_labels': ('Henkilö {name} syntyi', 'Person {name} was born'),
                       },
     'kotipaikka': {'uri': SCHEMA_NS.home_place, 'slash_separated': True,
                    'name_fi': 'Kotikunta',
@@ -171,23 +260,23 @@ PROPERTY_MAPPING = {
                                      'name_fi': 'Selvitys vangiksi jäämisestä'},
     'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates, 'slash_separated': True,
                  'name_fi': 'Palaamisaika'},
-    'kuollut': {'uri': SCHEMA_NS.death_date,
-                'converter': convert_dates,
+    'kuollut': {'converter': convert_dates,
                 'slash_separated': True,
                 'event': CIDOC.E69_Death,
                 'event_prop': 'timespan',
                 'participant_prop': CIDOC.P100_was_death_of,
                 'event_uri_suffix': '_death',
+                'event_labels': ('Henkilö {name} kuoli', 'Person {name} died'),
                 },
     'kuolinsyy': {'uri': SCHEMA_NS.cause_of_death, 'slash_separated': False,
                   'name_fi': 'Kuolinsyy'},
-    'kuolinpaikka': {'uri': SCHEMA_NS.death_place,
-                     'slash_separated': False,  # epämääräinen muotoilu
+    'kuolinpaikka': {'slash_separated': False,  # epämääräinen muotoilu
                      'converter': Literal,
                      'event': CIDOC.E69_Death,
                      'event_prop': 'place',
                      'participant_prop': CIDOC.P100_was_death_of,
                      'event_uri_suffix': '_death',
+                     'event_labels': ('Henkilö {name} kuoli', 'Person {name} died'),
                      },
     'hautauspaikka': {'uri': SCHEMA_NS.burial_place, 'slash_separated': False, 'name_fi': 'Hautauspaikka'},
     'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'slash_separated': False,
@@ -206,7 +295,8 @@ PROPERTY_MAPPING = {
                               'event_prop': 'timespan',
                               'participant_prop': CIDOC.P143_joined,
                               'event_uri_suffix': '_prisoner_association',
-                              'event_information': [(CIDOC.P144_joined_with, DATA_NS.Prisoner_association)]
+                              'event_information': [(CIDOC.P144_joined_with, DATA_NS.Prisoner_association)],
+                              'event_labels': ('Henkilö {name} liittyi ryhmään', 'Person {name} joined group'),
                               },
     'valokuva': {'uri': SCHEMA_NS.photograph, 'slash_separated': False, 'name_fi': 'Valokuva'},
     'paluukuulustelu-pöytäkirja; kjan lausunto; ilmoitus jääneistä sotavangeista; yht. sivumäärä':
@@ -254,104 +344,12 @@ data = Graph()
 
 column_headers = list(table)
 
+mapper = RDFMapper(PROPERTY_MAPPING, SCHEMA_NS.PrisonerOfWar)
+
 for index in range(len(table)):
     prisoner_uri = DATA_NS['prisoner_' + str(index)]
-    prisoner_name = ''
 
-    # map_row_to_rdf(table.ix[index])
-    for column in range(len(column_headers)):
-
-        column_name = column_headers[column]
-        value = table.ix[index][column]
-
-        data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
-
-        if column_name in PROPERTY_MAPPING:
-            slash_separated = PROPERTY_MAPPING[column_name].get('slash_separated')
-
-            # Make an iterable of all values in this field
-
-            values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
-
-            for single_value in values:
-
-                # TODO: Handle columns separated by ;
-
-                # Take sources for each value if present
-
-                if slash_separated:
-                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'
-                    sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
-                    (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
-
-                    sources = (s.strip() for s in sources.split(',')) if sources else []
-
-                    if trash:
-                        log.warning('Found some content after sources: %s' % trash)
-
-                # Convert value to some format
-
-                converter = PROPERTY_MAPPING[column_name].get('converter')
-                single_value = converter(single_value) if converter else single_value
-
-                if single_value:
-                    event = PROPERTY_MAPPING[column_name].get('event')
-
-                    if event:
-
-                        # Create event
-
-                        event_labels = None
-                        event_prop = PROPERTY_MAPPING[column_name].get('event_prop')
-                        event_uri_suffix = PROPERTY_MAPPING[column_name].get('event_uri_suffix')
-                        participant_prop = PROPERTY_MAPPING[column_name].get('participant_prop')
-                        event_information = PROPERTY_MAPPING[column_name].get('event_information')
-
-                        create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
-                                     prisoner_uri, prisoner_name, **{event_prop: single_value,
-                                                                     'extra_information': event_information})
-
-                    else:
-
-                        # Create literal
-
-                        liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
-                            else Literal(single_value)
-
-                        data.add((prisoner_uri,
-                                  PROPERTY_MAPPING[column_name]['uri'],
-                                  Literal(single_value)))
-
-        elif column_name == 'sukunimi ja etunimet':
-            fullname = value.upper()
-
-            namematch = re.search(RE_NAME_SPLIT, fullname)
-            (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
-
-            lastname = lastname.title()
-            firstnames = firstnames.title()
-
-            # Unify syntax for previous names
-            prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
-            lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
-
-            if extra:
-                extra = extra.lower()
-                lastname = ' '.join([extra, lastname])
-
-            fullname = lastname
-
-            if firstnames:
-                data.add((prisoner_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
-                fullname += ', ' + firstnames.title()
-
-            prisoner_name = fullname
-
-            data.add((prisoner_uri, SCHEMA_NS.lastname, Literal(lastname)))
-            data.add((prisoner_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
-
-            log.debug('Name %s was unified to form %s' % (value, fullname))
-
+    mapper.map_row_to_rdf(prisoner_uri, table.ix[index])
 
 schema = Graph()
 for prop in PROPERTY_MAPPING.values():
