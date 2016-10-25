@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """
-Convert Prisoners of War from CSV to RDF.
+Convert Prisoners of War from CSV to RDF using CIDOC CRM.
 """
 
 import argparse
@@ -19,9 +19,12 @@ import numpy as np
 #################################
 
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
+CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
+DC = Namespace('http://purl.org/dc/elements/1.1/')
 
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
+EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 
 INSTANCE_CLASS = SCHEMA_NS.PrisonerOfWar
 
@@ -56,13 +59,98 @@ def convert_dates(raw_date):
         return raw_date
 
 
+def create_event(uri_suffix, event_type, participant_prop, participant, participant_name, timespan=None, place=None, timespan_source=None,
+                 place_source=None, event_source=None, extra_information=None):
+    """
+    Create an event or add information to an existing one (by using a previously used URI).
+
+    :param uri_suffix:
+    :param event_type: URIRef
+    :param participant_prop:
+    :param participant:
+    :param participant_name:
+    :param labels: list of label literals in different languages
+    :param timespan: timespan tuple (begin, end) or single date
+    :param place: string representing the target place
+    :param timespan_source:
+    :param place_source:
+    :param event_source:
+    :param extra_information: list of (predicate, object) tuples
+    """
+
+    uri = EVENTS_NS[uri_suffix]
+    data.add((uri, RDF.type, event_type))
+    data.add((uri, participant_prop, participant))
+
+    labels = ()
+    if event_type == CIDOC.E67_Birth:
+        labels = (Literal('Henkilö {name} syntyi'.format(name=participant_name), lang='fi'),
+                  Literal('Person {name} was born'.format(name=participant_name), lang='en'))
+    elif event_type == CIDOC.E69_Death:
+        labels = (Literal('Henkilö {name} kuoli'.format(name=participant_name), lang='fi'),
+                  Literal('Person {name} died'.format(name=participant_name), lang='en'))
+    elif event_type == CIDOC.E85_Joining:
+        labels = (Literal('Henkilö {name} liittyi ryhmään'.format(name=participant_name), lang='fi'),
+                  Literal('Person {name} joined group'.format(name=participant_name), lang='en'))
+
+    for label in labels:
+        data.add((uri, SKOS.prefLabel, label))
+
+    if event_source:
+        data.add((uri, DC.source, event_source))
+
+    if extra_information:
+        for info in extra_information:
+            data.add((uri,) + info)
+
+    if timespan:
+        if type(timespan) != tuple:
+            timespan = (timespan, timespan)
+
+        timespan_uri = EVENTS_NS[uri_suffix + '_timespan']
+        label = (timespan[0] + ' - ' + timespan[1]) if timespan[0] != timespan[1] else timespan[0]
+
+        data.add((uri, CIDOC['P4_has_time-span'], timespan_uri))
+        data.add((timespan_uri, RDF.type, CIDOC['E52_Time-Span']))
+        data.add((timespan_uri, CIDOC.P82a_begin_of_the_begin, Literal(timespan[0], datatype=XSD.date)))
+        data.add((timespan_uri, CIDOC.P82b_end_of_the_end, Literal(timespan[1], datatype=XSD.date)))
+        data.add((timespan_uri, SKOS.prefLabel, Literal(label)))
+
+        if timespan_source:
+            data.add((timespan_uri, DC.source, timespan_source))
+
+    if place:
+        property_uri = CIDOC['P7_took_place_at']
+
+        if place_source:
+            # USING (SEMI-)SINGLETON PROPERTIES TO DENOTE SOURCE
+            property_uri = DATA_NS['took_place_at_' + place + '_' + place_source]
+
+            data.add((property_uri, DC.source, place_source))
+            data.add((property_uri, RDFS.subClassOf, CIDOC['P7_took_place_at']))
+
+        data.add((uri, property_uri, place))
+
+# def map_row_to_rdf(row):
+#     return
+
+
 PROPERTY_MAPPING = {
-    'syntymäaika': {'uri': SCHEMA_NS.birth_date, 'converter': convert_dates, 'slash_separated': True,
-                    'name_fi': 'Syntymäaika',
-                    'name_en': 'Date of birth'},
-    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place, 'slash_separated': True,
-                      'name_fi': 'Syntymäkunta',
-                      'name_en': 'Municipality of birth'
+    'syntymäaika': {'uri': SCHEMA_NS.birth_date,
+                    'converter': convert_dates,
+                    'slash_separated': True,
+                    'event': CIDOC.E67_Birth,
+                    'event_prop': 'timespan',
+                    'participant_prop': CIDOC.P98_brought_into_life,
+                    'event_uri_suffix': '_birth',
+                    },
+    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place,
+                      'converter': Literal,
+                      'slash_separated': True,
+                      'event': CIDOC.E67_Birth,
+                      'event_prop': 'place',
+                      'participant_prop': CIDOC.P98_brought_into_life,
+                      'event_uri_suffix': '_birth',
                       },
     'kotipaikka': {'uri': SCHEMA_NS.home_place, 'slash_separated': True,
                    'name_fi': 'Kotikunta',
@@ -83,12 +171,24 @@ PROPERTY_MAPPING = {
                                      'name_fi': 'Selvitys vangiksi jäämisestä'},
     'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates, 'slash_separated': True,
                  'name_fi': 'Palaamisaika'},
-    'kuollut': {'uri': SCHEMA_NS.death_date, 'converter': convert_dates, 'slash_separated': True,
-                'name_fi': 'Kuolinaika'},
+    'kuollut': {'uri': SCHEMA_NS.death_date,
+                'converter': convert_dates,
+                'slash_separated': True,
+                'event': CIDOC.E69_Death,
+                'event_prop': 'timespan',
+                'participant_prop': CIDOC.P100_was_death_of,
+                'event_uri_suffix': '_death',
+                },
     'kuolinsyy': {'uri': SCHEMA_NS.cause_of_death, 'slash_separated': False,
                   'name_fi': 'Kuolinsyy'},
-    'kuolinpaikka': {'uri': SCHEMA_NS.death_place, 'slash_separated': False,  # epämääräinen muotoilu
-                     'name_fi': 'kuolinpaikka'},
+    'kuolinpaikka': {'uri': SCHEMA_NS.death_place,
+                     'slash_separated': False,  # epämääräinen muotoilu
+                     'converter': Literal,
+                     'event': CIDOC.E69_Death,
+                     'event_prop': 'place',
+                     'participant_prop': CIDOC.P100_was_death_of,
+                     'event_uri_suffix': '_death',
+                     },
     'hautauspaikka': {'uri': SCHEMA_NS.burial_place, 'slash_separated': False, 'name_fi': 'Hautauspaikka'},
     'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'slash_separated': False,
                            'name_fi': 'Leirit ja sairaalat'},
@@ -99,8 +199,15 @@ PROPERTY_MAPPING = {
     'palanneiden kuolinaika': {'uri': SCHEMA_NS.death_date_of_returned, 'converter': convert_dates,
                                'slash_separated': False,
                                'name_fi': 'Palanneen kuolinaika'},
-    'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.workspace, 'slash_separated': True,
-                              'name_fi': 'Sotavangit ry:n jäsen'},
+    'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.association,
+                              'converter': convert_dates,
+                              'slash_separated': True,
+                              'event': CIDOC.E85_Joining,
+                              'event_prop': 'timespan',
+                              'participant_prop': CIDOC.P143_joined,
+                              'event_uri_suffix': '_prisoner_association',
+                              'event_information': [(CIDOC.P144_joined_with, DATA_NS.Prisoner_association)]
+                              },
     'valokuva': {'uri': SCHEMA_NS.photograph, 'slash_separated': False, 'name_fi': 'Valokuva'},
     'paluukuulustelu-pöytäkirja; kjan lausunto; ilmoitus jääneistä sotavangeista; yht. sivumäärä':
         {'uri': SCHEMA_NS.minutes, 'slash_separated': True,
@@ -148,12 +255,14 @@ data = Graph()
 column_headers = list(table)
 
 for index in range(len(table)):
+    prisoner_uri = DATA_NS['prisoner_' + str(index)]
+    prisoner_name = ''
+
+    # map_row_to_rdf(table.ix[index])
     for column in range(len(column_headers)):
 
         column_name = column_headers[column]
         value = table.ix[index][column]
-
-        prisoner_uri = DATA_NS['prisoner_' + str(index)]
 
         data.add((prisoner_uri, RDF.type, INSTANCE_CLASS))
 
@@ -171,27 +280,11 @@ for index in range(len(table)):
                 # Take sources for each value if present
 
                 if slash_separated:
-                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'  # TODO: Fix
+                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'
                     sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
                     (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
 
                     sources = (s.strip() for s in sources.split(',')) if sources else []
-
-                    for source in sources:
-                        log.debug('Found source %s' % source)
-                        data.add((prisoner_uri,
-                                  SKOS.note,
-                                  Literal('Tieto {prop} = {val} on peräisin lähteestä {source}'
-                                          .format(prop=PROPERTY_MAPPING[column_name].get('name_fi'),
-                                                  val=value, source=source.strip()), lang='fi')))
-
-                        data.add((prisoner_uri,
-                                  SKOS.note,
-                                  Literal('Information {prop} = {val} comes from source {source}'
-                                          .format(prop=PROPERTY_MAPPING[column_name].get('name_en'),
-                                                  val=value, source=source.strip()), lang='en')))
-
-                        # TODO: Add also dc:source property
 
                     if trash:
                         log.warning('Found some content after sources: %s' % trash)
@@ -201,14 +294,33 @@ for index in range(len(table)):
                 converter = PROPERTY_MAPPING[column_name].get('converter')
                 single_value = converter(single_value) if converter else single_value
 
-                # Create literal
+                if single_value:
+                    event = PROPERTY_MAPPING[column_name].get('event')
 
-                liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
-                    else Literal(single_value)
+                    if event:
 
-                data.add((prisoner_uri,
-                          PROPERTY_MAPPING[column_name]['uri'],
-                          Literal(single_value)))
+                        # Create event
+
+                        event_labels = None
+                        event_prop = PROPERTY_MAPPING[column_name].get('event_prop')
+                        event_uri_suffix = PROPERTY_MAPPING[column_name].get('event_uri_suffix')
+                        participant_prop = PROPERTY_MAPPING[column_name].get('participant_prop')
+                        event_information = PROPERTY_MAPPING[column_name].get('event_information')
+
+                        create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
+                                     prisoner_uri, prisoner_name, **{event_prop: single_value,
+                                                                     'extra_information': event_information})
+
+                    else:
+
+                        # Create literal
+
+                        liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
+                            else Literal(single_value)
+
+                        data.add((prisoner_uri,
+                                  PROPERTY_MAPPING[column_name]['uri'],
+                                  Literal(single_value)))
 
         elif column_name == 'sukunimi ja etunimet':
             fullname = value.upper()
@@ -232,6 +344,8 @@ for index in range(len(table)):
             if firstnames:
                 data.add((prisoner_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
                 fullname += ', ' + firstnames.title()
+
+            prisoner_name = fullname
 
             data.add((prisoner_uri, SCHEMA_NS.lastname, Literal(lastname)))
             data.add((prisoner_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
