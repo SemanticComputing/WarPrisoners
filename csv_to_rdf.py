@@ -17,10 +17,12 @@ import pandas as pd
 import numpy as np
 
 #################################
+from slugify import slugify
 
-SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DC = Namespace('http://purl.org/dc/elements/1.1/')
+FOAF = Namespace('http://xmlns.com/foaf/0.1/')
+SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
@@ -28,6 +30,7 @@ EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 
 INPUT_FILE_DIRECTORY = 'data/'
 OUTPUT_FILE_DIRECTORY = 'data/new/'
+
 
 def convert_int(raw_value):
     if not raw_value:
@@ -39,6 +42,7 @@ def convert_int(raw_value):
     except (ValueError, TypeError):
         log.error('Invalid value for int conversion: %s' % raw_value)
         return raw_value
+
 
 def convert_dates(raw_date):
     """
@@ -57,8 +61,39 @@ def convert_dates(raw_date):
         return raw_date
 
 
-def create_event(uri_suffix, event_type, participant_prop, participant, participant_name, labels, timespan=None, place=None, timespan_source=None,
-                 place_source=None, event_source=None, extra_information=None):
+def convert_person_name(raw_name):
+    """
+
+    :param raw_name:
+    :return: tuple containing first names, last name and full name
+    """
+    fullname = raw_name.upper()
+
+    namematch = re.search(RE_NAME_SPLIT, fullname)
+    (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
+
+    lastname = lastname.title()
+    firstnames = firstnames.title()
+
+    # Unify syntax for previous names
+    prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
+    lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
+
+    if extra:
+        extra = extra.lower()
+        lastname = ' '.join([extra, lastname])
+
+    fullname = lastname
+
+    if firstnames:
+        fullname += ', ' + firstnames.title()
+
+    log.debug('Name %s was unified to form %s' % (raw_name, fullname))
+    return firstnames, lastname, fullname
+
+
+def create_event(uri_suffix, event_type, participant_prop, participant, participant_name, labels, timespan=None,
+                 place=None, prop_sources=None, extra_information=None):
     """
     Create an event or add information to an existing one (by using a previously used URI).
 
@@ -86,8 +121,8 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
     for label in labels:
         data.add((uri, SKOS.prefLabel, label))
 
-    if event_source:
-        data.add((uri, DC.source, event_source))
+    # if event_source:
+    #     data.add((uri, DC.source, event_source))
 
     if extra_information:
         for info in extra_information:
@@ -106,61 +141,49 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
         data.add((timespan_uri, CIDOC.P82b_end_of_the_end, Literal(timespan[1], datatype=XSD.date)))
         data.add((timespan_uri, SKOS.prefLabel, Literal(label)))
 
-        if timespan_source:
-            data.add((timespan_uri, DC.source, timespan_source))
+        if prop_sources:
+            for timespan_source in prop_sources:
+                data.add((timespan_uri, DC.source, timespan_source))
 
     if place:
         property_uri = CIDOC['P7_took_place_at']
-
-        if place_source:
-            # USING (SEMI-)SINGLETON PROPERTIES TO DENOTE SOURCE
-            property_uri = DATA_NS['took_place_at_' + place + '_' + place_source]
-
-            data.add((property_uri, DC.source, place_source))
-            data.add((property_uri, RDFS.subClassOf, CIDOC['P7_took_place_at']))
-
         data.add((uri, property_uri, place))
 
+        if prop_sources:
+            # TODO: Use singleton properties or PROV Ontology (https://www.w3.org/TR/prov-o/#qualifiedAssociation)
+            for place_source in prop_sources:
+                # USING (SEMI-)SINGLETON PROPERTIES TO DENOTE SOURCE
+                property_uri = DATA_NS['took_place_at_' + slugify(place) + '_' + slugify(place_source)]
+
+                data.add((property_uri, DC.source, place_source))
+                data.add((property_uri, RDFS.subClassOf, CIDOC['P7_took_place_at']))
+
+
+
 class RDFMapper:
+    """
+    Map tabular data (currently pandas DataFrame) to RDF. Create a class instance of each row.
+    """
 
     def __init__(self, mapping, instance_class):
         self.mapping = mapping
         self.instance_class = instance_class
 
-    def _unify_name(self, original_name):
-
-        fullname = original_name.upper()
-
-        namematch = re.search(RE_NAME_SPLIT, fullname)
-        (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
-
-        lastname = lastname.title()
-        firstnames = firstnames.title()
-
-        # Unify syntax for previous names
-        prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
-        lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
-
-        if extra:
-            extra = extra.lower()
-            lastname = ' '.join([extra, lastname])
-
-        fullname = lastname
-
-        if firstnames:
-            fullname += ', ' + firstnames.title()
-
-        log.debug('Name %s was unified to form %s' % (original_name, fullname))
-        return firstnames, lastname, fullname
-
     def map_row_to_rdf(self, entity_uri, row):
+        """
+        Map a single row to RDF.
 
-        (firstnames, lastname, fullname) = self._unify_name(row[0])
+        :param entity_uri: URI of the instance being created
+        :param row: tabular data
+        :return:
+        """
+
+        (firstnames, lastname, fullname) = convert_person_name(row[0])
 
         if firstnames:
-            data.add((entity_uri, SCHEMA_NS.firstnames, Literal(firstnames)))
+            data.add((entity_uri, FOAF.givenName, Literal(firstnames)))
 
-        data.add((entity_uri, SCHEMA_NS.lastname, Literal(lastname)))
+        data.add((entity_uri, FOAF.familyName, Literal(lastname)))
         data.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
 
         for column_name in self.mapping:
@@ -180,12 +203,16 @@ class RDFMapper:
 
                 # Take sources for each value if present
 
+                sources = []
                 if slash_separated:
                     RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'
                     sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
                     (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
 
-                    sources = (s.strip() for s in sources.split(',')) if sources else []
+                    if sources:
+                        log.debug('Found sources: %s' % sources)
+                        sources = (Literal(s.strip()) for s in sources.split(','))
+                        # TODO: Use resources instead of literals
 
                     if trash:
                         log.warning('Found some content after sources: %s' % trash)
@@ -209,8 +236,9 @@ class RDFMapper:
                         event_information = self.mapping[column_name].get('event_information')
 
                         create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
-                                     entity_uri, fullname, event_labels, **{event_prop: single_value,
-                                     'extra_information': event_information})
+                                     entity_uri, fullname, event_labels, extra_information=event_information,
+                                     prop_sources=sources,
+                                     **{event_prop: single_value})
 
                     else:
 
@@ -243,12 +271,12 @@ PROPERTY_MAPPING = {
                       },
     'kotipaikka': {'uri': SCHEMA_NS.home_place, 'slash_separated': True,
                    'name_fi': 'Kotikunta',
-                   'name_en': 'Municipality of home'
+                   'name_en': 'Home municipality'
                    },
     'asuinpaikka': {'uri': SCHEMA_NS.residence_place, 'name_fi': 'Asuinpaikka', 'slash_separated': True},
     'ammatti': {'uri': SCHEMA_NS.occupation, 'name_fi': 'Ammatti', 'slash_separated': True},
     'siviilisääty': {'uri': SCHEMA_NS.marital_status, 'name_fi': 'Siviilisääty', 'slash_separated': True},
-    'lasten lkm': {'uri': SCHEMA_NS.amount_children, #'converter': convert_int,
+    'lasten lkm': {'uri': SCHEMA_NS.amount_children,
                    'name_fi': 'Lasten lukumäärä', 'slash_separated': True},
     'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo', 'slash_separated': True},
     'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
@@ -282,14 +310,19 @@ PROPERTY_MAPPING = {
     'leirit / sairaalat': {'uri': SCHEMA_NS.camps_and_hospitals, 'slash_separated': False,
                            'name_fi': 'Leirit ja sairaalat'},
     ' muita tietoja': {'uri': SCHEMA_NS.other_information, 'slash_separated': False,
-                       'name_fi': 'Muita tietoja'},
+                       'name_fi': 'Muita tietoja',
+                       },
     'lisätietoja': {'uri': SCHEMA_NS.additional_information, 'slash_separated': False,
                     'name_fi': 'Lisätietoja'},
-    'palanneiden kuolinaika': {'uri': SCHEMA_NS.death_date_of_returned, 'converter': convert_dates,
-                               'slash_separated': False,
-                               'name_fi': 'Palanneen kuolinaika'},
-    'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.association,
-                              'converter': convert_dates,
+    'palanneiden kuolinaika': {'converter': convert_dates,
+                               'slash_separated': True,
+                               'event': CIDOC.E69_Death,
+                               'event_prop': 'timespan',
+                               'participant_prop': CIDOC.P100_was_death_of,
+                               'event_uri_suffix': '_death',
+                               'event_labels': ('Henkilö {name} kuoli', 'Person {name} died'),
+                               },
+    'Sotavangit ry:n jäsen': {'converter': convert_dates,
                               'slash_separated': True,
                               'event': CIDOC.E85_Joining,
                               'event_prop': 'timespan',
