@@ -7,16 +7,9 @@ Convert Prisoners of War from CSV to RDF using CIDOC CRM.
 import argparse
 import datetime
 import logging
-import os
-
 import re
-import iso8601
-
-from rdflib import *
+from rdflib import Graph, Namespace, RDF, RDFS, Literal, XSD, URIRef
 import pandas as pd
-import numpy as np
-
-#################################
 from slugify import slugify
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
@@ -105,9 +98,7 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
     :param labels: list of label literals in different languages
     :param timespan: timespan tuple (begin, end) or single date
     :param place: string representing the target place
-    :param timespan_source:
-    :param place_source:
-    :param event_source:
+    :param prop_sources:
     :param extra_information: list of (predicate, object) tuples
     """
 
@@ -159,7 +150,6 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
                 data.add((property_uri, RDFS.subClassOf, CIDOC['P7_took_place_at']))
 
 
-
 class RDFMapper:
     """
     Map tabular data (currently pandas DataFrame) to RDF. Create a class instance of each row.
@@ -203,10 +193,9 @@ class RDFMapper:
 
                 # Take sources for each value if present
 
-                sources = []
+                sources = ''
                 if slash_separated:
-                    RE_SOURCE_SPLIT = r'(.+) \(([^\(\)]+)\)(.*)'
-                    sourcematch = re.search(RE_SOURCE_SPLIT, single_value)
+                    sourcematch = re.search(r'(.+) \(([^\(\)]+)\)(.*)', single_value)
                     (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
 
                     if sources:
