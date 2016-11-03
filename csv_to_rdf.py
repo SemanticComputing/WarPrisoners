@@ -46,11 +46,16 @@ def convert_dates(raw_date):
     if not raw_date:
         return raw_date
     try:
-        date = datetime.datetime.strptime(str(raw_date).strip(), '%d.%m.%Y').date()
+        date = datetime.datetime.strptime(str(raw_date).strip(), '%d/%m/%Y').date()
         log.debug('Converted date: %s  to  %s' % (raw_date, date))
         return date
     except ValueError:
-        log.error('Invalid value for date conversion: %s' % raw_date)
+        try:
+            date = datetime.datetime.strptime(str(raw_date).strip(), '%d.%m.%Y').date()
+            log.debug('Converted date: %s  to  %s' % (raw_date, date))
+            return date
+        except ValueError:
+            log.error('Invalid value for date conversion: %s' % raw_date)
         return raw_date
 
 
@@ -187,7 +192,9 @@ class RDFMapper:
             # Make an iterable of all values in this field
             # TODO: Handle columns separated by ;
 
-            values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
+            # values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
+            values = (val.strip() for val in re.split(r'\s/\s', str(value))) if slash_separated else \
+                [str(value).strip()]
 
             for single_value in values:
 
@@ -268,7 +275,7 @@ PROPERTY_MAPPING = {
     'lasten lkm': {'uri': SCHEMA_NS.amount_children,
                    'name_fi': 'Lasten lukumäärä', 'slash_separated': True},
     'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo', 'slash_separated': True},
-    'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
+    '2': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
     'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'converter': convert_dates, 'slash_separated': True,
                       'name_fi': 'Vangiksi jäämisen päivämäärä'},
     'vangiksi paikka': {'uri': SCHEMA_NS.place_captured, 'slash_separated': True,
