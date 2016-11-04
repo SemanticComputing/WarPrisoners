@@ -16,6 +16,7 @@ CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DC = Namespace('http://purl.org/dc/elements/1.1/')
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
+BIOC = Namespace('http://ldf.fi/schema/bioc/')
 
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
@@ -183,6 +184,8 @@ class RDFMapper:
 
         for column_name in self.mapping:
 
+            # TODO: Don't throw KeyError if column_name is not found??
+
             value = row[column_name]
 
             data.add((entity_uri, RDF.type, self.instance_class))
@@ -270,7 +273,7 @@ PROPERTY_MAPPING = {
                    'name_en': 'Home municipality'
                    },
     'asuinpaikka': {'uri': SCHEMA_NS.residence_place, 'name_fi': 'Asuinpaikka', 'slash_separated': True},
-    'ammatti': {'uri': SCHEMA_NS.occupation, 'name_fi': 'Ammatti', 'slash_separated': True},
+    'ammatti': {'uri': BIOC.has_profession, 'name_fi': 'Ammatti', 'slash_separated': True},
     'siviilisääty': {'uri': SCHEMA_NS.marital_status, 'name_fi': 'Siviilisääty', 'slash_separated': True},
     'lasten lkm': {'uri': SCHEMA_NS.amount_children,
                    'name_fi': 'Lasten lukumäärä', 'slash_separated': True},
@@ -389,9 +392,15 @@ for prop in PROPERTY_MAPPING.values():
 data.bind("p", "http://ldf.fi/warsa/prisoners/")
 data.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
 data.bind("skos", "http://www.w3.org/2004/02/skos/core#")
+data.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
+data.bind("foaf", 'http://xmlns.com/foaf/0.1/')
+data.bind("bioc", 'http://ldf.fi/schema/bioc/')
 
 schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
 schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
+schema.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
+schema.bind("foaf", 'http://xmlns.com/foaf/0.1/')
+schema.bind("bioc", 'http://ldf.fi/schema/bioc/')
 
 data.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "prisoners.ttl")
 schema.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "schema.ttl")
