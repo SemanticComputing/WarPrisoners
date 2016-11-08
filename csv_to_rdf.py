@@ -35,6 +35,45 @@ class RDFMapper:
         self.mapping = mapping
         self.instance_class = instance_class
 
+    def _create_event_or_literal(self, s_uri, s_name, sources, value, mapping):
+        """
+        Create a CIDOC event or a literal value
+
+        :param s_uri:
+        :param s_name:
+        :param sources:
+        :param value:
+        :param mapping:
+        """
+        new_rdf = Graph()
+
+        event = mapping.get('event')
+
+        if event:
+            # Create event
+
+            event_prop = mapping.get('event_prop')
+            event_uri_suffix = mapping.get('event_uri_suffix')
+            participant_prop = mapping.get('participant_prop')
+            event_labels = mapping.get('event_labels')
+            event_information = mapping.get('event_information')
+
+            new_rdf += create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
+                                    s_uri, s_name, event_labels, extra_information=event_information,
+                                    prop_sources=sources, **{event_prop: value})
+
+        else:
+            # Create literal
+
+            liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date \
+                else Literal(value)
+
+            new_rdf.add((s_uri,
+                         mapping['uri'],
+                         Literal(liter)))
+
+        return new_rdf
+
     def map_row_to_rdf(self, entity_uri, row):
         """
         Map a single row to RDF.
@@ -56,69 +95,40 @@ class RDFMapper:
 
         for column_name in self.mapping:
 
-            # TODO: Don't throw KeyError if column_name is not found??
+            mapping = self.mapping[column_name]
 
             value = row[column_name]
 
             row_rdf.add((entity_uri, RDF.type, self.instance_class))
 
-            slash_separated = self.mapping[column_name].get('slash_separated')
+            slash_separated = mapping.get('slash_separated')
 
             # Make an iterable of all values in this field
             # TODO: Handle columns separated by ;
 
-            # values = (val.strip() for val in str(value).split(sep='/')) if slash_separated else [str(value).strip()]
             values = (val.strip() for val in re.split(r'\s/\s', str(value))) if slash_separated else \
                 [str(value).strip()]
 
-            for single_value in values:
-
-                # Take sources for each value if present
+            for value in values:
 
                 sources = ''
                 if slash_separated:
-                    sourcematch = re.search(r'(.+) \(([^\(\)]+)\)(.*)', single_value)
-                    (single_value, sources, trash) = sourcematch.groups() if sourcematch else (single_value, None, None)
+                    # Split value to value and sources
+                    sourcematch = re.search(r'(.+) \(([^\(\)]+)\)(.*)', value)
+                    (value, sources, trash) = sourcematch.groups() if sourcematch else (value, None, None)
 
                     if sources:
                         log.debug('Found sources: %s' % sources)
                         sources = (Literal(s.strip()) for s in sources.split(','))
-                        # TODO: Use resources instead of literals
 
                     if trash:
                         log.warning('Found some content after sources: %s' % trash)
 
-                # Convert value to some format
+                converter = mapping.get('converter')
+                value = converter(value) if converter else value
 
-                converter = self.mapping[column_name].get('converter')
-                single_value = converter(single_value) if converter else single_value
-
-                if single_value:
-                    event = self.mapping[column_name].get('event')
-
-                    if event:
-                        # Create event
-
-                        event_prop = self.mapping[column_name].get('event_prop')
-                        event_uri_suffix = self.mapping[column_name].get('event_uri_suffix')
-                        participant_prop = self.mapping[column_name].get('participant_prop')
-                        event_labels = self.mapping[column_name].get('event_labels')
-                        event_information = self.mapping[column_name].get('event_information')
-
-                        row_rdf += create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
-                                                entity_uri, fullname, event_labels, extra_information=event_information,
-                                                prop_sources=sources,
-                                                **{event_prop: single_value})
-
-                    else:
-                        # Create literal
-
-                        liter = Literal(single_value, datatype=XSD.date) if type(single_value) == datetime.date \
-                            else Literal(single_value)
-
-                        row_rdf.add((entity_uri,
-                                     self.mapping[column_name]['uri'],
-                                     Literal(liter)))
+                if value:
+                    row_rdf += self._create_event_or_literal(entity_uri, fullname, sources, value, mapping)
 
         return row_rdf
 
