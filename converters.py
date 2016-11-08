@@ -24,7 +24,13 @@ EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 log = logging.getLogger(__name__)
 
 
-def convert_int(raw_value):
+def convert_int(raw_value: str):
+    """
+    Convert string value to integer if possible, if not, return original value
+
+    :param raw_value: original string value
+    :return: converted or original value
+    """
     if not raw_value:
         return raw_value
     try:
@@ -36,9 +42,10 @@ def convert_int(raw_value):
         return raw_value
 
 
-def convert_dates(raw_date):
+def convert_dates(raw_date: str):
     """
     Convert date string to iso8601 date
+
     :param raw_date: raw date string from the CSV
     :return: ISO 8601 compliant date if can be parse, otherwise original date string
     """
@@ -58,26 +65,26 @@ def convert_dates(raw_date):
         return raw_date
 
 
-def convert_person_name(raw_name):
+def convert_person_name(raw_name: str):
     """
+    Unify name syntax and split into first names and last name
 
-    :param raw_name:
+    :param raw_name: Original name string
     :return: tuple containing first names, last name and full name
     """
-    # Some numbers and parentheses are also present in names
-    re_name_split = r'([A-ZÅÄÖÉ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖ/\- \(\)0-9,]*)'
+    re_name_split = r'([A-ZÅÄÖÉÓÁ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖÉÓÁ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖÉÓÁ/\- \(\)0-9,.]*)'
 
     fullname = raw_name.upper()
 
     namematch = re.search(re_name_split, fullname)
     (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
 
-    lastname = lastname.title()
-    firstnames = firstnames.title()
-
     # Unify syntax for previous names
-    prev_name_regex = r'([a-zA-ZåäöÅÄÖ/\-]{2}) +\(?(E(?:nt)?[\.\s]+)([a-zA-ZåäöÅÄÖ/\-]+)\)?'
+    prev_name_regex = r'([A-ZÅÄÖÉÓÁ/\-]{2}) +\(?(E(?:NT)?[\.\s]+)([A-ZÅÄÖÉÓÁ/\-]+)\)?'
     lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
+
+    lastname = lastname.title().replace('(Ent. ', '(ent. ')
+    firstnames = firstnames.title()
 
     if extra:
         extra = extra.lower()
@@ -86,9 +93,14 @@ def convert_person_name(raw_name):
     fullname = lastname
 
     if firstnames:
-        fullname += ', ' + firstnames.title()
+        fullname += ', ' + firstnames
 
     log.debug('Name %s was unified to form %s' % (raw_name, fullname))
+
+    original_style_name = ' '.join((lastname, firstnames))
+    if original_style_name.lower() != raw_name.lower():
+        log.warning('New name %s differs from %s' % (original_style_name, raw_name))
+
     return firstnames, lastname, fullname
 
 
