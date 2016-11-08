@@ -22,7 +22,6 @@ DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 
-INPUT_FILE_DIRECTORY = 'data/'
 OUTPUT_FILE_DIRECTORY = 'data/new/'
 
 
@@ -136,6 +135,7 @@ class RDFMapper:
 
 argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
 
+argparser.add_argument("input", help="Input CSV file")
 argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                        choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
 
@@ -148,7 +148,7 @@ logging.basicConfig(filename='Prisoners.log',
 
 log = logging.getLogger(__name__)
 
-table = pd.read_csv(INPUT_FILE_DIRECTORY + 'vangit.csv', encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+table = pd.read_csv(args.input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
                     # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
                     na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
 
