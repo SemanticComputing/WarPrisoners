@@ -3,12 +3,14 @@
 """
 Tests for data conversion
 """
+import argparse
 import datetime
-import unittest
+from unittest import mock, TestCase, main
 
 import converters
 
-class TestConverters(unittest.TestCase):
+
+class TestConverters(TestCase):
 
     def test_convert_int(self):
         self.assertIsInstance(converters.convert_int('1234'), int)
@@ -39,5 +41,15 @@ class TestConverters(unittest.TestCase):
         self.assertEqual(converters.convert_person_name('Ahjo ent. Germanoff Juho ent. Ivan'),
                          ('Juho Ent. Ivan', 'Ahjo (ent. Germanoff)', 'Ahjo (ent. Germanoff), Juho Ent. Ivan'))
 
+
+class TestCSV2RDF(TestCase):
+
+    @mock.patch('argparse.ArgumentParser.parse_args',
+                return_value=argparse.Namespace(input='test_data.csv', output='foo', loglevel='WARNING'))
+    @mock.patch('rdflib.Graph.serialize', return_value=None)
+    def test_command(self, mock_args, mock_args2):
+        import csv_to_rdf
+
+
 if __name__ == '__main__':
-    unittest.main()
+    main()

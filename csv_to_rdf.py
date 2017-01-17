@@ -5,11 +5,15 @@ Convert Prisoners of War from CSV to RDF using CIDOC CRM.
 """
 
 import argparse
+import datetime
+import logging
+import re
 
 import pandas as pd
-from rdflib import URIRef
+from rdflib import URIRef, Namespace, Graph, RDF, Literal
+from rdflib import XSD
 
-from converters import *
+from converters import convert_int, convert_dates, convert_person_name
 from mapping import PRISONER_MAPPING
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
@@ -21,8 +25,6 @@ BIOC = Namespace('http://ldf.fi/schema/bioc/')
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
-
-OUTPUT_FILE_DIRECTORY = 'data/new/'
 
 
 class RDFMapper:
@@ -100,10 +102,14 @@ class RDFMapper:
 argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
 
 argparser.add_argument("input", help="Input CSV file")
+argparser.add_argument("output", help="Output location to serialize RDF files to")
 argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                        choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
 
+
 args = argparser.parse_args()
+
+output_dir = args.output + '/' if args.output[-1] != '/' else args.output
 
 logging.basicConfig(filename='Prisoners.log',
                     filemode='a',
@@ -148,5 +154,5 @@ schema.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
 schema.bind("foaf", 'http://xmlns.com/foaf/0.1/')
 schema.bind("bioc", 'http://ldf.fi/schema/bioc/')
 
-data.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "prisoners.ttl")
-schema.serialize(format="turtle", destination=OUTPUT_FILE_DIRECTORY + "schema.ttl")
+data.serialize(format="turtle", destination=args.output + "prisoners.ttl")
+schema.serialize(format="turtle", destination=args.output + "schema.ttl")
