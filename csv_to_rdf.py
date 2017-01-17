@@ -34,45 +34,6 @@ class RDFMapper:
         self.mapping = mapping
         self.instance_class = instance_class
 
-    def _create_event_or_literal(self, s_uri, s_name, sources, value, mapping):
-        """
-        Create a CIDOC event or a literal value
-
-        :param s_uri:
-        :param s_name:
-        :param sources:
-        :param value:
-        :param mapping:
-        """
-        new_rdf = Graph()
-
-        event = mapping.get('event')
-
-        if event:
-            # Create event
-
-            event_prop = mapping.get('event_prop')
-            event_uri_suffix = mapping.get('event_uri_suffix')
-            participant_prop = mapping.get('participant_prop')
-            event_labels = mapping.get('event_labels')
-            event_information = mapping.get('event_information')
-
-            new_rdf += create_event('prisoner_' + str(index) + event_uri_suffix, event, participant_prop,
-                                    s_uri, s_name, event_labels, extra_information=event_information,
-                                    prop_sources=sources, **{event_prop: value})
-
-        else:
-            # Create literal
-
-            liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date \
-                else Literal(value)
-
-            new_rdf.add((s_uri,
-                         mapping['uri'],
-                         Literal(liter)))
-
-        return new_rdf
-
     def map_row_to_rdf(self, entity_uri, row):
         """
         Map a single row to RDF.
@@ -120,6 +81,8 @@ class RDFMapper:
                         log.debug('Found sources: %s' % sources)
                         sources = (Literal(s.strip()) for s in sources.split(','))
 
+                    # TODO: Write sources to properties
+
                     if trash:
                         log.warning('Found some content after sources: %s' % trash)
 
@@ -127,7 +90,8 @@ class RDFMapper:
                 value = converter(value) if converter else value
 
                 if value:
-                    row_rdf += self._create_event_or_literal(entity_uri, fullname, sources, value, mapping)
+                    liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
+                    row_rdf.add((entity_uri, mapping['uri'], liter))
 
         return row_rdf
 
