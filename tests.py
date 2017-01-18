@@ -5,9 +5,15 @@ Tests for data conversion
 """
 import argparse
 import datetime
+import io
 from unittest import mock, TestCase, main
 
+from rdflib import Graph
+from rdflib import URIRef
+
+from csv_to_rdf import RDFMapper
 import converters
+from mapping import PRISONER_MAPPING, RDF
 
 
 class TestConverters(TestCase):
@@ -44,11 +50,36 @@ class TestConverters(TestCase):
 
 class TestCSV2RDF(TestCase):
 
-    @mock.patch('argparse.ArgumentParser.parse_args',
-                return_value=argparse.Namespace(input='test_data.csv', output='foo', loglevel='WARNING'))
-    @mock.patch('rdflib.Graph.serialize', return_value=None)
-    def test_command(self, mock_args, mock_args2):
-        import csv_to_rdf
+    def test_read_csv(self):
+        test_csv = '''col1  col2    col3
+        1   2   3
+        4   5   6
+        7   8   9
+        '''
+
+        mapper = RDFMapper({}, '')
+        mapper.read_csv(io.StringIO(test_csv))
+        assert len(mapper.table) == 3
+
+    def test_read_csv2(self):
+        mapper = RDFMapper({}, '')
+        mapper.read_csv('test_data.csv')
+        assert len(mapper.table) == 1
+
+    def test_mapping(self):
+        INSTANCE_CLASS = URIRef('http://example.com/Class')
+
+        mapper = RDFMapper(PRISONER_MAPPING, INSTANCE_CLASS)
+        mapper.read_csv('test_data.csv')
+        mapper.process_rows()
+        rdf_data, schema = mapper.serialize(None, None)
+        g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
+
+        types = list(g.objects(None, RDF.type))
+
+        assert len(types) == 1
+        assert types[0] == INSTANCE_CLASS
+        assert len(g) == 21
 
 
 if __name__ == '__main__':

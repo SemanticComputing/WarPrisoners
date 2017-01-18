@@ -32,18 +32,18 @@ class RDFMapper:
     Map tabular data (currently pandas DataFrame) to RDF. Create a class instance of each row.
     """
 
-    def __init__(self, mapping, instance_class, loglevel):
+    def __init__(self, mapping, instance_class, loglevel='WARNING'):
         self.mapping = mapping
         self.instance_class = instance_class
         self.table = None
         self.data = Graph()
         self.schema = Graph()
-        logging.basicConfig(filename='Prisoners.log',
+        logging.basicConfig(filename='rdfmapper.log',
                             filemode='a',
                             level=getattr(logging, loglevel),
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        log = logging.getLogger(__name__)
+        self.log = logging.getLogger(__name__)
 
 
     def map_row_to_rdf(self, entity_uri, row):
@@ -90,13 +90,13 @@ class RDFMapper:
                     (value, sources, trash) = sourcematch.groups() if sourcematch else (value, None, None)
 
                     if sources:
-                        log.debug('Found sources: %s' % sources)
+                        self.log.debug('Found sources: %s' % sources)
                         sources = (Literal(s.strip()) for s in sources.split(','))
 
                     # TODO: Write sources to properties
 
                     if trash:
-                        log.warning('Found some content after sources: %s' % trash)
+                        self.log.warning('Found some content after sources: %s' % trash)
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
@@ -107,15 +107,15 @@ class RDFMapper:
 
         return row_rdf
 
-    def read_csv(self, filename):
+    def read_csv(self, input):
         """
         Read in a CSV files using pandas.read_csv
 
-        :param filename: Input CSV filename
+        :param input: CSV input (filename or buffer)
         """
-        csv_data = pd.read_csv(filename, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
-                            # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
-                            na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
+        csv_data = pd.read_csv(input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+                               # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
+                               na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
 
@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     output_dir = args.output + '/' if args.output[-1] != '/' else args.output
 
-    mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, args.loglevel.upper())
+    mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, loglevel=args.loglevel.upper())
     mapper.read_csv(args.input)
 
     mapper.process_rows()
