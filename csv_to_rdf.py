@@ -45,6 +45,20 @@ class RDFMapper:
 
         self.log = logging.getLogger(__name__)
 
+    def read_column_with_sources(self, orig_value):
+        # Split value to value and sources
+        sourcematch = re.search(r'(.+) \(([^()]+)\)(.*)', orig_value)
+        (value, sources, trash) = sourcematch.groups() if sourcematch else (orig_value, None, None)
+
+        if sources:
+            self.log.debug('Found sources: %s' % sources)
+            sources = (Literal(s.strip()) for s in sources.split(','))
+
+        if trash:
+            self.log.warning('Found some content after sources: %s' % trash)
+
+        return value, sources
+
     def map_row_to_rdf(self, entity_uri, row):
         """
         Map a single row to RDF.
@@ -82,20 +96,13 @@ class RDFMapper:
 
             for value in values:
 
-                sources = ''
+                sources = None
                 if slash_separated:
-                    # Split value to value and sources
-                    sourcematch = re.search(r'(.+) \(([^\(\)]+)\)(.*)', value)
-                    (value, sources, trash) = sourcematch.groups() if sourcematch else (value, None, None)
+                    value, sources = self.read_column_with_sources(value)
 
-                    if sources:
-                        self.log.debug('Found sources: %s' % sources)
-                        sources = (Literal(s.strip()) for s in sources.split(','))
-
-                    # TODO: Write sources to properties
-
-                    if trash:
-                        self.log.warning('Found some content after sources: %s' % trash)
+                if sources:
+                    # TODO: Write sources in reified statements
+                    pass
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
