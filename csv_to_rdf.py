@@ -32,9 +32,19 @@ class RDFMapper:
     Map tabular data (currently pandas DataFrame) to RDF. Create a class instance of each row.
     """
 
-    def __init__(self, mapping, instance_class):
+    def __init__(self, mapping, instance_class, loglevel):
         self.mapping = mapping
         self.instance_class = instance_class
+        self.table = None
+        self.data = Graph()
+        self.schema = Graph()
+        logging.basicConfig(filename='Prisoners.log',
+                            filemode='a',
+                            level=getattr(logging, loglevel),
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        log = logging.getLogger(__name__)
+
 
     def map_row_to_rdf(self, entity_uri, row):
         """
@@ -97,62 +107,77 @@ class RDFMapper:
 
         return row_rdf
 
-#################################
+    def read_csv(self, filename):
+        """
+        Read in a CSV files using pandas.read_csv
 
-argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
+        :param filename: Input CSV filename
+        """
+        csv_data = pd.read_csv(filename, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+                            # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
+                            na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
 
-argparser.add_argument("input", help="Input CSV file")
-argparser.add_argument("output", help="Output location to serialize RDF files to")
-argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
-                       choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
+        self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
+
+    def serialize(self, destination_data, destination_schema):
+        """
+        Serialize RDF graphs
+
+        :param destination_data: serialization destination for data
+        :param destination_schema: serialization destination for schema
+        :return: output from rdflib.Graph.serialize
+        """
+        self.data.bind("p", "http://ldf.fi/warsa/prisoners/")
+        self.data.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
+        self.data.bind("skos", "http://www.w3.org/2004/02/skos/core#")
+        self.data.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
+        self.data.bind("foaf", 'http://xmlns.com/foaf/0.1/')
+        self.data.bind("bioc", 'http://ldf.fi/schema/bioc/')
+
+        self.schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
+        self.schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
+        self.schema.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
+        self.schema.bind("foaf", 'http://xmlns.com/foaf/0.1/')
+        self.schema.bind("bioc", 'http://ldf.fi/schema/bioc/')
+
+        data = self.data.serialize(format="turtle", destination=destination_data)
+        schema = self.schema.serialize(format="turtle", destination=destination_schema)
+
+        return data, schema  # Mainly for testing purposes
+
+    def process_rows(self):
+        """
+        Loop through CSV rows and convert them to RDF
+        """
+        column_headers = list(self.table)
+
+        for index in range(len(self.table)):
+            prisoner_uri = DATA_NS['prisoner_' + str(index)]
+            self.data += self.map_row_to_rdf(prisoner_uri, self.table.ix[index])
+
+        for prop in PRISONER_MAPPING.values():
+            if 'name_fi' in prop:
+                self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
+                self.schema.add((prop['uri'], RDF.type, RDF.Property))
 
 
-args = argparser.parse_args()
+if __name__ == "__main__":
 
-output_dir = args.output + '/' if args.output[-1] != '/' else args.output
+    argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
 
-logging.basicConfig(filename='Prisoners.log',
-                    filemode='a',
-                    level=getattr(logging, args.loglevel.upper()),
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    argparser.add_argument("input", help="Input CSV file")
+    argparser.add_argument("output", help="Output location to serialize RDF files to")
+    argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
+                           choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
 
-log = logging.getLogger(__name__)
 
-table = pd.read_csv(args.input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
-                    # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
-                    na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
+    args = argparser.parse_args()
 
-table = table.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
+    output_dir = args.output + '/' if args.output[-1] != '/' else args.output
 
-data = Graph()
+    mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, args.loglevel.upper())
+    mapper.read_csv(args.input)
 
-column_headers = list(table)
+    mapper.process_rows()
 
-mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar)
-
-for index in range(len(table)):
-    prisoner_uri = DATA_NS['prisoner_' + str(index)]
-
-    data += mapper.map_row_to_rdf(prisoner_uri, table.ix[index])
-
-schema = Graph()
-for prop in PRISONER_MAPPING.values():
-    if 'name_fi' in prop:
-        schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
-        schema.add((prop['uri'], RDF.type, RDF.Property))
-
-data.bind("p", "http://ldf.fi/warsa/prisoners/")
-data.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
-data.bind("skos", "http://www.w3.org/2004/02/skos/core#")
-data.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
-data.bind("foaf", 'http://xmlns.com/foaf/0.1/')
-data.bind("bioc", 'http://ldf.fi/schema/bioc/')
-
-schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
-schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
-schema.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
-schema.bind("foaf", 'http://xmlns.com/foaf/0.1/')
-schema.bind("bioc", 'http://ldf.fi/schema/bioc/')
-
-data.serialize(format="turtle", destination=args.output + "prisoners.ttl")
-schema.serialize(format="turtle", destination=args.output + "schema.ttl")
+    mapper.serialize(output_dir + "prisoners.ttl", output_dir + "schema.ttl")
