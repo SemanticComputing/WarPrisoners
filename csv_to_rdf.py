@@ -45,7 +45,6 @@ class RDFMapper:
 
         self.log = logging.getLogger(__name__)
 
-
     def map_row_to_rdf(self, entity_uri, row):
         """
         Map a single row to RDF.
@@ -149,8 +148,8 @@ class RDFMapper:
         """
         Loop through CSV rows and convert them to RDF
         """
-        column_headers = list(self.table)
-
+        # column_headers = list(self.table)
+        #
         for index in range(len(self.table)):
             prisoner_uri = DATA_NS['prisoner_' + str(index)]
             self.data += self.map_row_to_rdf(prisoner_uri, self.table.ix[index])

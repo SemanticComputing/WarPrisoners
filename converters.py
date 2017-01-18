@@ -72,7 +72,7 @@ def convert_person_name(raw_name: str):
     :param raw_name: Original name string
     :return: tuple containing first names, last name and full name
     """
-    re_name_split = r'([A-ZÅÄÖÉÓÁ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖÉÓÁ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖÉÓÁ/\- \(\)0-9,.]*)'
+    re_name_split = r'([A-ZÅÄÖÜÉÓÁ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖÜÉÓÁ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖÜÉÓÁ/\- \(\)0-9,.]*)'
 
     fullname = raw_name.upper()
 
@@ -80,7 +80,7 @@ def convert_person_name(raw_name: str):
     (lastname, extra, firstnames) = namematch.groups() if namematch else (fullname, None, '')
 
     # Unify syntax for previous names
-    prev_name_regex = r'([A-ZÅÄÖÉÓÁ/\-]{2}) +\(?(E(?:NT)?[\.\s]+)([A-ZÅÄÖÉÓÁ/\-]+)\)?'
+    prev_name_regex = r'([A-ZÅÄÖÜÉÓÁ/\-]{2}) +\(?(E(?:NT)?[\.\s]+)([A-ZÅÄÖÜÉÓÁ/\-]+)\)?'
     lastname = re.sub(prev_name_regex, r'\1 (ent. \3)', str(lastname))
 
     lastname = lastname.title().replace('(Ent. ', '(ent. ')
@@ -97,7 +97,7 @@ def convert_person_name(raw_name: str):
 
     log.debug('Name %s was unified to form %s' % (raw_name, fullname))
 
-    original_style_name = ' '.join((lastname, firstnames))
+    original_style_name = ' '.join((lastname, firstnames)) if firstnames else lastname
     if original_style_name.lower() != raw_name.lower():
         log.warning('New name %s differs from %s' % (original_style_name, raw_name))
 
