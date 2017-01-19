@@ -5,14 +5,16 @@ Tests for data conversion
 """
 import datetime
 import io
+from collections import defaultdict
 from unittest import TestCase, main
 
-from rdflib import Graph
-from rdflib import URIRef
+from rdflib import Graph, RDF, URIRef
+from rdflib import Literal
+from rdflib import XSD
 
 import converters
 from csv_to_rdf import RDFMapper
-from mapping import PRISONER_MAPPING, RDF
+from mapping import PRISONER_MAPPING, DATA_NS, DC
 
 
 class TestConverters(TestCase):
@@ -63,7 +65,7 @@ class TestCSV2RDF(TestCase):
     def test_read_csv2(self):
         mapper = RDFMapper({}, '')
         mapper.read_csv('test_data.csv')
-        assert len(mapper.table) == 1
+        assert len(mapper.table) == 2
 
     def test_mapping(self):
         instance_class = URIRef('http://example.com/Class')
@@ -74,14 +76,76 @@ class TestCSV2RDF(TestCase):
         rdf_data, schema = mapper.serialize(None, None)
         g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
 
-        types = list(g.objects(None, RDF.type))
-
         # print(rdf_data.decode("utf-8"))
 
-        assert len(types) == 1
-        assert types[0] == instance_class
-        assert len(g) == 47  # 43 columns with data + firstname + lastname + prefLabel + rdf:type
+        instances = list(g.subjects(RDF.type, instance_class))
+        assert len(instances) == 2
 
+        p0 = list(g[DATA_NS.prisoner_0::])
+        assert len(p0) == 47  # 43 columns with data + firstname + lastname + prefLabel + rdf:type
+
+    def test_mapping_field_contents(self):
+        instance_class = URIRef('http://example.com/Class')
+
+        mapper = RDFMapper(PRISONER_MAPPING, instance_class)
+        mapper.read_csv('test_data.csv')
+        mapper.process_rows()
+        rdf_data, schema = mapper.serialize(None, None)
+        g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
+
+        p1 = list(g[DATA_NS.prisoner_1::])
+        assert len(p1) > 20
+
+        p1_dict = defaultdict(list)
+        for k, v in p1:
+            p1_dict[k].append(v)
+
+        # Birth date
+
+        birth_dates = p1_dict[PRISONER_MAPPING['syntymäaika']['uri']]
+        assert len(birth_dates) == 2
+
+        assert birth_dates[0].datatype == URIRef('http://www.w3.org/2001/XMLSchema#date')
+        assert birth_dates[1].datatype == URIRef('http://www.w3.org/2001/XMLSchema#date')
+
+        # No reifications
+        assert len(list(g[:RDF.object:birth_dates[0]])) == 0
+        assert len(list(g[:RDF.object:birth_dates[1]])) == 0
+
+        # Place of domicile
+
+        places = p1_dict[PRISONER_MAPPING['asuinpaikka']['uri']]
+        assert len(places) == 2
+
+        assert places[0].datatype is None
+        assert places[1].datatype is None
+
+        # Some reifications
+        assert len(list(g[:RDF.object:Literal('Viipuri')])) == 0
+        assert len(list(g[:RDF.object:Literal('Hämeenlinna')])) == 1
+
+        # Death date
+
+        death_dates = p1_dict[PRISONER_MAPPING['kuollut']['uri']]
+        assert len(death_dates) == 3
+
+        assert death_dates[0].datatype == URIRef('http://www.w3.org/2001/XMLSchema#date')
+        assert death_dates[1].datatype == URIRef('http://www.w3.org/2001/XMLSchema#date')
+        assert death_dates[2].datatype == URIRef('http://www.w3.org/2001/XMLSchema#date')
+
+        # Some reifications
+        r0 = g.value(None, RDF.object, Literal('1943-02-02', datatype=XSD.date))
+
+        assert g.value(r0, RDF.type, None) == RDF.Statement
+        assert g.value(r0, RDF.predicate, None) == PRISONER_MAPPING['kuollut']['uri']
+        assert g.value(r0, DC.source, None) == Literal('Karaganda')
+
+        r1 = g.value(None, RDF.object, Literal('1943-02-03', datatype=XSD.date))
+
+        print(g.value(r1, DC.source, None))
+        assert g.value(r1, DC.source, None) == Literal('mikrofilmi')  # TODO: Fix
+
+        # TODO: Check more fields
 
 if __name__ == '__main__':
     main()

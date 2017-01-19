@@ -45,19 +45,26 @@ class RDFMapper:
 
         self.log = logging.getLogger(__name__)
 
-    def read_column_with_sources(self, orig_value):
-        # Split value to value and sources
+    def read_value_with_source(self, orig_value):
+        """
+        Read a value with source given in the end in parenthesis
+
+        :param orig_value: string in format "value (source)"
+        :return: value, sources
+        """
+
         sourcematch = re.search(r'(.+) \(([^()]+)\)(.*)', orig_value)
         (value, sources, trash) = sourcematch.groups() if sourcematch else (orig_value, None, None)
 
         if sources:
             self.log.debug('Found sources: %s' % sources)
-            sources = (Literal(s.strip()) for s in sources.split(','))
+            sources = (s.strip() for s in sources.split(','))
 
         if trash:
-            self.log.warning('Found some content after sources: %s' % trash)
+            self.log.warning('Found some content after sources, reverting to original: %s' % trash)
+            value = orig_value
 
-        return value, sources
+        return value, sources or []
 
     def map_row_to_rdf(self, entity_uri, row):
         """
@@ -67,6 +74,7 @@ class RDFMapper:
         :param row: tabular data
         :return:
         """
+        reification_template = '{entity}_{prop}_{id}_reification'
 
         row_rdf = Graph()
 
@@ -92,23 +100,20 @@ class RDFMapper:
 
             row_rdf.add((entity_uri, RDF.type, self.instance_class))
 
-            slash_separated = mapping.get('slash_separated')
+            separator = mapping.get('value_separator')
 
             # Make an iterable of all values in this field
             # TODO: Handle columns separated by ;
 
-            values = (val.strip() for val in re.split(r'\s/\s', str(value))) if slash_separated else \
+            # values = (val.strip() for val in re.split(r'\s/\s', str(value))) if separator == '/' else \
+            values = (val.strip() for val in re.split('/', str(value))) if separator == '/' else \
                 [str(value).strip()]
 
-            for value in values:
+            for index, value in enumerate(values):
 
-                sources = None
-                if slash_separated:
-                    value, sources = self.read_column_with_sources(value)
-
-                if sources:
-                    # TODO: Write sources in reified statements
-                    pass
+                sources = []
+                if separator == '/':
+                    value, sources = self.read_value_with_source(value)
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
@@ -116,6 +121,16 @@ class RDFMapper:
                 if value:
                     liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
                     row_rdf.add((entity_uri, mapping['uri'], liter))
+
+                    for source in sources:
+                        reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
+                                                                              prop=mapping['uri'].split('/')[-1],
+                                                                              id=index)]
+                        row_rdf.add((reification_uri, RDF.subject, entity_uri))
+                        row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
+                        row_rdf.add((reification_uri, RDF.object, liter))
+                        row_rdf.add((reification_uri, RDF.type, RDF.Statement))
+                        row_rdf.add((reification_uri, DC.source, Literal(source)))
 
         return row_rdf
 
