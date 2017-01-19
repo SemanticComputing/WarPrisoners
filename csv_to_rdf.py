@@ -13,7 +13,7 @@ import pandas as pd
 from rdflib import URIRef, Namespace, Graph, RDF, Literal
 from rdflib import XSD
 
-from converters import convert_int, convert_dates, convert_person_name
+from converters import convert_int, convert_person_name
 from mapping import PRISONER_MAPPING
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')

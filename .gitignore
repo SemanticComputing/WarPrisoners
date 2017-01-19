@@ -3,6 +3,7 @@ data
 # Python
 *.py[co]
 *.pot
+.coverage
 
 # Packages
 
@@ -25,7 +26,6 @@ pip-log.txt
 .project
 .pydevproject
 .settings/
-*.iml
 .idea
 
 # Backup files

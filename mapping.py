@@ -4,9 +4,9 @@
 Mapping of CSV columns to RDF properties
 """
 
-from rdflib import Namespace, Literal
+from rdflib import Namespace
 
-from converters import *
+from converters import convert_dates
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DC = Namespace('http://purl.org/dc/elements/1.1/')
@@ -42,11 +42,11 @@ PRISONER_MAPPING = {
     'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'converter': convert_dates, 'slash_separated': True,
                       'name_fi': 'Vangiksi jäämisen päivämäärä'},
     'vangiksi paikka, kunta': {'uri': SCHEMA_NS.place_captured_municipality, 'slash_separated': True,
-                        'name_fi': 'Vangiksi jäämisen kunta'},
+                               'name_fi': 'Vangiksi jäämisen kunta'},
     'vangiksi paikka, kylä, kaupunginosa': {'uri': SCHEMA_NS.place_captured, 'slash_separated': True,
-                        'name_fi': 'Vangiksi jäämisen paikka'},
+                                            'name_fi': 'Vangiksi jäämisen paikka'},
     'vangiksi, taistelupaikka': {'uri': SCHEMA_NS.place_captured_battle, 'slash_separated': True,
-                        'name_fi': 'Vangiksi jäämisen taistelupaikka'},
+                                 'name_fi': 'Vangiksi jäämisen taistelupaikka'},
     'selvitys vangiksi jäämisestä': {'uri': SCHEMA_NS.explanation, 'slash_separated': False,
                                      'name_fi': 'Selvitys vangiksi jäämisestä'},
     'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates, 'slash_separated': True,

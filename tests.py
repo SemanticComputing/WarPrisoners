@@ -3,16 +3,15 @@
 """
 Tests for data conversion
 """
-import argparse
 import datetime
 import io
-from unittest import mock, TestCase, main
+from unittest import TestCase, main
 
 from rdflib import Graph
 from rdflib import URIRef
 
-from csv_to_rdf import RDFMapper
 import converters
+from csv_to_rdf import RDFMapper
 from mapping import PRISONER_MAPPING, RDF
 
 
