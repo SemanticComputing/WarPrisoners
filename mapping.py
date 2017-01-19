@@ -18,6 +18,8 @@ DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 
+# Mapping dict. Person name is taken from the first field separately.
+
 PRISONER_MAPPING = {
     'syntymäaika': {'uri': SCHEMA_NS.birth_date, 'converter': convert_dates, 'slash_separated': True,
                     'name_fi': 'Syntymäaika',
@@ -36,11 +38,15 @@ PRISONER_MAPPING = {
     'lasten lkm': {'uri': SCHEMA_NS.amount_children,
                    'name_fi': 'Lasten lukumäärä', 'slash_separated': True},
     'sotilas- arvo': {'uri': SCHEMA_NS.rank, 'name_fi': 'Sotilasarvo', 'slash_separated': True},
-    '2': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
+    'joukko-osasto': {'uri': SCHEMA_NS.unit, 'name_fi': 'Joukko-osasto', 'slash_separated': False},
     'vangiksi aika': {'uri': SCHEMA_NS.time_captured, 'converter': convert_dates, 'slash_separated': True,
                       'name_fi': 'Vangiksi jäämisen päivämäärä'},
-    'vangiksi paikka': {'uri': SCHEMA_NS.place_captured, 'slash_separated': True,
+    'vangiksi paikka, kunta': {'uri': SCHEMA_NS.place_captured_municipality, 'slash_separated': True,
+                        'name_fi': 'Vangiksi jäämisen kunta'},
+    'vangiksi paikka, kylä, kaupunginosa': {'uri': SCHEMA_NS.place_captured, 'slash_separated': True,
                         'name_fi': 'Vangiksi jäämisen paikka'},
+    'vangiksi, taistelupaikka': {'uri': SCHEMA_NS.place_captured_battle, 'slash_separated': True,
+                        'name_fi': 'Vangiksi jäämisen taistelupaikka'},
     'selvitys vangiksi jäämisestä': {'uri': SCHEMA_NS.explanation, 'slash_separated': False,
                                      'name_fi': 'Selvitys vangiksi jäämisestä'},
     'palannut': {'uri': SCHEMA_NS.returned_date, 'converter': convert_dates, 'slash_separated': True,
@@ -65,18 +71,56 @@ PRISONER_MAPPING = {
     'Sotavangit ry:n jäsen': {'uri': SCHEMA_NS.workspace, 'slash_separated': True,
                               'name_fi': 'Sotavangit ry:n jäsen'},
     'valokuva': {'uri': SCHEMA_NS.photograph, 'slash_separated': False, 'name_fi': 'Valokuva'},
-    'paluukuulustelu-pöytäkirja; kjan lausunto; ilmoitus jääneistä sotavangeista; yht. sivumäärä':
+    'paluukuulustelu-pöytäkirja; kjan lausunto; ilmoitus jääneistä sotavangeista':
         {'uri': SCHEMA_NS.minutes, 'slash_separated': True,
          'name_fi': 'Paluukuulustelu-pöytäkirja, kjan lausunto, sivumäärä'},
-    'kantakortti': {'uri': SCHEMA_NS.military_record, 'slash_separated': False, 'name_fi': 'Kantakortti'},
-    'radiokatsaus': {'uri': SCHEMA_NS.radio_report, 'slash_separated': False, 'name_fi': 'Radiokatsaus'},
-    'katoamis-dokumentit': {'uri': SCHEMA_NS.missing_person_documents, 'slash_separated': False,
+    'kantakortti': {'uri': SCHEMA_NS.military_record,
+                    'slash_separated': False,
+                    'name_fi': 'Kantakortti'},
+    'radiokatsaus': {'uri': SCHEMA_NS.radio_report,
+                     'slash_separated': False,
+                     'name_fi': 'Radiokatsaus'},
+    'katoamis-dokumentit': {'uri': SCHEMA_NS.missing_person_documents,
+                            'slash_separated': False,
                             'name_fi': 'Katoamisdokumentit'},
-    'kuulustelija': {'uri': SCHEMA_NS.interrogator, 'slash_separated': False, 'name_fi': 'Kuulustelija'},
+    'Jatkosodan VEN kuulustelulomakkeet, palautetut': {'uri': SCHEMA_NS.russian_interrogation_sheets,
+                                                       'name_fi': 'Jatkosodan venäläiset kuulustelulomakkeet'},
+    'Talvisodan kortisto': {'uri': SCHEMA_NS.winterwar_card_file,
+                            'name_fi': 'Talvisodan kortisto'},
+    'kuulustelija': {'uri': SCHEMA_NS.interrogator,
+                     'name_fi': 'Kuulustelija'},
     'takavarikoitu omaisuus, arvo markoissa':
-        {'uri': SCHEMA_NS.confiscated_possessions, 'slash_separated': True,
+        {'uri': SCHEMA_NS.confiscated_possessions,
+         'slash_separated': True,
          'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
     'suomenruotsalainen':
-        {'uri': SCHEMA_NS.confiscated_possessions, 'slash_separated': True,
+        {'uri': SCHEMA_NS.swedish_finn,
          'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
+    'Karagandan kortisto':
+        {'uri': SCHEMA_NS.karaganda_card_file,
+         'name_fi': 'Karagandan kortisto'},
+    'Jatkosodan kortisto':
+        {'uri': SCHEMA_NS.continuation_war_card_file,
+         'name_fi': 'Jatkosodan kortisto'},
+    'Jatkosodan VEN kuulustelulomakkeet, kuolleet':
+        {'uri': SCHEMA_NS.continuation_war_russian_card_file,
+         'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet'},
+    'Talvisodan kokoelma':
+        {'uri': SCHEMA_NS.winter_war_collection,
+         'name_fi': 'Talvisodan kokoelma'},
+    'Talvisodan kokoelma, Moskovasta tulevat':
+        {'uri': SCHEMA_NS.winter_war_collection_from_moscow,
+         'name_fi': 'Talvisodan kokoelma (Moskovasta)'},
+    'lentolehtinen':
+        {'uri': SCHEMA_NS.flyer,
+         'name_fi': 'Lentolehtinen'},
+    'muistelmat, lehtijutut':
+        {'uri': SCHEMA_NS.memoirs,
+         'name_fi': 'Muistelmat ja lehtijutut'},
+    'tallenne video/audio':
+        {'uri': SCHEMA_NS.recording,
+         'name_fi': 'Tallenne (video/audio)'},
+    'Karjalan kansallisarkiston dokumentit':
+        {'uri': SCHEMA_NS.karelian_archive_documents,
+         'name_fi': 'Karjalan kansallisarkiston dokumentit'},
 }

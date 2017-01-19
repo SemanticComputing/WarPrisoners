@@ -67,9 +67,9 @@ class TestCSV2RDF(TestCase):
         assert len(mapper.table) == 1
 
     def test_mapping(self):
-        INSTANCE_CLASS = URIRef('http://example.com/Class')
+        instance_class = URIRef('http://example.com/Class')
 
-        mapper = RDFMapper(PRISONER_MAPPING, INSTANCE_CLASS)
+        mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data.csv')
         mapper.process_rows()
         rdf_data, schema = mapper.serialize(None, None)
@@ -77,9 +77,11 @@ class TestCSV2RDF(TestCase):
 
         types = list(g.objects(None, RDF.type))
 
+        # print(rdf_data.decode("utf-8"))
+
         assert len(types) == 1
-        assert types[0] == INSTANCE_CLASS
-        assert len(g) == 21
+        assert types[0] == instance_class
+        assert len(g) == 47  # 43 columns with data + firstname + lastname + prefLabel + rdf:type
 
 
 if __name__ == '__main__':

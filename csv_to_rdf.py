@@ -70,14 +70,20 @@ class RDFMapper:
 
         row_rdf = Graph()
 
+        # Handle first and last names
+
         (firstnames, lastname, fullname) = convert_person_name(row[0])
+
+        original_name = row[0].strip()
 
         if firstnames:
             row_rdf.add((entity_uri, FOAF.givenName, Literal(firstnames)))
 
         row_rdf.add((entity_uri, FOAF.familyName, Literal(lastname)))
         row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
+        row_rdf.add((entity_uri, SCHEMA_NS.original_name, Literal(original_name)))
 
+        # Loop through the mapping dict and convert data to RDF
         for column_name in self.mapping:
 
             mapping = self.mapping[column_name]
@@ -113,13 +119,13 @@ class RDFMapper:
 
         return row_rdf
 
-    def read_csv(self, input):
+    def read_csv(self, csv_input):
         """
         Read in a CSV files using pandas.read_csv
 
-        :param input: CSV input (filename or buffer)
+        :param csv_input: CSV input (filename or buffer)
         """
-        csv_data = pd.read_csv(input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+        csv_data = pd.read_csv(csv_input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
                                # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
                                na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
 
@@ -175,7 +181,6 @@ if __name__ == "__main__":
     argparser.add_argument("output", help="Output location to serialize RDF files to")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
-
 
     args = argparser.parse_args()
 
