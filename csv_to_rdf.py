@@ -58,11 +58,34 @@ class RDFMapper:
 
         if sources:
             self.log.debug('Found sources: %s' % sources)
-            sources = (s.strip() for s in sources.split(','))
+            sources = [s.strip() for s in sources.split(',')]
 
         if trash:
             self.log.warning('Found some content after sources, reverting to original: %s' % trash)
             value = orig_value
+
+        return value, sources or []
+
+    def read_semicolon_separated(self, orig_value):
+        """
+        Read semicolon separated values (with possible sources)
+
+        :param orig_value: string in format "source: value", or just "value"
+        :return: value, sources
+        """
+
+        if ': ' in orig_value:
+            try:
+                (sources, value) = orig_value.split(': ')
+            except ValueError as error:
+                self.log.error('Semicolon separated: %s caused error "%s"' % (orig_value, error))
+                (sources, value) = ('', orig_value)
+        else:
+            (sources, value) = ('', orig_value)
+
+        if sources:
+            self.log.debug('Found sources: %s' % sources)
+            sources = [s.strip() for s in sources.split(',')]
 
         return value, sources or []
 
@@ -106,14 +129,20 @@ class RDFMapper:
             # TODO: Handle columns separated by ;
 
             # values = (val.strip() for val in re.split(r'\s/\s', str(value))) if separator == '/' else \
-            values = (val.strip() for val in re.split('/', str(value))) if separator == '/' else \
-                [str(value).strip()]
+            if separator == '/':
+                values = (val.strip() for val in re.split('/', str(value)) if val)
+            elif separator == ';':
+                values = (val.strip() for val in re.split(';', str(value)) if val)
+            else:
+                values = [str(value).strip()]
 
             for index, value in enumerate(values):
 
                 sources = []
                 if separator == '/':
                     value, sources = self.read_value_with_source(value)
+                elif separator == ';':
+                    value, sources = self.read_semicolon_separated(value)
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value

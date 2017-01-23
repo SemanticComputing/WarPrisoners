@@ -51,6 +51,22 @@ class TestConverters(TestCase):
 
 class TestCSV2RDF(TestCase):
 
+    def test_read_value_with_source(self):
+        mapper = RDFMapper({}, '')
+
+        assert mapper.read_value_with_source('Some text') == ('Some text', [])
+        assert mapper.read_value_with_source('Some text (source A)') == ('Some text', ['source A'])
+        assert mapper.read_value_with_source('Some text (source A, source B)') == ('Some text',
+                                                                                   ['source A', 'source B'])
+
+    def test_read_semicolon_separated(self):
+        mapper = RDFMapper({}, '')
+
+        assert mapper.read_semicolon_separated('Some text') == ('Some text', [])
+        assert mapper.read_semicolon_separated('Source: Value') == ('Value', ['Source'])
+        assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'])
+        assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [])
+
     def test_read_csv(self):
         test_csv = '''col1  col2    col3
         1   2   3
@@ -82,7 +98,9 @@ class TestCSV2RDF(TestCase):
         assert len(instances) == 2
 
         p0 = list(g[DATA_NS.prisoner_0::])
-        assert len(p0) == 47  # 43 columns with data + firstname + lastname + prefLabel + rdf:type
+        print(len(p0))
+        assert len(p0) == 50
+        # 43 columns with data + firstname + lastname + prefLabel + rdf:type + 3 columns with two values
 
     def test_mapping_field_contents(self):
         instance_class = URIRef('http://example.com/Class')
