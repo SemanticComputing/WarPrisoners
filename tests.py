@@ -14,7 +14,7 @@ from rdflib import XSD
 
 import converters
 from csv_to_rdf import RDFMapper
-from mapping import PRISONER_MAPPING, DATA_NS, DC
+from mapping import PRISONER_MAPPING, DATA_NS, DC, SCHEMA_NS
 
 
 class TestConverters(TestCase):
@@ -158,12 +158,15 @@ class TestCSV2RDF(TestCase):
         assert g.value(r0, RDF.predicate, None) == PRISONER_MAPPING['kuollut']['uri']
         assert g.value(r0, DC.source, None) == Literal('Karaganda')
 
-        r1 = g.value(None, RDF.object, Literal('1943-02-03', datatype=XSD.date))
+        r1 = g.value(None, RDF.object, Literal('1943-03-02', datatype=XSD.date))
 
-        print(g.value(r1, DC.source, None))
-        assert g.value(r1, DC.source, None) == Literal('mikrofilmi')  # TODO: Fix
+        assert g.value(r1, DC.source, None) == Literal('mikrofilmi')
 
-        # TODO: Check more fields
+        r2 = g.value(None, RDF.object, Literal('1943-03-13', datatype=XSD.date))
+        assert r2 is None
+
+        r_other = g.value(None, DC.source, Literal('KA-internet'))
+        assert g.value(r_other, RDF.object, None) == Literal('kadonnut, julistettu virallisesti kuolleeksi.')
 
 if __name__ == '__main__':
     main()
