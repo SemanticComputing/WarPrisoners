@@ -6,7 +6,7 @@ Tests for data conversion
 import datetime
 import io
 from collections import defaultdict
-from unittest import TestCase, main
+import unittest
 
 from rdflib import Graph, RDF, URIRef
 from rdflib import Literal
@@ -14,10 +14,10 @@ from rdflib import XSD
 
 import converters
 from csv_to_rdf import RDFMapper
-from mapping import PRISONER_MAPPING, DATA_NS, DC, SCHEMA_NS
+from mapping import PRISONER_MAPPING, DATA_NS, DC
 
 
-class TestConverters(TestCase):
+class TestConverters(unittest.TestCase):
 
     def test_convert_int(self):
         self.assertIsInstance(converters.convert_int('1234'), int)
@@ -49,7 +49,7 @@ class TestConverters(TestCase):
                          ('Juho Ent. Ivan', 'Ahjo (ent. Germanoff)', 'Ahjo (ent. Germanoff), Juho Ent. Ivan'))
 
 
-class TestCSV2RDF(TestCase):
+class TestCSV2RDF(unittest.TestCase):
 
     def test_read_value_with_source(self):
         mapper = RDFMapper({}, '')
@@ -168,5 +168,6 @@ class TestCSV2RDF(TestCase):
         r_other = g.value(None, DC.source, Literal('KA-internet'))
         assert g.value(r_other, RDF.object, None) == Literal('kadonnut, julistettu virallisesti kuolleeksi.')
 
+
 if __name__ == '__main__':
-    main()
+    unittest.main()

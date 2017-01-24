@@ -39,7 +39,7 @@ PRISONER_MAPPING = {
     'asuinpaikka': {'uri': SCHEMA_NS.residence_place,
                     'name_fi': 'Asuinpaikka',
                     'value_separator': '/'},
-    'ammatti': {'uri': BIOC.has_profession,
+    'ammatti': {'uri': BIOC.has_occupation,
                 'name_fi': 'Ammatti',
                 'value_separator': '/'},
     'siviilisääty': {'uri': SCHEMA_NS.marital_status,
