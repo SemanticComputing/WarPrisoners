@@ -48,7 +48,7 @@ PRISONER_MAPPING = {
     'lasten lkm': {'uri': SCHEMA_NS.amount_children,
                    'name_fi': 'Lasten lukumäärä',
                    'value_separator': '/'},
-    'sotilas- arvo': {'uri': SCHEMA_NS.rank,
+    'sotilasarvo': {'uri': SCHEMA_NS.rank,
                       'name_fi': 'Sotilasarvo',
                       'value_separator': '/'},
     'joukko-osasto': {'uri': SCHEMA_NS.unit,
