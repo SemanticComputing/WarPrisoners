@@ -16,6 +16,8 @@ from rdflib import XSD
 from converters import convert_int, convert_person_name
 from mapping import PRISONER_MAPPING
 
+from csv2rdf import CSV2RDF
+
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DC = Namespace('http://purl.org/dc/elements/1.1/')
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
@@ -222,6 +224,7 @@ if __name__ == "__main__":
 
     argparser.add_argument("input", help="Input CSV file")
     argparser.add_argument("output", help="Output location to serialize RDF files to")
+    argparser.add_argument("mode", help="CSV conversion mode", default="PRISONERS", choices=["PRISONERS", "CAMPS"])
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
 
@@ -229,9 +232,19 @@ if __name__ == "__main__":
 
     output_dir = args.output + '/' if args.output[-1] != '/' else args.output
 
-    mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, loglevel=args.loglevel.upper())
-    mapper.read_csv(args.input)
+    if args.mode == "PRISONERS":
+        mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, loglevel=args.loglevel.upper())
+        mapper.read_csv(args.input)
 
-    mapper.process_rows()
+        mapper.process_rows()
 
-    mapper.serialize(output_dir + "prisoners.ttl", output_dir + "schema.ttl")
+        mapper.serialize(output_dir + "prisoners.ttl", output_dir + "schema.ttl")
+
+    elif args.mode == "CAMPS":
+        mapper = CSV2RDF()
+        mapper.read_csv(args.input, **{'sep': '\t'})
+        mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
+                              Namespace("http://ldf.fi/schema/warsa/prisoners/"),
+                              SCHEMA_NS.PrisonCamp)
+        mapper.write_rdf(output_dir + "camps.ttl", output_dir + "camp_schema.ttl", fformat='turtle')
+
