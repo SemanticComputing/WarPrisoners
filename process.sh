@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-python csv_to_rdf.py data/vangit.csv data/new/
+python csv_to_rdf.py data/prisoners.csv data/new/
 

@@ -126,11 +126,10 @@ class RDFMapper:
             separator = mapping.get('value_separator')
 
             # Make an iterable of all values in this field
-            # TODO: Handle columns separated by ;
 
             # values = (val.strip() for val in re.split(r'\s/\s', str(value))) if separator == '/' else \
             if separator == '/':
-                values = (val.strip() for val in re.split('/', str(value)) if val)
+                values = (val.strip() for val in re.split(r'(?: /)|(?:/ )', str(value)) if val)
             elif separator == ';':
                 values = (val.strip() for val in re.split(';', str(value)) if val)
             else:
