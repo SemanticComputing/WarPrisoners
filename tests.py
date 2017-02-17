@@ -66,10 +66,12 @@ class TestCSV2RDF(unittest.TestCase):
     def test_read_semicolon_separated(self):
         mapper = RDFMapper({}, '')
 
-        assert mapper.read_semicolon_separated('Some text') == ('Some text', [])
-        assert mapper.read_semicolon_separated('Source: Value') == ('Value', ['Source'])
-        assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'])
-        assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [])
+        assert mapper.read_semicolon_separated('Some text') == ('Some text', [], None, None)
+        assert mapper.read_semicolon_separated('Source: Value') == ('Value', ['Source'], None, None)
+        assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'], None, None)
+        assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [], None, None)
+
+        assert mapper.read_semicolon_separated('54 13.10.1997-xx.11.1997') == ('54', [], '13.10.1997', 'xx.11.1997')
 
     def test_read_csv(self):
         test_csv = '''col1  col2    col3

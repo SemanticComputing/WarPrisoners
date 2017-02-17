@@ -70,9 +70,9 @@ class RDFMapper:
 
     def read_semicolon_separated(self, orig_value):
         """
-        Read semicolon separated values (with possible sources)
+        Read semicolon separated values (with possible sources and date range)
 
-        :param orig_value: string in format "source: value", or just "value"
+        :param orig_value: string in format "source: value date1-date2", or just "value"
         :return: value, sources
         """
 
@@ -85,11 +85,17 @@ class RDFMapper:
         else:
             (sources, value) = ('', orig_value)
 
+        datematch = re.search(r'(.+) ([0-9xX.]{5,})-([0-9xX.]{5,})', value)
+        (value, date_begin, date_end) = datematch.groups() if datematch else (value, None, None)
+
         if sources:
             self.log.debug('Found sources: %s' % sources)
             sources = [s.strip() for s in sources.split(',')]
 
-        return value, sources or []
+        if date_begin or date_end:
+            self.log.debug('Found dates for value: %s - %s' % (date_begin, date_end))
+
+        return value, sources or [], date_begin, date_end
 
     def map_row_to_rdf(self, entity_uri, row):
         """
@@ -140,10 +146,13 @@ class RDFMapper:
             for index, value in enumerate(values):
 
                 sources = []
+                date_begin = None
+                date_end = None
+
                 if separator == '/':
                     value, sources = self.read_value_with_source(value)
                 elif separator == ';':
-                    value, sources = self.read_semicolon_separated(value)
+                    value, sources, date_begin, date_end = self.read_semicolon_separated(value)
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
@@ -161,6 +170,14 @@ class RDFMapper:
                         row_rdf.add((reification_uri, RDF.object, liter))
                         row_rdf.add((reification_uri, RDF.type, RDF.Statement))
                         row_rdf.add((reification_uri, DC.source, Literal(source)))
+
+                    if date_begin:
+                        # TODO
+                        pass
+
+                    if date_end:
+                        # TODO
+                        pass
 
         return row_rdf
 
