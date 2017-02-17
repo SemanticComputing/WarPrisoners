@@ -105,7 +105,7 @@ class RDFMapper:
         :param row: tabular data
         :return:
         """
-        reification_template = '{entity}_{prop}_{id}_reification'
+        reification_template = '{entity}_{prop}_{id}_reification_{reason}'
 
         row_rdf = Graph()
 
@@ -164,20 +164,25 @@ class RDFMapper:
                     for source in sources:
                         reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
                                                                               prop=mapping['uri'].split('/')[-1],
-                                                                              id=index)]
+                                                                              id=index,
+                                                                              reason='source')]
                         row_rdf.add((reification_uri, RDF.subject, entity_uri))
                         row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
                         row_rdf.add((reification_uri, RDF.object, liter))
                         row_rdf.add((reification_uri, RDF.type, RDF.Statement))
                         row_rdf.add((reification_uri, DC.source, Literal(source)))
 
-                    if date_begin:
-                        # TODO
-                        pass
-
-                    if date_end:
-                        # TODO
-                        pass
+                    if date_begin or date_end:
+                        reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
+                                                                              prop=mapping['uri'].split('/')[-1],
+                                                                              id=index,
+                                                                              reason='daterange')]
+                        row_rdf.add((reification_uri, RDF.subject, entity_uri))
+                        row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
+                        row_rdf.add((reification_uri, RDF.object, liter))
+                        row_rdf.add((reification_uri, RDF.type, RDF.Statement))
+                        row_rdf.add((reification_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
+                        row_rdf.add((reification_uri, SCHEMA_NS.date_end, Literal(date_end)))
 
         return row_rdf
 

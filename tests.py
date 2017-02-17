@@ -118,7 +118,7 @@ class TestCSV2RDF(unittest.TestCase):
         g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
 
         p1 = list(g[DATA_NS.prisoner_1::])
-        assert len(p1) > 20
+        assert len(p1) > 50
 
         p1_dict = defaultdict(list)
         for k, v in p1:
