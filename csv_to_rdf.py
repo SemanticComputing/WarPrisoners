@@ -66,7 +66,7 @@ class RDFMapper:
             self.log.warning('Found some content after sources, reverting to original: %s' % trash)
             value = orig_value
 
-        return value, sources or []
+        return value.strip(), sources or []
 
     def read_semicolon_separated(self, orig_value):
         """

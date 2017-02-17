@@ -48,6 +48,10 @@ class TestConverters(unittest.TestCase):
         self.assertEqual(converters.convert_person_name('Ahjo ent. Germanoff Juho ent. Ivan'),
                          ('Juho Ent. Ivan', 'Ahjo (ent. Germanoff)', 'Ahjo (ent. Germanoff), Juho Ent. Ivan'))
 
+    def test_strip_dash(self):
+        assert not converters.strip_dash('-')
+        assert converters.strip_dash('Foo-Bar') == 'Foo-Bar'
+
 
 class TestCSV2RDF(unittest.TestCase):
 

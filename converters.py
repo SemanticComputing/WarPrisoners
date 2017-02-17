@@ -172,3 +172,8 @@ def create_event(uri_suffix, event_type, participant_prop, participant, particip
                 event.add((property_uri, RDFS.subClassOf, CIDOC['P7_took_place_at']))
 
     return event
+
+
+def strip_dash(raw_value: str):
+    return '' if raw_value.strip() == '-' else raw_value
+

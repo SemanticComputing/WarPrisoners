@@ -6,7 +6,7 @@ Mapping of CSV columns to RDF properties
 
 from rdflib import Namespace
 
-from converters import convert_dates
+from converters import convert_dates, strip_dash
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DC = Namespace('http://purl.org/dc/elements/1.1/')
@@ -46,6 +46,7 @@ PRISONER_MAPPING = {
                      'name_fi': 'Siviilisääty',
                      'value_separator': '/'},
     'lasten lkm': {'uri': SCHEMA_NS.amount_children,
+                   'converter': strip_dash,
                    'name_fi': 'Lasten lukumäärä',
                    'value_separator': '/'},
     'sotilasarvo': {'uri': SCHEMA_NS.rank,
