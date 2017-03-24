@@ -182,9 +182,8 @@ p:prisoner_0 a <http://example.com/Class> ;
     ps:home_place "Karkkila" ;
     ps:interrogator "sot.virk. L.Sarporanta" ;
     ps:karaganda_card_file "Karaganda 12" ;
-    ps:karelian_archive_documents "f. 8, op. 1, d. 1129, l. 34" ;
     ps:marital_status "naimaton" ;
-    ps:memoirs "http://www.veteraanienperinto.fi/vepe/index.php/fi/ryhmia/kertomuksia-10/483-kertomukset-34/i5-35/348-sotavankina" ;
+    ps:memoirs "Cinderella" ;
     ps:military_record "RK 154/10.07.1944" ;
     ps:minutes "ei" ;
     ps:missing_person_documents "PM:n valvonta-osastolle 30.09.1943" ;
@@ -197,10 +196,11 @@ p:prisoner_0 a <http://example.com/Class> ;
     ps:place_captured_municipality "Ylämaa" ;
     ps:radio_report "01.08.1944 Leningrad" ;
     ps:rank "korpr" ;
-    ps:recording "Cinderella" ;
+    ps:recording "f. 8, op. 1, d. 1129, l. 34" ;
     ps:residence_place "Karkkila" ;
     ps:returned_date "1944-11-22"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
+    ps:sotavangit_ry "kuoli ennen perustamista" ;
     ps:swedish_finn "?" ;
     ps:time_captured "1944-07-06"^^xsd:date ;
     ps:unit "1./Er.P 25" ;
@@ -208,7 +208,6 @@ p:prisoner_0 a <http://example.com/Class> ;
     ps:winter_war_collection_from_moscow "RGVA 34980-10-1048 l. 69 KL Moskovassa",
         "RGVA 34980-6-345 l. 181-186 KL" ;
     ps:winterwar_card_file "Talvisodan kortisto 31-32" ;
-    ps:workspace "kuoli ennen perustamista" ;
     skos:prefLabel "Testi, Testaaja" ;
     foaf:familyName "Testi" ;
     foaf:givenName "Testaaja" .
@@ -270,13 +269,13 @@ p:prisoner_1 a <http://example.com/Class> ;
         "1944-10-10"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 115 53",
         "VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
+    ps:sotavangit_ry "01.09.1970" ;
     ps:swedish_finn "X" ;
     ps:time_captured "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     ps:unit "3./I/KTR15" ;
     ps:winter_war_collection_from_moscow "RGVA 34980-12-737 l. 131-142 kuulustelujen ja kirjeiden yhteenvetoa, pätkä kuulustelusta lainattu",
         "RGVA 34980-6-345, l. 1-7 ja 8-9 OL, l. 10 ehkä saman miehen (nimetön) vetoomus sotilastovereille" ;
-    ps:workspace "01.09.1970" ;
     skos:prefLabel "Harri, Hankala" ;
     foaf:familyName "Harri" ;
     foaf:givenName "Hankala" .

@@ -7,12 +7,13 @@ import datetime
 import io
 from collections import defaultdict
 import unittest
+from pprint import pprint
 
 from approvaltests.Approvals import verify
 from rdflib import Graph, RDF, URIRef
 from rdflib import Literal
 from rdflib import XSD
-from rdflib.compare import isomorphic
+from rdflib.compare import isomorphic, graph_diff
 
 import converters
 from csv_to_rdf import RDFMapper
@@ -103,6 +104,14 @@ class TestRDFMapper(unittest.TestCase):
 
         # g.serialize('test_data.ttl', format="turtle")  # Decomment to update file, and verify it by hand
         g2 = Graph().parse('test_data.ttl', format='turtle')
+
+        diffs = graph_diff(g, g2)
+
+        print('In new:')
+        pprint([d for d in diffs[1]])
+
+        print('In old:')
+        pprint([d for d in diffs[2]])
 
         assert isomorphic(g, g2)  # Isomorphic graph comparison
 
