@@ -123,10 +123,12 @@ class RDFMapper:
 
         if firstnames:
             row_rdf.add((entity_uri, FOAF.givenName, Literal(firstnames)))
-
-        row_rdf.add((entity_uri, FOAF.familyName, Literal(lastname)))
-        row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
-        row_rdf.add((entity_uri, SCHEMA_NS.original_name, Literal(original_name)))
+        if lastname:
+            row_rdf.add((entity_uri, FOAF.familyName, Literal(lastname)))
+        if fullname:
+            row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
+        if original_name:
+            row_rdf.add((entity_uri, SCHEMA_NS.original_name, Literal(original_name)))
 
         # Loop through the mapping dict and convert data to RDF
         for column_name in self.mapping:
@@ -134,8 +136,6 @@ class RDFMapper:
             mapping = self.mapping[column_name]
 
             value = row[column_name]
-
-            row_rdf.add((entity_uri, RDF.type, self.instance_class))
 
             separator = mapping.get('value_separator')
 
@@ -190,6 +190,12 @@ class RDFMapper:
                         row_rdf.add((reification_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
                         row_rdf.add((reification_uri, SCHEMA_NS.date_end, Literal(date_end)))
 
+            if row_rdf:
+                row_rdf.add((entity_uri, RDF.type, self.instance_class))
+            else:
+                # Don't create class instance if there is no data about it
+                logging.debug('No data found for {uri}'.format(uri=entity_uri))
+
         return row_rdf
 
     def read_csv(self, csv_input):
@@ -238,7 +244,9 @@ class RDFMapper:
         #
         for index in range(len(self.table)):
             prisoner_uri = DATA_NS['prisoner_' + str(index)]
-            self.data += self.map_row_to_rdf(prisoner_uri, self.table.ix[index])
+            row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index])
+            if row_rdf:
+                self.data += row_rdf
 
         for prop in PRISONER_MAPPING.values():
             self.schema.add((prop['uri'], RDF.type, RDF.Property))
