@@ -200,7 +200,7 @@ class RDFMapper:
         """
         csv_data = pd.read_csv(csv_input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
                                # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
-                               na_values=[' '], converters={'ammatti': lambda x: x.lower(), 'lasten lkm': convert_int})
+                               na_values=[' '], converters={'ammatti': lambda x: x.lower()})
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
 
@@ -241,9 +241,11 @@ class RDFMapper:
             self.data += self.map_row_to_rdf(prisoner_uri, self.table.ix[index])
 
         for prop in PRISONER_MAPPING.values():
+            self.schema.add((prop['uri'], RDF.type, RDF.Property))
             if 'name_fi' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
-                self.schema.add((prop['uri'], RDF.type, RDF.Property))
+            if 'name_en' in prop:
+                self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
 
 
 if __name__ == "__main__":
