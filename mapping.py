@@ -9,7 +9,7 @@ from rdflib import Namespace
 from converters import convert_dates, strip_dash
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
-DC = Namespace('http://purl.org/dc/elements/1.1/')
+DC = Namespace('http://purl.org/dc/terms/')
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 BIOC = Namespace('http://ldf.fi/schema/bioc/')
@@ -103,6 +103,7 @@ PRISONER_MAPPING = {
                       'name_fi': 'Hautauspaikka'},
     'vankeuspaikat': {'uri': SCHEMA_NS.camps_and_hospitals,
                       'value_separator': ';',
+                      'reify_order_number': True,  # TODO: Implement this (as index * 10 for maintainability)
                       'name_en': 'Captivity locations',
                       'name_fi': 'Vankeuspaikat'},
     ' muita tietoja': {'uri': SCHEMA_NS.other_information,

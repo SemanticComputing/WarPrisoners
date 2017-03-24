@@ -19,7 +19,7 @@ from mapping import PRISONER_MAPPING
 from csv2rdf import CSV2RDF
 
 CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
-DC = Namespace('http://purl.org/dc/elements/1.1/')
+DC = Namespace('http://purl.org/dc/terms/')
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 BIOC = Namespace('http://ldf.fi/schema/bioc/')
