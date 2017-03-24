@@ -23,7 +23,7 @@ p:prisoner_0_burial_place_0_reification_source a rdf:Statement ;
     rdf:subject p:prisoner_0 .
 
 p:prisoner_0_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
-    ps:date_begin "28.11.1941" ;
+    ps:date_begin "1941-11-28"^^xsd:date ;
     ps:date_end "xx.2.1943" ;
     rdf:object "99" ;
     rdf:predicate ps:camps_and_hospitals ;
@@ -54,36 +54,36 @@ p:prisoner_1_burial_place_1_reification_source a rdf:Statement ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
-    ps:date_begin "31.7.1941" ;
+    ps:date_begin "1941-07-31"^^xsd:date ;
     ps:date_end "xx.xx.1941" ;
     rdf:object "Vologda" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
-    ps:date_begin "15.9.1941" ;
-    ps:date_end "25.5.1942" ;
+    ps:date_begin "1941-09-15"^^xsd:date ;
+    ps:date_end "1942-05-25"^^xsd:date ;
     rdf:object "99" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
-    ps:date_begin "5.6.1942" ;
+    ps:date_begin "1942-06-05"^^xsd:date ;
     ps:date_end "xx.xx.1942" ;
     rdf:object "67" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
-    ps:date_begin "10.9.1942" ;
+    ps:date_begin "1942-09-10"^^xsd:date ;
     ps:date_end "xx.xx.xxxx" ;
     rdf:object "84" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
-    ps:date_begin "20.9.1943" ;
-    ps:date_end "20.11.1944" ;
+    ps:date_begin "1943-09-20"^^xsd:date ;
+    ps:date_end "1944-11-20"^^xsd:date ;
     rdf:object "158" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .

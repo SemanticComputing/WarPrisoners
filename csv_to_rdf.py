@@ -13,7 +13,7 @@ import pandas as pd
 from rdflib import URIRef, Namespace, Graph, RDF, Literal
 from rdflib import XSD
 
-from converters import convert_int, convert_person_name
+from converters import convert_int, convert_person_name, convert_dates
 from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
@@ -87,6 +87,12 @@ class RDFMapper:
 
         datematch = re.search(r'(.+) ([0-9xX.]{5,})-([0-9xX.]{5,})', value)
         (value, date_begin, date_end) = datematch.groups() if datematch else (value, None, None)
+
+        if date_begin:
+            date_begin = convert_dates(date_begin)
+
+        if date_end:
+            date_end = convert_dates(date_end)
 
         if sources:
             self.log.debug('Found sources: %s' % sources)

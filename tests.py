@@ -36,6 +36,7 @@ class TestConverters(unittest.TestCase):
         self.assertEqual(converters.convert_dates('24/12/2016'), datetime.date(2016, 12, 24))
 
         self.assertEqual(converters.convert_dates('xx.xx.xxxx'), 'xx.xx.xxxx')
+        self.assertEqual(converters.convert_dates('xx.09.2016'), 'xx.09.2016')
 
     def test_convert_person_name(self):
         self.assertEqual(converters.convert_person_name('Virtanen Matti Akseli'),
@@ -73,7 +74,7 @@ class TestRDFMapper(unittest.TestCase):
         assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'], None, None)
         assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [], None, None)
 
-        assert mapper.read_semicolon_separated('54 13.10.1997-xx.11.1997') == ('54', [], '13.10.1997', 'xx.11.1997')
+        assert mapper.read_semicolon_separated('54 13.10.1997-xx.11.1997') == ('54', [], datetime.date(1997, 10, 13), 'xx.11.1997')
 
     def test_read_csv_simple(self):
         test_csv = '''col1  col2    col3
