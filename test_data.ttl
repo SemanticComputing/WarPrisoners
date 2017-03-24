@@ -1,0 +1,283 @@
+@prefix bioc: <http://ldf.fi/schema/bioc/> .
+@prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ns1: <http://purl.org/dc/elements/1.1/> .
+@prefix p: <http://ldf.fi/warsa/prisoners/> .
+@prefix ps: <http://ldf.fi/schema/warsa/prisoners/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+p:prisoner_0_additional_information_0_reification_source a rdf:Statement ;
+    ns1:source "KA T 19472/2" ;
+    rdf:object "epäillään suorittaneen tuhopolton Ähtärissä" ;
+    rdf:predicate ps:additional_information ;
+    rdf:subject p:prisoner_0 .
+
+p:prisoner_0_burial_place_0_reification_source a rdf:Statement ;
+    ns1:source "Voennye memorialy(??)" ;
+    rdf:object "sotavankileiri  ? 58:n hautausmaa ????" ;
+    rdf:predicate ps:burial_place ;
+    rdf:subject p:prisoner_0 .
+
+p:prisoner_0_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
+    ps:date_begin "28.11.1941" ;
+    ps:date_end "xx.2.1943" ;
+    rdf:object "99" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_0 .
+
+p:prisoner_0_interrogator_0_reification_source a rdf:Statement ;
+    ns1:source "HT" ;
+    rdf:object "sot.virk. L.Sarporanta" ;
+    rdf:predicate ps:interrogator ;
+    rdf:subject p:prisoner_0 .
+
+p:prisoner_1_additional_information_0_reification_source a rdf:Statement ;
+    ns1:source "KA T 19472/2" ;
+    rdf:object "Pion.P 20" ;
+    rdf:predicate ps:additional_information ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_amount_children_1_reification_source a rdf:Statement ;
+    ns1:source "VEN 195" ;
+    rdf:object "2" ;
+    rdf:predicate ps:amount_children ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_burial_place_1_reification_source a rdf:Statement ;
+    ns1:source "Seppälä Alpo" ;
+    rdf:object "haudattu Shumihaan." ;
+    rdf:predicate ps:burial_place ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
+    ps:date_begin "31.7.1941" ;
+    ps:date_end "xx.xx.1941" ;
+    rdf:object "Vologda" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
+    ps:date_begin "15.9.1941" ;
+    ps:date_end "25.5.1942" ;
+    rdf:object "99" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
+    ps:date_begin "5.6.1942" ;
+    ps:date_end "xx.xx.1942" ;
+    rdf:object "67" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
+    ps:date_begin "10.9.1942" ;
+    ps:date_end "xx.xx.xxxx" ;
+    rdf:object "84" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
+    ps:date_begin "20.9.1943" ;
+    ps:date_end "20.11.1944" ;
+    rdf:object "158" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_death_date_0_reification_source a rdf:Statement ;
+    ns1:source "Karaganda",
+        "Svry" ;
+    rdf:object "1943-02-02"^^xsd:date,
+        "2001-01-01"^^xsd:date ;
+    rdf:predicate ps:death_date ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_death_date_1_reification_source a rdf:Statement ;
+    ns1:source "mikrofilmi" ;
+    rdf:object "1943-03-02"^^xsd:date ;
+    rdf:predicate ps:death_date ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_death_place_0_reification_source a rdf:Statement ;
+    ns1:source "Budko" ;
+    rdf:object "1770" ;
+    rdf:predicate ps:death_place ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_death_place_1_reification_source a rdf:Statement ;
+    ns1:source "Kyzminyh 1" ;
+    rdf:object "1170" ;
+    rdf:predicate ps:death_place ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_has_occupation_1_reification_source a rdf:Statement ;
+    ns1:source "mikrofilmi" ;
+    rdf:object "sekatyömies" ;
+    rdf:predicate bioc:has_occupation ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_marital_status_1_reification_source a rdf:Statement ;
+    ns1:source "mikrofilmi" ;
+    rdf:object "naimisissa" ;
+    rdf:predicate ps:marital_status ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_other_information_0_reification_source a rdf:Statement ;
+    ns1:source "KA T 19472/2" ;
+    rdf:object "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi" ;
+    rdf:predicate ps:other_information ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_other_information_1_reification_source a rdf:Statement ;
+    ns1:source "KA-internet" ;
+    rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
+    rdf:predicate ps:other_information ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_place_captured_municipality_1_reification_source a rdf:Statement ;
+    ns1:source "Talvisodan kortisto" ;
+    rdf:object "Leipäsuo" ;
+    rdf:predicate ps:place_captured_municipality ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_rank_1_reification_source a rdf:Statement ;
+    ns1:source "Talvisodan kortisto" ;
+    rdf:object "siv" ;
+    rdf:predicate ps:rank ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_residence_place_1_reification_source a rdf:Statement ;
+    ns1:source "mikrofilmi" ;
+    rdf:object "Hämeenlinna" ;
+    rdf:predicate ps:residence_place ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_time_captured_1_reification_source a rdf:Statement ;
+    ns1:source "Talvisodan kortisto" ;
+    rdf:object "1939-12-28"^^xsd:date ;
+    rdf:predicate ps:time_captured ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_0 a <http://example.com/Class> ;
+    bioc:has_occupation "kaavaaja" ;
+    ps:additional_information "epäillään suorittaneen tuhopolton Ähtärissä" ;
+    ps:amount_children "0" ;
+    ps:birth_date "1908-12-24"^^xsd:date ;
+    ps:birth_place "Karkkila" ;
+    ps:burial_place "sotavankileiri  ? 58:n hautausmaa ????" ;
+    ps:camps_and_hospitals "58",
+        "99" ;
+    ps:cause_of_death "aivokooma" ;
+    ps:confiscated_possessions "850.0" ;
+    ps:continuation_war_russian_card_file "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008: kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
+    ps:death_date "1944-06-24"^^xsd:date,
+        "xx.xx.xxxx" ;
+    ps:death_place "99" ;
+    ps:explanation "Yllätetty etuvartiopaikalla." ;
+    ps:flyer "lentolehtisessä" ;
+    ps:home_place "Karkkila" ;
+    ps:interrogator "sot.virk. L.Sarporanta" ;
+    ps:karaganda_card_file "Karaganda 12" ;
+    ps:karelian_archive_documents "f. 8, op. 1, d. 1129, l. 34" ;
+    ps:marital_status "naimaton" ;
+    ps:memoirs "http://www.veteraanienperinto.fi/vepe/index.php/fi/ryhmia/kertomuksia-10/483-kertomukset-34/i5-35/348-sotavankina" ;
+    ps:military_record "RK 154/10.07.1944" ;
+    ps:minutes "ei" ;
+    ps:missing_person_documents "PM:n valvonta-osastolle 30.09.1943" ;
+    ps:original_name "Testi Testaaja" ;
+    ps:other_information "Leningradin radiossa 01.08.1944",
+        "allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\"." ;
+    ps:photograph "Hanko" ;
+    ps:place_captured "Leino" ;
+    ps:place_captured_battle "Tuherrusjärvi" ;
+    ps:place_captured_municipality "Ylämaa" ;
+    ps:radio_report "01.08.1944 Leningrad" ;
+    ps:rank "korpr" ;
+    ps:recording "Cinderella" ;
+    ps:residence_place "Karkkila" ;
+    ps:returned_date "1944-11-22"^^xsd:date ;
+    ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
+    ps:swedish_finn "?" ;
+    ps:time_captured "1944-07-06"^^xsd:date ;
+    ps:unit "1./Er.P 25" ;
+    ps:winter_war_collection "Kuulustelulomake Digiarkisto 6:346, suomennettu;" ;
+    ps:winter_war_collection_from_moscow "RGVA 34980-10-1048 l. 69 KL Moskovassa",
+        "RGVA 34980-6-345 l. 181-186 KL" ;
+    ps:winterwar_card_file "Talvisodan kortisto 31-32" ;
+    ps:workspace "kuoli ennen perustamista" ;
+    skos:prefLabel "Testi, Testaaja" ;
+    foaf:familyName "Testi" ;
+    foaf:givenName "Testaaja" .
+
+p:prisoner_1 a <http://example.com/Class> ;
+    bioc:has_occupation "posteljooni",
+        "sekatyömies" ;
+    ps:additional_information "Mikrofilmi VEN 195 106",
+        "Pion.P 20" ;
+    ps:amount_children "2" ;
+    ps:birth_date "1907-12-12"^^xsd:date,
+        "1907-12-13"^^xsd:date ;
+    ps:birth_place "Juuka/Kiihtelysvaara" ;
+    ps:burial_place "?? sotavankihautausmaa, hauta № 184",
+        "haudattu Shumihaan." ;
+    ps:camps_and_hospitals "100",
+        "158",
+        "67",
+        "84",
+        "99",
+        "Vologda" ;
+    ps:cause_of_death "teloitus" ;
+    ps:confiscated_possessions "4.975" ;
+    ps:continuation_war_russian_card_file "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242: kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943;" ;
+    ps:death_date "1943-02-02"^^xsd:date,
+        "1943-03-02"^^xsd:date,
+        "1943-03-13"^^xsd:date,
+        "2001-01-01"^^xsd:date ;
+    ps:death_place "1170",
+        "1770" ;
+    ps:explanation "katosi lähettitehtävissä Räisälän Unnunkoskella (T 26073/33)" ;
+    ps:flyer "allekirjoitus lentolehtisessä № 314, 7 allekirjoittajaa",
+        "lentolehtisessä 17.08.1941" ;
+    ps:home_place "Lavia",
+        "Tampere" ;
+    ps:interrogator "ltn Kalervo Apiola",
+        "sot.virk. Vieno Sahia" ;
+    ps:marital_status "naimaton",
+        "naimisissa" ;
+    ps:military_record "on" ;
+    ps:minutes "4" ;
+    ps:missing_person_documents "paljon" ;
+    ps:original_name "Harri Hankala" ;
+    ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
+        "kadonnut, julistettu virallisesti kuolleeksi." ;
+    ps:photograph "VEN 196" ;
+    ps:place_captured "Huumola",
+        "Näykki" ;
+    ps:place_captured_battle "Mäkräjärvi><Kotkatjärvi" ;
+    ps:place_captured_municipality "Kannas",
+        "Leipäsuo" ;
+    ps:radio_report "RK 136/17.06.1944",
+        "RK 144/28.06.1944" ;
+    ps:rank "hevosmies",
+        "siv" ;
+    ps:residence_place "Hämeenlinna",
+        "Viipuri" ;
+    ps:returned_date "1944-10-09"^^xsd:date,
+        "1944-10-10"^^xsd:date ;
+    ps:russian_interrogation_sheets "Mikrofilmi VEN 115 53",
+        "VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
+    ps:swedish_finn "X" ;
+    ps:time_captured "1939-12-03"^^xsd:date,
+        "1939-12-28"^^xsd:date ;
+    ps:unit "3./I/KTR15" ;
+    ps:winter_war_collection_from_moscow "RGVA 34980-12-737 l. 131-142 kuulustelujen ja kirjeiden yhteenvetoa, pätkä kuulustelusta lainattu",
+        "RGVA 34980-6-345, l. 1-7 ja 8-9 OL, l. 10 ehkä saman miehen (nimetön) vetoomus sotilastovereille" ;
+    ps:workspace "01.09.1970" ;
+    skos:prefLabel "Harri, Hankala" ;
+    foaf:familyName "Harri" ;
+    foaf:givenName "Hankala" .
+
