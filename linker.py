@@ -3,15 +3,17 @@
 """War prisoner linking tasks"""
 import argparse
 import logging
+import re
 
 from arpa_linker.arpa import ArpaMimic, arpafy
 from rdflib import Graph
+from rdflib import URIRef
 from rdflib.util import guess_format
 
 from namespaces import *
 
 
-def link_ranks(graph, endpoint, rdf_class=SCHEMA_NS.PrisonerOfWar):
+def link_ranks(graph, endpoint, prop=SCHEMA_NS.rank):
     """
     Link military ranks in graph
 
@@ -20,7 +22,8 @@ def link_ranks(graph, endpoint, rdf_class=SCHEMA_NS.PrisonerOfWar):
     :param rdf_class:
     :return:
     """
-    MAPPING = {'-': ''}
+    MAPPING = {'kaart': 'stm',
+               'aliluutn': 'aliluutnantti'}
 
     query = "PREFIX text: <http://jena.apache.org/text#> " +\
             "SELECT * { ?id a <http://ldf.fi/warsa/actors/ranks/Rank> . " +\
@@ -29,18 +32,19 @@ def link_ranks(graph, endpoint, rdf_class=SCHEMA_NS.PrisonerOfWar):
 
     arpa = ArpaMimic(query.replace("\n", ""), url=endpoint, retries=3, wait_between_tries=3)
 
-    for prisoner in graph[:RDF.type:rdf_class]:
-        rank = graph.value(subject=prisoner, predicate=SCHEMA_NS.rank)
+    for (prisoner, rank_literal) in list(graph[:prop:]):
+        rank = re.sub(r'[/\-]', ' ', str(rank_literal)).strip()
         if rank:
-            res = arpa.query(MAPPING[rank] if rank in MAPPING else rank.replace('/', '\\\\/'))
+            res = arpa.query(MAPPING[rank] if rank in MAPPING else rank)
             if res:
                 res = res[0]['id']
-                logger.debug('{rank} --> {res}'.format(rank=rank, res=res))
+                logger.debug('Found a matching rank for {rank}: {res}'.format(rank=rank, res=res))
+                graph.remove((prisoner, prop, rank_literal))
+                graph.add((prisoner, prop, URIRef(res)))
             else:
                 logger.warning('No match found for rank %s' % rank)
-        else:
-            logger.info('Empty rank for p')
 
+    return graph
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
@@ -62,10 +66,9 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     input_graph = Graph()
-    logger.info('Parsing file {}'.format(args.input))
     input_graph.parse(args.input, format=guess_format(args.input))
 
     if args.task == 'ranks':
         logger.info('Linking ranks')
-        link_ranks(input_graph, args.endpoint)
+        link_ranks(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
 
