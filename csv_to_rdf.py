@@ -10,23 +10,13 @@ import logging
 import re
 
 import pandas as pd
-from rdflib import URIRef, Namespace, Graph, RDF, Literal
-from rdflib import XSD
+from rdflib import URIRef, Graph, Literal
 
 from converters import convert_int, convert_person_name, convert_dates
 from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
-
-CIDOC = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
-DC = Namespace('http://purl.org/dc/terms/')
-FOAF = Namespace('http://xmlns.com/foaf/0.1/')
-SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
-BIOC = Namespace('http://ldf.fi/schema/bioc/')
-
-DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
-SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
-EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
+from namespaces import *
 
 
 class RDFMapper:
