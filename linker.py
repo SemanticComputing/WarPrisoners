@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
+
 import argparse
 import logging
 import re
 
-from arpa_linker.arpa import ArpaMimic, arpafy
+from arpa_linker.arpa import ArpaMimic
 from rdflib import Graph
 from rdflib import URIRef
 from rdflib.util import guess_format
@@ -15,12 +16,12 @@ from namespaces import *
 
 def link_ranks(graph, endpoint, prop=SCHEMA_NS.rank):
     """
-    Link military ranks in graph
+    Link military ranks in graph.
 
-    :param graph:
-    :param endpoint:
-    :param rdf_class:
-    :return:
+    :param graph: Data in RDFLib Graph object 
+    :param endpoint: Endpoint to query military ranks from
+    :param prop: Property used to give military rank (used for both source and target) 
+    :return: RDFLib Graph with updated links
     """
     MAPPING = {'kaart': 'stm',
                'aliluutn': 'aliluutnantti'}
@@ -45,6 +46,7 @@ def link_ranks(graph, endpoint, prop=SCHEMA_NS.rank):
                 logger.warning('No match found for rank %s' % rank)
 
     return graph
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
