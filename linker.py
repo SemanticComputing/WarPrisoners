@@ -10,6 +10,8 @@ import itertools
 from pprint import pprint
 
 import copy
+
+from fuzzywuzzy import fuzz
 from rdflib.compare import graph_diff
 
 from arpa_linker.arpa import ArpaMimic, arpafy
@@ -27,7 +29,7 @@ def _preprocess(literal, prisoner, subgraph):
     return str(literal).strip()
 
 
-def link(graph, endpoint, prop, query, preprocess=_preprocess, validate=None):
+def link(graph, arpa, prop, preprocess=_preprocess, validator=None):
     """
     Link entities based on parameters
 
@@ -35,34 +37,35 @@ def link(graph, endpoint, prop, query, preprocess=_preprocess, validate=None):
     """
     prop_str = str(prop).split('/')[-1]  # Used for logging
 
-    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
-
-    # linked = arpafy(copy.deepcopy(graph), SCHEMA_NS.temp, arpa, SCHEMA_NS.rank, preprocessor=preprocess, progress=True)[
-    #     'graph']
+    # linked = arpafy(copy.deepcopy(graph), SCHEMA_NS.temp, arpa, SCHEMA_NS.rank, preprocessor=preprocess, progress=True)['graph']
     #
     # new_triples = graph_diff(graph, linked)[2]
-
-    # TODO: Update reifications
 
     for (prisoner, value_literal) in list(graph[:prop:]):
         value = preprocess(value_literal, prisoner, graph)
 
-        if value != str(value_literal):
-            logger.info('Changed %s %s into %s for linking' % (prop_str, value_literal, value))
+        logger.debug('Finding links for %s (originally %s)' % (value, value_literal))
 
         if value:
-            res = arpa.query(value)
-            if res:
-                res = res[0]['id']
-                logger.debug('Found a matching {ps} for {val}: {res}'.format(ps=prop_str, val=value, res=res))
+            arpa_result = arpa.query(value)
+            if arpa_result:
+                res = arpa_result[0]['id']
 
-                if validate and not validate(res):
-                    logger.info('Match {res} failed validation for {val}, skipping it')
-                    continue
+                if validator:
+                    res = validator.validate(arpa_result, value_literal, prisoner)
+                    if not res:
+                        logger.info('Match {res} failed validation for {val}, skipping it'.
+                                    format(res=res, val=value_literal))
+                        continue
+
+                logger.info('Accepted a match for property {ps} with original value {val} : {res}'.
+                             format(ps=prop_str, val=value_literal, res=res))
 
                 # Update property to found value
                 graph.remove((prisoner, prop, value_literal))
                 graph.add((prisoner, prop, URIRef(res)))
+
+                # TODO: Update reifications
             else:
                 logger.warning('No match found for %s: %s' % (prop_str, value))
 
@@ -90,7 +93,9 @@ def link_ranks(graph, endpoint):
             "?id text:query \"<VALUES>\" . " +\
             "}"
 
-    return link(graph, endpoint, SCHEMA_NS.rank, query, preprocess=preprocess)
+    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
+
+    return link(graph, arpa, SCHEMA_NS.rank, preprocess=preprocess)
 
 
 def _create_unit_abbreviations(text, *args):
@@ -134,6 +139,58 @@ def _create_unit_abbreviations(text, *args):
     return ' # '.join(combined_variations) + ' # ' + ' # '.join(sorted(variationset))
 
 
+class UnitValidator:
+
+    def __init__(self, graph):
+        """
+        :type graph: Graph
+        """
+        self.graph = graph
+
+    def validate(self, results, text, prisoner):
+        if not results:
+            return results
+
+        filtered = []
+
+        for unit in results:
+            unit_begin = None
+            unit_end = None
+            name = None
+            try:
+                name = unit['properties']['label'][0].split('"')[1]
+                unit_begin = unit['properties']['begin'][0].split('"')[1]
+                unit_end = unit['properties']['end'][0].split('"')[1]
+            except (TypeError, KeyError):
+                logger.warning('Unable to read data for validation for {uri} , skipping result...'.format(uri=unit))
+                continue
+
+            prisoner_caught = str(self.graph.value(prisoner, SCHEMA_NS.time_captured))
+
+            print(text)
+            print(name)
+            if fuzz.token_set_ratio(text, name) < 80:
+                print(fuzz.token_set_ratio(text, name))
+                continue
+
+            if unit_begin and unit_begin > prisoner_caught:
+                if unit_end and prisoner_caught > unit_end:
+                    continue
+
+            filtered.append(unit)
+
+        if len(filtered) == 1:
+            return filtered
+        elif len(filtered) > 1:
+            pprint(len(results))
+            pprint(len(filtered))
+            return filtered
+
+        pprint(filtered)
+        quit()
+        return []
+
+
 def link_units(graph, endpoint):
     """
     Link military units in graph.
@@ -146,17 +203,23 @@ def link_units(graph, endpoint):
     def preprocess(literal, prisoner, subgraph):
         return _create_unit_abbreviations(str(literal).strip())
 
-    query = "PREFIX text: <http://jena.apache.org/text#> " \
-            "PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> " \
-            "SELECT * { ?id a <http://ldf.fi/warsa/actors/actor_types/MilitaryUnit> . " \
-            "?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P82a_begin_of_the_begin " \
-            "    ?conflict_start . " \
-            "?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P82b_end_of_the_end " \
-            "    ?conflict_end . " \
-            "?id text:query \"<VALUES>\" . " \
-            "}"
+    query = "PREFIX text: <http://jena.apache.org/text#>" \
+            "PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>" \
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" \
+            "SELECT ?id ?label (min(?conflict_start) as ?begin) (max(?conflict_end) as ?end) {" \
+            "  ?id a <http://ldf.fi/warsa/actors/actor_types/MilitaryUnit> ." \
+            "  OPTIONAL {?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P4_has_time-span/crm:P82a_begin_of_the_begin" \
+            "        ?conflict_start ." \
+            "    ?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P4_has_time-span/crm:P82b_end_of_the_end" \
+            "        ?conflict_end . }" \
+            "  ?id rdfs:label ?label ." \
+            "  ?id text:query \"<VALUES>\" ." \
+            "} GROUP BY ?id ?label"
+    # TODO: skos:prefLabel, skos:altLabel
 
-    return link(graph, endpoint, SCHEMA_NS.unit, query, preprocess=preprocess, validate=print)
+    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
+
+    return link(graph, arpa, SCHEMA_NS.unit, preprocess=preprocess, validator=UnitValidator(graph))
 
 
 if __name__ == '__main__':
