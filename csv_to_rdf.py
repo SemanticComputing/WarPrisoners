@@ -30,7 +30,7 @@ class RDFMapper:
         self.table = None
         self.data = Graph()
         self.schema = Graph()
-        logging.basicConfig(filename='rdfmapper.log',
+        logging.basicConfig(filename='prisoners.log',
                             filemode='a',
                             level=getattr(logging, loglevel),
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -199,6 +199,7 @@ class RDFMapper:
                                na_values=[' '], converters={'ammatti': lambda x: x.lower()})
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
+        self.log.info('Data read from CSV %s' % csv_input)
 
     def serialize(self, destination_data, destination_schema):
         """
@@ -223,8 +224,10 @@ class RDFMapper:
 
         data = self.data.serialize(format="turtle", destination=destination_data)
         schema = self.schema.serialize(format="turtle", destination=destination_schema)
+        self.log.info('Data serialized to %s' % destination_data)
+        self.log.info('Schema serialized to %s' % destination_schema)
 
-        return data, schema  # Mainly for testing purposes
+        return data, schema  # Return for testing purposes
 
     def process_rows(self):
         """

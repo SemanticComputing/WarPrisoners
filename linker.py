@@ -35,13 +35,19 @@ def link_ranks(graph, endpoint, prop=SCHEMA_NS.rank):
 
     for (prisoner, rank_literal) in list(graph[:prop:]):
         rank = re.sub(r'[/\-]', ' ', str(rank_literal)).strip()
+        if rank != str(rank_literal):
+            logger.info('Changed rank %s into %s for linking.' % (rank_literal, rank))
         if rank:
             res = arpa.query(MAPPING[rank] if rank in MAPPING else rank)
             if res:
                 res = res[0]['id']
                 logger.debug('Found a matching rank for {rank}: {res}'.format(rank=rank, res=res))
+
+                # Update property to found value
                 graph.remove((prisoner, prop, rank_literal))
                 graph.add((prisoner, prop, URIRef(res)))
+
+                # TODO: Update reifications
             else:
                 logger.warning('No match found for rank %s' % rank)
 
@@ -60,7 +66,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    logging.basicConfig(filename='linker.log',
+    logging.basicConfig(filename='prisoners.log',
                         filemode='a',
                         level=getattr(logging, args.loglevel),
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

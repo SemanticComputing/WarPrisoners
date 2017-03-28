@@ -31,7 +31,7 @@ def convert_int(raw_value: str):
         log.debug('Converted int: %s' % raw_value)
         return value
     except (ValueError, TypeError):
-        log.error('Invalid value for int conversion: %s' % raw_value)
+        log.warning('Invalid value for int conversion: %s' % raw_value)
         return raw_value
 
 
@@ -54,7 +54,7 @@ def convert_dates(raw_date: str):
             log.debug('Converted date: %s  to  %s' % (raw_date, date))
             return date
         except ValueError:
-            log.error('Invalid value for date conversion: %s' % raw_date)
+            log.warning('Invalid value for date conversion: %s' % raw_date)
         return raw_date
 
 
