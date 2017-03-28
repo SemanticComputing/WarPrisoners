@@ -7,32 +7,45 @@ import logging
 import re
 
 import itertools
+from pprint import pprint
 
-from arpa_linker.arpa import ArpaMimic
+import copy
+from rdflib.compare import graph_diff
+
+from arpa_linker.arpa import ArpaMimic, arpafy
 from rdflib import Graph
 from rdflib import URIRef
 from rdflib.util import guess_format
 
 from namespaces import *
 
+# TODO: Write some tests using responses
 
-def link(graph, endpoint, prop, query, preprocess=lambda x: x, mapping=None, validate=None):
+
+def _preprocess(literal, prisoner, subgraph):
+    """Default preprocess implementation for link function"""
+    return str(literal).strip()
+
+
+def link(graph, endpoint, prop, query, preprocess=_preprocess, validate=None):
     """
     Link entities based on parameters
-    
-    :return: 
-    """
-    if not mapping:
-        mapping = {}
 
+    :return:
+    """
     prop_str = str(prop).split('/')[-1]  # Used for logging
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
+    # linked = arpafy(copy.deepcopy(graph), SCHEMA_NS.temp, arpa, SCHEMA_NS.rank, preprocessor=preprocess, progress=True)[
+    #     'graph']
+    #
+    # new_triples = graph_diff(graph, linked)[2]
+
+    # TODO: Update reifications
+
     for (prisoner, value_literal) in list(graph[:prop:]):
-        value = str(value_literal).strip()
-        value = preprocess(value)
-        value = mapping[value] if value in mapping else value
+        value = preprocess(value_literal, prisoner, graph)
 
         if value != str(value_literal):
             logger.info('Changed %s %s into %s for linking' % (prop_str, value_literal, value))
@@ -50,8 +63,6 @@ def link(graph, endpoint, prop, query, preprocess=lambda x: x, mapping=None, val
                 # Update property to found value
                 graph.remove((prisoner, prop, value_literal))
                 graph.add((prisoner, prop, URIRef(res)))
-
-                # TODO: Update reifications
             else:
                 logger.warning('No match found for %s: %s' % (prop_str, value))
 
@@ -67,7 +78,9 @@ def link_ranks(graph, endpoint):
     :param prop: Property used to give military rank (used for both source and target) 
     :return: RDFLib Graph with updated links
     """
-    preprocess = lambda literal: re.sub(r'[/\-]', ' ', str(literal)).strip()
+    def preprocess(literal, prisoner, subgraph):
+        value = re.sub(r'[/\-]', ' ', str(literal)).strip()
+        return mapping[value] if value in mapping else value
 
     mapping = {'kaart': 'stm',
                'aliluutn': 'aliluutnantti'}
@@ -77,7 +90,7 @@ def link_ranks(graph, endpoint):
             "?id text:query \"<VALUES>\" . " +\
             "}"
 
-    return link(graph, endpoint, SCHEMA_NS.rank, query, preprocess=preprocess, mapping=mapping)
+    return link(graph, endpoint, SCHEMA_NS.rank, query, preprocess=preprocess)
 
 
 def _create_unit_abbreviations(text, *args):
@@ -130,9 +143,8 @@ def link_units(graph, endpoint):
     :param prop: Property used to give military unit (used for both source and target)
     :return: RDFLib Graph with updated links
     """
-    preprocess = lambda literal: _create_unit_abbreviations(str(literal).strip())
-
-    mapping = {}
+    def preprocess(literal, prisoner, subgraph):
+        return _create_unit_abbreviations(str(literal).strip())
 
     query = "PREFIX text: <http://jena.apache.org/text#> " \
             "PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> " \
@@ -144,7 +156,7 @@ def link_units(graph, endpoint):
             "?id text:query \"<VALUES>\" . " \
             "}"
 
-    return link(graph, endpoint, SCHEMA_NS.unit, query, preprocess=preprocess, mapping=mapping, validate=print)
+    return link(graph, endpoint, SCHEMA_NS.unit, query, preprocess=preprocess, validate=print)
 
 
 if __name__ == '__main__':
