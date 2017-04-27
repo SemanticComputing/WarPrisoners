@@ -253,15 +253,14 @@ if __name__ == "__main__":
 
     argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
 
-    argparser.add_argument("input", help="Input CSV file")
-    argparser.add_argument("output", help="Output location to serialize RDF files to")
     argparser.add_argument("mode", help="CSV conversion mode", default="PRISONERS", choices=["PRISONERS", "CAMPS"])
+    argparser.add_argument("input", help="Input CSV file")
+    argparser.add_argument("--outdata", help="Output file to serialize RDF dataset to (.ttl)", default=None)
+    argparser.add_argument("--outschema", help="Output file to serialize RDF schema to (.ttl)", default=None)
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
 
     args = argparser.parse_args()
-
-    output_dir = args.output + '/' if args.output[-1] != '/' else args.output
 
     if args.mode == "PRISONERS":
         mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, loglevel=args.loglevel.upper())
@@ -269,7 +268,7 @@ if __name__ == "__main__":
 
         mapper.process_rows()
 
-        mapper.serialize(output_dir + "prisoners.ttl", output_dir + "schema.ttl")
+        mapper.serialize(args.outdata, args.outschema)
 
     elif args.mode == "CAMPS":
         mapper = CSV2RDF()
@@ -277,5 +276,5 @@ if __name__ == "__main__":
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               SCHEMA_NS.PrisonCamp)
-        mapper.write_rdf(output_dir + "camps.ttl", output_dir + "camp_schema.ttl", fformat='turtle')
+        mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
