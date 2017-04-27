@@ -10,12 +10,6 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-p:prisoner_0_additional_information_0_reification_source a rdf:Statement ;
-    ns1:source "KA T 19472/2" ;
-    rdf:object "epäillään suorittaneen tuhopolton Ähtärissä" ;
-    rdf:predicate ps:additional_information ;
-    rdf:subject p:prisoner_0 .
-
 p:prisoner_0_burial_place_0_reification_source a rdf:Statement ;
     ns1:source "Voennye memorialy(??)" ;
     rdf:object "sotavankileiri  ? 58:n hautausmaa ????" ;
@@ -28,18 +22,6 @@ p:prisoner_0_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
     rdf:object "99" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_0 .
-
-p:prisoner_0_interrogator_0_reification_source a rdf:Statement ;
-    ns1:source "HT" ;
-    rdf:object "sot.virk. L.Sarporanta" ;
-    rdf:predicate ps:interrogator ;
-    rdf:subject p:prisoner_0 .
-
-p:prisoner_1_additional_information_0_reification_source a rdf:Statement ;
-    ns1:source "KA T 19472/2" ;
-    rdf:object "Pion.P 20" ;
-    rdf:predicate ps:additional_information ;
-    rdf:subject p:prisoner_1 .
 
 p:prisoner_1_amount_children_1_reification_source a rdf:Statement ;
     ns1:source "VEN 195" ;
@@ -162,9 +144,8 @@ p:prisoner_1_time_captured_1_reification_source a rdf:Statement ;
     rdf:predicate ps:time_captured ;
     rdf:subject p:prisoner_1 .
 
-p:prisoner_0 a <http://example.com/Class> ;
+p:prisoner_0 a ps:PrisonerOfWar ;
     bioc:has_occupation "kaavaaja" ;
-    ps:additional_information "epäillään suorittaneen tuhopolton Ähtärissä" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
     ps:birth_place "Karkkila" ;
@@ -180,13 +161,9 @@ p:prisoner_0 a <http://example.com/Class> ;
     ps:explanation "Yllätetty etuvartiopaikalla." ;
     ps:flyer "lentolehtisessä" ;
     ps:home_place "Karkkila" ;
-    ps:interrogator "sot.virk. L.Sarporanta" ;
     ps:karaganda_card_file "Karaganda 12" ;
     ps:marital_status "naimaton" ;
     ps:memoirs "Cinderella" ;
-    ps:military_record "RK 154/10.07.1944" ;
-    ps:minutes "ei" ;
-    ps:missing_person_documents "PM:n valvonta-osastolle 30.09.1943" ;
     ps:original_name "Testi Testaaja" ;
     ps:other_information "Leningradin radiossa 01.08.1944",
         "allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\"." ;
@@ -200,7 +177,6 @@ p:prisoner_0 a <http://example.com/Class> ;
     ps:residence_place "Karkkila" ;
     ps:returned_date "1944-11-22"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
-    ps:sotavangit_ry "kuoli ennen perustamista" ;
     ps:swedish_finn "?" ;
     ps:time_captured "1944-07-06"^^xsd:date ;
     ps:unit "1./Er.P 25" ;
@@ -212,11 +188,9 @@ p:prisoner_0 a <http://example.com/Class> ;
     foaf:familyName "Testi" ;
     foaf:givenName "Testaaja" .
 
-p:prisoner_1 a <http://example.com/Class> ;
+p:prisoner_1 a ps:PrisonerOfWar ;
     bioc:has_occupation "posteljooni",
         "sekatyömies" ;
-    ps:additional_information "Mikrofilmi VEN 195 106",
-        "Pion.P 20" ;
     ps:amount_children "2" ;
     ps:birth_date "1907-12-12"^^xsd:date,
         "1907-12-13"^^xsd:date ;
@@ -229,7 +203,7 @@ p:prisoner_1 a <http://example.com/Class> ;
         "84",
         "99",
         "Vologda" ;
-    ps:cause_of_death "teloitus" ;
+    ps:cause_of_death "joku syy" ;
     ps:confiscated_possessions "4.975" ;
     ps:continuation_war_russian_card_file "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242: kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943;" ;
     ps:death_date "1943-02-02"^^xsd:date,
@@ -243,13 +217,8 @@ p:prisoner_1 a <http://example.com/Class> ;
         "lentolehtisessä 17.08.1941" ;
     ps:home_place "Lavia",
         "Tampere" ;
-    ps:interrogator "ltn Kalervo Apiola",
-        "sot.virk. Vieno Sahia" ;
     ps:marital_status "naimaton",
         "naimisissa" ;
-    ps:military_record "on" ;
-    ps:minutes "4" ;
-    ps:missing_person_documents "paljon" ;
     ps:original_name "Harri Hankala" ;
     ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
         "kadonnut, julistettu virallisesti kuolleeksi." ;
@@ -269,7 +238,6 @@ p:prisoner_1 a <http://example.com/Class> ;
         "1944-10-10"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 115 53",
         "VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
-    ps:sotavangit_ry "01.09.1970" ;
     ps:swedish_finn "X" ;
     ps:time_captured "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;

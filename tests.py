@@ -94,7 +94,7 @@ class TestRDFMapper(unittest.TestCase):
         assert len(mapper.table) == 2
 
     def test_mapping_field_contents(self):
-        instance_class = URIRef('http://example.com/Class')
+        instance_class = URIRef('http://ldf.fi/schema/warsa/prisoners/PrisonerOfWar')
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data.csv')

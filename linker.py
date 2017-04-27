@@ -115,11 +115,8 @@ def _create_unit_abbreviations(text, *args):
     True
     """
 
-    # TODO: Copy-pasted from casualties linking, should use this commonly if no customization needed
-
     def _split(part):
         return [a for a, b in re.findall(r'(\w+?)(\b|(?<=[a-zäö])(?=[A-ZÄÖ]))', part)]
-        # return [p.strip() for p in part.split('.')]
 
     def _variations(part):
         inner_parts = _split(part) + ['']
@@ -129,8 +126,6 @@ def _create_unit_abbreviations(text, *args):
         combined_strings = [''.join(cc[0] + cc[1] for cc in inner).strip() for inner in combined]
 
         variations = list(set(combined_strings))
-        # variations += ['.'.join(inner_parts)]
-        # variations += ['. '.join(inner_parts)]
         variations += [' '.join(inner_parts)]
         variations += [''.join(inner_parts)]
         return sorted(variations)
@@ -252,17 +247,15 @@ def link_units(graph, endpoint):
     res = arpafy(graph, SCHEMA_NS.unit_linked, arpa, SCHEMA_NS.unit_winter,
                     preprocessor=_create_unit_abbreviations, progress=True)
 
-    print(res)
+    log.debug('arpafy results:  %s' % res)
 
     arpa = Arpa('http://demo.seco.tkk.fi/arpa/warsa_actor_units_continuationwar')
     res = arpafy(graph, SCHEMA_NS.unit_linked, arpa, SCHEMA_NS.unit_continuation,
                     preprocessor=_create_unit_abbreviations, progress=True)
 
-    print(res)
+    log.debug('arpafy results:  %s' % res)
 
     return graph
-
-    # return link(graph, arpa, SCHEMA_NS.unit, preprocess=preprocess, validator=UnitValidator(graph))
 
 
 if __name__ == '__main__':
