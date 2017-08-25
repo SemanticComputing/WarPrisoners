@@ -236,8 +236,9 @@ class RDFMapper:
         # column_headers = list(self.table)
         #
         for index in range(len(self.table)):
-            prisoner_uri = DATA_NS['prisoner_' + str(index)]
-            row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index])
+            prisoner_number = self.table.ix[index][0]
+            prisoner_uri = DATA_NS['prisoner_' + str(prisoner_number)]
+            row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index][1:])
             if row_rdf:
                 self.data += row_rdf
 

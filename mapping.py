@@ -16,20 +16,26 @@ PRISONER_MAPPING = {
                     'value_separator': '/',
                     'name_fi': 'Syntymäaika',
                     'name_en': 'Date of birth'},
-    'syntymäpaikka': {'uri': SCHEMA_NS.birth_place,
+    'synnyinkunta': {'uri': SCHEMA_NS.birth_place,
                       'value_separator': '/',
                       'name_fi': 'Syntymäkunta',
                       'name_en': 'Municipality of birth'
                       },
-    'kotipaikka': {'uri': SCHEMA_NS.home_place,
+    'kotikunta': {'uri': SCHEMA_NS.home_place,
                    'value_separator': '/',
                    'name_fi': 'Kotikunta',
                    'name_en': 'Home municipality'
                    },
-    'asuinpaikka': {'uri': SCHEMA_NS.residence_place,
+    'asuinkunta': {'uri': SCHEMA_NS.residence_place,
                     'name_fi': 'Asuinpaikka',
                     'name_en': 'Municipality of residence',
                     'value_separator': '/'},
+    'kuolinkunta, palanneet':
+        {
+            'uri': SCHEMA_NS.municipality_of_death,
+            'name_en': 'Municipality of Death',
+            'name_fi': 'Kuolinkunta'
+        },
     'ammatti': {'uri': BIOC.has_occupation,
                 'name_fi': 'Ammatti',
                 'name_en': 'Occupation',
@@ -50,6 +56,14 @@ PRISONER_MAPPING = {
     'joukko-osasto': {'uri': SCHEMA_NS.unit,
                       'name_en': 'Military Unit',
                       'name_fi': 'Joukko-osasto'},
+    'katoamisaika':
+        {
+            'uri': SCHEMA_NS.time_gone_missing,
+            'converter': convert_dates,
+            'value_separator': '/',
+            'name_en': 'Date captured',
+            'name_fi': 'Vangiksi jäämisen päivämäärä'
+        },
     'vangiksi aika': {'uri': SCHEMA_NS.time_captured,
                       'converter': convert_dates,
                       'value_separator': '/',
@@ -112,9 +126,15 @@ PRISONER_MAPPING = {
     #                           'name_en': 'Sotavangit ry membership',
     #                           'name_fi': 'Sotavangit ry:n jäsen'},
     'valokuva': {'uri': SCHEMA_NS.photograph, 'name_fi': 'Valokuva', 'name_en': 'Photograph'},
-    # 'kantakortti tms.': {'uri': SCHEMA_NS.military_record,
-    #                      'name_en': 'Military record',
-    #                      'name_fi': 'Kantakortti'},
+    'suomalainen paluukuulustelupöytäkirja': 
+        {
+            'uri': SCHEMA_NS.finnish_return_interrogation_file,
+            'name_en': 'Finnish return interrogation file',
+            'name_fi': 'Suomalainen paluukuulustelupöytäkirja'
+        },
+    'kantakortti': {'uri': SCHEMA_NS.military_record,
+                         'name_en': 'Military record',
+                         'name_fi': 'Kantakortti'},
     'radiossa, PM:n valvontatoimiston radiokatsaukset': {'uri': SCHEMA_NS.radio_report,
                      'value_separator': ';',
                      'name_en': 'Radio report',
@@ -122,7 +142,7 @@ PRISONER_MAPPING = {
     # 'katoamisdokumentit': {'uri': SCHEMA_NS.missing_person_documents,
     #                        'name_en': 'Missing person record',
     #                        'name_fi': 'Katoamisdokumentit'},
-    'Jatkosodan VEN kuulustelulomakkeet F 473, palautetut': {'uri': SCHEMA_NS.russian_interrogation_sheets,
+    'Jatkosodan VEN henkilömapit F 473, palautetut': {'uri': SCHEMA_NS.russian_interrogation_sheets,
                                                        'value_separator': ';',
                                                        'name_en': 'Russian interrogation sheets',
                                                        'name_fi': 'Jatkosodan venäläiset kuulustelulomakkeet'},
@@ -133,10 +153,10 @@ PRISONER_MAPPING = {
     #                  'value_separator': ';',
     #                  'name_en': 'Interrogator',
     #                  'name_fi': 'Kuulustelija'},
-    'takavarikoitu omaisuus, arvo markoissa':
-        {'uri': SCHEMA_NS.confiscated_possessions,
-         'name_en': 'Confiscated possessions',
-         'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
+    # 'takavarikoitu omaisuus, arvo markoissa':
+    #     {'uri': SCHEMA_NS.confiscated_possessions,
+    #      'name_en': 'Confiscated possessions',
+    #      'name_fi': 'takavarikoitu omaisuus, arvo markoissa'},
     'suomenruotsalainen':
         {'uri': SCHEMA_NS.swedish_finn,
          'name_en': 'Swedish finn',
@@ -145,14 +165,20 @@ PRISONER_MAPPING = {
         {'uri': SCHEMA_NS.karaganda_card_file,
          'name_en': 'Karaganda card file',
          'name_fi': 'Karagandan kortisto'},
-    'Jatkosodan kortisto':
+    'jatkosodan kortisto':
         {'uri': SCHEMA_NS.continuation_war_card_file,
          'name_en': 'Continuation War card file',
          'name_fi': 'Jatkosodan kortisto'},
-    'Jatkosodan VEN kuulustelulomakkeet, kuolleet F 465':
-        {'uri': SCHEMA_NS.continuation_war_russian_card_file,
-         'name_en': 'Continuation War russian card file',
-         'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet'},
+    'Jatkosodan VEN henkilömapit, kuolleet F 465':
+        {'uri': SCHEMA_NS.continuation_war_russian_card_file_F_465,
+         'name_en': 'Continuation War russian card file F 465',
+         'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet F 465'},
+    'Jatkosodan VEN henkilömapit, vangitut ja internoidut 461/p':
+        {
+            'uri': SCHEMA_NS.continuation_war_russian_card_file_461p,
+            'name_en': 'Continuation War russian card file 461/p',
+            'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet 461/p'
+        },
     'Talvisodan kokoelma':
         {'uri': SCHEMA_NS.winter_war_collection,
          'name_en': 'Winter War collection',
@@ -167,7 +193,14 @@ PRISONER_MAPPING = {
          'value_separator': ';',
          'name_en': 'Flyer',
          'name_fi': 'Lentolehtinen'},
-    'muistelmat, lehtijutut, tietokirjat, tutkimukset, Kansa taisteli-lehti':
+    'Sotilaan Ääni-lehti, Kansan Valta-lehti, Kansan  Mies-lehti':
+        {
+            'uri': SCHEMA_NS.propaganda_magazine,
+            'value_separator': ';',
+            'name_en': 'Propaganda magazine',
+            'name_fi': 'Propagandalehti'
+        },
+    'muistelmat, lehtijutut, tietokirjat, tutkimukset, Kansa taisteli-lehti, näyttelyt':
         {'uri': SCHEMA_NS.memoirs,
          'name_en': 'Memoirs',
          'name_fi': 'Muistelmat ja lehtijutut'},
