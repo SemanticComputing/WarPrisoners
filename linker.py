@@ -81,6 +81,8 @@ def link_ranks(graph, endpoint):
     :param prop: Property used to give military rank (used for both source and target) 
     :return: RDFLib Graph with updated links
     """
+    # TODO: Return only links, not the whole graph
+
     def preprocess(literal, prisoner, subgraph):
         value = re.sub(r'[/\-]', ' ', str(literal)).strip()
         return mapping[value] if value in mapping else value
@@ -202,6 +204,8 @@ def link_units(graph, endpoint):
     :param prop: Property used to give military unit (used for both source and target)
     :return: RDFLib Graph with updated links
     """
+    # TODO: Return only links, not the whole graph
+
     def preprocess(literal, prisoner, subgraph):
         return _create_unit_abbreviations(str(literal).strip())
 
@@ -222,22 +226,6 @@ def link_units(graph, endpoint):
                 pgraph.add((person, SCHEMA_NS.unit_continuation, unit))
 
         return pgraph
-
-    # query = "PREFIX text: <http://jena.apache.org/text#>" \
-    #         "PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>" \
-    #         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" \
-    #         "SELECT ?id ?label (min(?conflict_start) as ?begin) (max(?conflict_end) as ?end) {" \
-    #         "  ?id a <http://ldf.fi/warsa/actors/actor_types/MilitaryUnit> ." \
-    #         "  OPTIONAL {?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P4_has_time-span/crm:P82a_begin_of_the_begin" \
-    #         "        ?conflict_start ." \
-    #         "    ?id <http://ldf.fi/warsa/actors/hasConflict>/crm:P4_has_time-span/crm:P82b_end_of_the_end" \
-    #         "        ?conflict_end . }" \
-    #         "  ?id rdfs:label ?label ." \
-    #         "  ?id text:query \"<VALUES>\" ." \
-    #         "} GROUP BY ?id ?label"
-    # # TODO: skos:prefLabel, skos:altLabel
-    #
-    # arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
     graph = split_by_war(graph)
     log.debug('Found %s winter war units to link' % len(list(graph[:SCHEMA_NS.unit_winter:])))

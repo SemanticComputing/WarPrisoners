@@ -10,141 +10,141 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-p:prisoner_0_burial_place_0_reification_source a rdf:Statement ;
+p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
     ns1:source "Voennye memorialy(??)" ;
     rdf:object "sotavankileiri  ? 58:n hautausmaa ????" ;
     rdf:predicate ps:burial_place ;
-    rdf:subject p:prisoner_0 .
+    rdf:subject p:prisoner_1 .
 
-p:prisoner_0_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
+p:prisoner_1_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
     ps:date_begin "1941-11-28"^^xsd:date ;
     ps:date_end "xx.2.1943" ;
     rdf:object "99" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_0 .
+    rdf:subject p:prisoner_1 .
 
-p:prisoner_1_amount_children_1_reification_source a rdf:Statement ;
+p:prisoner_2_amount_children_1_reification_source a rdf:Statement ;
     ns1:source "VEN 195" ;
     rdf:object "2" ;
     rdf:predicate ps:amount_children ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_burial_place_1_reification_source a rdf:Statement ;
+p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
     ns1:source "Seppälä Alpo" ;
     rdf:object "haudattu Shumihaan." ;
     rdf:predicate ps:burial_place ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
+p:prisoner_2_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
     ps:date_begin "1941-07-31"^^xsd:date ;
     ps:date_end "xx.xx.1941" ;
     rdf:object "Vologda" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
+p:prisoner_2_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
     ps:date_begin "1941-09-15"^^xsd:date ;
     ps:date_end "1942-05-25"^^xsd:date ;
     rdf:object "99" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
+p:prisoner_2_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
     ps:date_begin "1942-06-05"^^xsd:date ;
     ps:date_end "xx.xx.1942" ;
     rdf:object "67" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
+p:prisoner_2_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
     ps:date_begin "1942-09-10"^^xsd:date ;
     ps:date_end "xx.xx.xxxx" ;
     rdf:object "84" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
+p:prisoner_2_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
     ps:date_begin "1943-09-20"^^xsd:date ;
     ps:date_end "1944-11-20"^^xsd:date ;
     rdf:object "158" ;
     rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_death_date_0_reification_source a rdf:Statement ;
+p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
     ns1:source "Karaganda",
         "Svry" ;
     rdf:object "1943-02-02"^^xsd:date,
         "2001-01-01"^^xsd:date ;
     rdf:predicate ps:death_date ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_death_date_1_reification_source a rdf:Statement ;
+p:prisoner_2_death_date_1_reification_source a rdf:Statement ;
     ns1:source "mikrofilmi" ;
     rdf:object "1943-03-02"^^xsd:date ;
     rdf:predicate ps:death_date ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_death_place_0_reification_source a rdf:Statement ;
+p:prisoner_2_death_place_0_reification_source a rdf:Statement ;
     ns1:source "Budko" ;
     rdf:object "1770" ;
     rdf:predicate ps:death_place ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_death_place_1_reification_source a rdf:Statement ;
+p:prisoner_2_death_place_1_reification_source a rdf:Statement ;
     ns1:source "Kyzminyh 1" ;
     rdf:object "1170" ;
     rdf:predicate ps:death_place ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_has_occupation_1_reification_source a rdf:Statement ;
+p:prisoner_2_has_occupation_1_reification_source a rdf:Statement ;
     ns1:source "mikrofilmi" ;
     rdf:object "sekatyömies" ;
     rdf:predicate bioc:has_occupation ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_marital_status_1_reification_source a rdf:Statement ;
+p:prisoner_2_marital_status_1_reification_source a rdf:Statement ;
     ns1:source "mikrofilmi" ;
     rdf:object "naimisissa" ;
     rdf:predicate ps:marital_status ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_other_information_0_reification_source a rdf:Statement ;
+p:prisoner_2_other_information_0_reification_source a rdf:Statement ;
     ns1:source "KA T 19472/2" ;
     rdf:object "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi" ;
     rdf:predicate ps:other_information ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_other_information_1_reification_source a rdf:Statement ;
+p:prisoner_2_other_information_1_reification_source a rdf:Statement ;
     ns1:source "KA-internet" ;
     rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
     rdf:predicate ps:other_information ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_place_captured_municipality_1_reification_source a rdf:Statement ;
+p:prisoner_2_place_captured_municipality_1_reification_source a rdf:Statement ;
     ns1:source "Talvisodan kortisto" ;
     rdf:object "Leipäsuo" ;
     rdf:predicate ps:place_captured_municipality ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_rank_1_reification_source a rdf:Statement ;
+p:prisoner_2_rank_1_reification_source a rdf:Statement ;
     ns1:source "Talvisodan kortisto" ;
     rdf:object "siv" ;
     rdf:predicate ps:rank ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_residence_place_1_reification_source a rdf:Statement ;
+p:prisoner_2_residence_place_1_reification_source a rdf:Statement ;
     ns1:source "mikrofilmi" ;
     rdf:object "Hämeenlinna" ;
     rdf:predicate ps:residence_place ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_1_time_captured_1_reification_source a rdf:Statement ;
+p:prisoner_2_time_captured_1_reification_source a rdf:Statement ;
     ns1:source "Talvisodan kortisto" ;
     rdf:object "1939-12-28"^^xsd:date ;
     rdf:predicate ps:time_captured ;
-    rdf:subject p:prisoner_1 .
+    rdf:subject p:prisoner_2 .
 
-p:prisoner_0 a ps:PrisonerOfWar ;
+p:prisoner_1 a ps:PrisonerOfWar ;
     bioc:has_occupation "kaavaaja" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
@@ -153,8 +153,8 @@ p:prisoner_0 a ps:PrisonerOfWar ;
     ps:camps_and_hospitals "58",
         "99" ;
     ps:cause_of_death "aivokooma" ;
-    ps:confiscated_possessions "850.0" ;
-    ps:continuation_war_russian_card_file "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008: kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
+    ps:continuation_war_russian_card_file_461p "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
+    ps:continuation_war_russian_card_file_F_465 "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008: kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
     ps:death_date "1944-06-24"^^xsd:date,
         "xx.xx.xxxx" ;
     ps:death_place "99" ;
@@ -162,8 +162,11 @@ p:prisoner_0 a ps:PrisonerOfWar ;
     ps:flyer "lentolehtisessä" ;
     ps:home_place "Karkkila" ;
     ps:karaganda_card_file "Karaganda 12" ;
+    ps:karelian_archive_documents "kpk" ;
     ps:marital_status "naimaton" ;
     ps:memoirs "Cinderella" ;
+    ps:military_record "kantakortti" ;
+    ps:municipality_of_death "Lohjan kunta" ;
     ps:original_name "Testi Testaaja" ;
     ps:other_information "Leningradin radiossa 01.08.1944",
         "allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\"." ;
@@ -171,6 +174,7 @@ p:prisoner_0 a ps:PrisonerOfWar ;
     ps:place_captured "Leino" ;
     ps:place_captured_battle "Tuherrusjärvi" ;
     ps:place_captured_municipality "Ylämaa" ;
+    ps:propaganda_magazine "http://www.veteraanienperinto.fi/vepe/index.php/fi/ryhmia/kertomuksia-10/483-kertomukset-34/i5-35/348-sotavankina" ;
     ps:radio_report "01.08.1944 Leningrad" ;
     ps:rank "korpr" ;
     ps:recording "f. 8, op. 1, d. 1129, l. 34" ;
@@ -179,6 +183,7 @@ p:prisoner_0 a ps:PrisonerOfWar ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
     ps:swedish_finn "?" ;
     ps:time_captured "1944-07-06"^^xsd:date ;
+    ps:time_gone_missing "4.7.1944  (KA T 19472/4 [3]" ;
     ps:unit "1./Er.P 25" ;
     ps:winter_war_collection "Kuulustelulomake Digiarkisto 6:346, suomennettu;" ;
     ps:winter_war_collection_from_moscow "RGVA 34980-10-1048 l. 69 KL Moskovassa",
@@ -188,7 +193,7 @@ p:prisoner_0 a ps:PrisonerOfWar ;
     foaf:familyName "Testi" ;
     foaf:givenName "Testaaja" .
 
-p:prisoner_1 a ps:PrisonerOfWar ;
+p:prisoner_2 a ps:PrisonerOfWar ;
     bioc:has_occupation "posteljooni",
         "sekatyömies" ;
     ps:amount_children "2" ;
@@ -204,8 +209,8 @@ p:prisoner_1 a ps:PrisonerOfWar ;
         "99",
         "Vologda" ;
     ps:cause_of_death "joku syy" ;
-    ps:confiscated_possessions "4.975" ;
-    ps:continuation_war_russian_card_file "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242: kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943;" ;
+    ps:continuation_war_russian_card_file_461p "VEN 420 360" ;
+    ps:continuation_war_russian_card_file_F_465 "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242: kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943;" ;
     ps:death_date "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
@@ -217,8 +222,11 @@ p:prisoner_1 a ps:PrisonerOfWar ;
         "lentolehtisessä 17.08.1941" ;
     ps:home_place "Lavia",
         "Tampere" ;
+    ps:karelian_archive_documents "useita dokumentteja" ;
     ps:marital_status "naimaton",
         "naimisissa" ;
+    ps:memoirs "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150; kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249" ;
+    ps:military_record "Z" ;
     ps:original_name "Harri Hankala" ;
     ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
         "kadonnut, julistettu virallisesti kuolleeksi." ;
@@ -241,6 +249,7 @@ p:prisoner_1 a ps:PrisonerOfWar ;
     ps:swedish_finn "X" ;
     ps:time_captured "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
+    ps:time_gone_missing "1944-06-19"^^xsd:date ;
     ps:unit "3./I/KTR15" ;
     ps:winter_war_collection_from_moscow "RGVA 34980-12-737 l. 131-142 kuulustelujen ja kirjeiden yhteenvetoa, pätkä kuulustelusta lainattu",
         "RGVA 34980-6-345, l. 1-7 ja 8-9 OL, l. 10 ehkä saman miehen (nimetön) vetoomus sotilastovereille" ;
