@@ -265,7 +265,8 @@ if __name__ == "__main__":
 
     argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
 
-    argparser.add_argument("mode", help="CSV conversion mode", default="PRISONERS", choices=["PRISONERS", "CAMPS"])
+    argparser.add_argument("mode", help="CSV conversion mode", default="PRISONERS",
+                           choices=["PRISONERS", "CAMPS", "HOSPITALS"])
     argparser.add_argument("input", help="Input CSV file")
     argparser.add_argument("--outdata", help="Output file to serialize RDF dataset to (.ttl)", default=None)
     argparser.add_argument("--outschema", help="Output file to serialize RDF schema to (.ttl)", default=None)
@@ -288,5 +289,13 @@ if __name__ == "__main__":
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               SCHEMA_NS.PrisonCamp)
+        mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
+
+    elif args.mode == "HOSPITALS":
+        mapper = CSV2RDF()
+        mapper.read_csv(args.input, **{'sep': '\t'})
+        mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
+                              Namespace("http://ldf.fi/schema/warsa/prisoners/"),
+                              SCHEMA_NS.Hospital)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
