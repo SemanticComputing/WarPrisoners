@@ -16,10 +16,35 @@ p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_1 .
 
-p:prisoner_1_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
-    ps:date_begin "1941-11-28"^^xsd:date ;
-    ps:date_end "xx.2.1943" ;
-    rdf:object "99" ;
+p:prisoner_1_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
+    ps:date_begin "1944-07-14"^^xsd:date ;
+    ps:date_end "xx.xx.1944" ;
+    rdf:object "135" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_0_reification_order a rdf:Statement ;
+    ps:order 0 ;
+    rdf:object "135" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_1_reification_order a rdf:Statement ;
+    ps:order 10 ;
+    rdf:object "270" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_2_reification_daterange a rdf:Statement ;
+    ps:date_begin "1944-10-17"^^xsd:date ;
+    ps:date_end "1944-11-20"^^xsd:date ;
+    rdf:object "158" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_1 .
+
+p:prisoner_1_camps_and_hospitals_2_reification_order a rdf:Statement ;
+    ps:order 20 ;
+    rdf:object "158" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
@@ -42,6 +67,12 @@ p:prisoner_2_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
 
+p:prisoner_2_camps_and_hospitals_0_reification_order a rdf:Statement ;
+    ps:order 0 ;
+    rdf:object "Vologda" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
 p:prisoner_2_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
     ps:date_begin "1941-09-15"^^xsd:date ;
     ps:date_end "1942-05-25"^^xsd:date ;
@@ -49,9 +80,27 @@ p:prisoner_2_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
 
+p:prisoner_2_camps_and_hospitals_1_reification_order a rdf:Statement ;
+    ps:order 10 ;
+    rdf:object "99" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
+p:prisoner_2_camps_and_hospitals_2_reification_order a rdf:Statement ;
+    ps:order 20 ;
+    rdf:object "100" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
 p:prisoner_2_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
     ps:date_begin "1942-06-05"^^xsd:date ;
     ps:date_end "xx.xx.1942" ;
+    rdf:object "67" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
+p:prisoner_2_camps_and_hospitals_3_reification_order a rdf:Statement ;
+    ps:order 30 ;
     rdf:object "67" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
@@ -63,9 +112,21 @@ p:prisoner_2_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
 
+p:prisoner_2_camps_and_hospitals_4_reification_order a rdf:Statement ;
+    ps:order 40 ;
+    rdf:object "84" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
 p:prisoner_2_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
     ps:date_begin "1943-09-20"^^xsd:date ;
     ps:date_end "1944-11-20"^^xsd:date ;
+    rdf:object "158" ;
+    rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
+p:prisoner_2_camps_and_hospitals_5_reification_order a rdf:Statement ;
+    ps:order 50 ;
     rdf:object "158" ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
@@ -150,8 +211,9 @@ p:prisoner_1 a ps:PrisonerOfWar ;
     ps:birth_date "1908-12-24"^^xsd:date ;
     ps:birth_place "Karkkila" ;
     ps:burial_place "sotavankileiri  ? 58:n hautausmaa ????" ;
-    ps:camps_and_hospitals "58",
-        "99" ;
+    ps:camps_and_hospitals "135",
+        "158",
+        "270" ;
     ps:cause_of_death "aivokooma" ;
     ps:continuation_war_russian_card_file_461p "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
     ps:continuation_war_russian_card_file_F_465 "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008: kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;

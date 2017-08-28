@@ -107,7 +107,7 @@ PRISONER_MAPPING = {
                       'name_fi': 'Hautauspaikka'},
     'vankeuspaikat': {'uri': SCHEMA_NS.camps_and_hospitals,
                       'value_separator': ';',
-                      'reify_order_number': True,  # TODO: Implement this (as index * 10 for maintainability)
+                      'reify_order_number': True,
                       'name_en': 'Captivity locations',
                       'name_fi': 'Vankeuspaikat'},
     ' muita tietoja': {'uri': SCHEMA_NS.other_information,

@@ -2,6 +2,8 @@
 #  -*- coding: UTF-8 -*-
 """
 Tests for data conversion
+
+To run all tests (including doctests) you can use for example nose: nosetests --with-doctest
 """
 import datetime
 import io

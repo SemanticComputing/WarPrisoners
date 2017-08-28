@@ -157,6 +157,17 @@ class RDFMapper:
                     liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
                     row_rdf.add((entity_uri, mapping['uri'], liter))
 
+                    if mapping.get('reify_order_number'):
+                        reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
+                                                                              prop=mapping['uri'].split('/')[-1],
+                                                                              id=index,
+                                                                              reason='order')]
+                        row_rdf.add((reification_uri, RDF.subject, entity_uri))
+                        row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
+                        row_rdf.add((reification_uri, RDF.object, liter))
+                        row_rdf.add((reification_uri, RDF.type, RDF.Statement))
+                        row_rdf.add((reification_uri, SCHEMA_NS.order, Literal(index * 10)))
+
                     for source in sources:
                         reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
                                                                               prop=mapping['uri'].split('/')[-1],
