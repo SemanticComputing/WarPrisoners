@@ -1,0 +1,31 @@
+PREFIX text: <http://jena.apache.org/text#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wacs: <http://ldf.fi/schema/warsa/actors/>
+PREFIX wsc: <http://ldf.fi/schema/warsa/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+SELECT DISTINCT ?id ?label ?ngram ?war {
+  VALUES ?ngram {
+    <VALUES>
+  }
+  FILTER(STRLEN(?ngram) > 2 || STRLEN(?ngram) > 1 && UCASE(?ngram) = STR(?ngram))
+  {
+    VALUES ?ngram {
+      <VALUES>
+    }
+    BIND(CONCAT('"',REPLACE(?ngram,"([\\+\\-\\&\\|\\!\\(\\)\\{\\}\\[\\]\\^\\\"\\~\\*\\?\\:\\/\\\\])","\\\\$1"),'"') AS ?qstring)
+    GRAPH <http://ldf.fi/warsa/units> { ?rid text:query (?qstring 100) . }
+  }
+  {
+    ?rid a/rdfs:subClassOf* wsc:Group .
+    BIND(?rid AS ?id)
+  }
+  UNION
+  {
+    ?rid crm:P95_has_formed ?id .
+  }
+  ?rid rdfs:label|skos:prefLabel|skos:altLabel|wacs:covernumber ?label .
+
+  FILTER(LCASE(REPLACE(STR(?label), "[,./\\s]", ""))=LCASE(REPLACE(STR(?ngram), "[,./\\s]", '')))
+  OPTIONAL { ?id wacs:hasConflict ?war . }
+}

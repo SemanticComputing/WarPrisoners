@@ -1,0 +1,34 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wps: <http://ldf.fi/schema/warsa/prisoners/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+construct {
+  ?sub <http://ldf.fi/schema/warsa/events/related_period> ?war .
+} {
+  {
+    ?sub a wps:PrisonerOfWar .
+    ?sub wps:time_captured ?date .
+    BIND(xsd:date(?date) AS ?dd)
+    FILTER(BOUND(?dd))
+    BIND(IF(?dd < "1941-06-24"^^xsd:date, <http://ldf.fi/warsa/conflicts/WinterWar>, <http://ldf.fi/warsa/conflicts/ContinuationWar>) AS ?war)
+  }
+  UNION
+  {
+    ?sub a wps:PrisonerOfWar .
+    OPTIONAL {
+      ?sub wps:time_captured ?date .
+      BIND(xsd:date(?date) AS ?dd)
+    }
+    FILTER(!BOUND(?dd))
+    OPTIONAL {
+      ?sub wps:time_captured ?date .
+      BIND(IF(REGEX(?date, "talvisota|39", "i"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
+      FILTER(?war != <>)
+    }
+    OPTIONAL {
+      ?sub wps:time_captured ?date .
+      BIND(IF(REGEX(STR(?date), "(4[012345])|jatkosota", "i"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
+      FILTER(?war != <>)
+    }
+  }
+}
