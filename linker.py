@@ -26,19 +26,16 @@ def _preprocess(literal, prisoner, subgraph):
     return str(literal).strip()
 
 
-def link(graph, arpa, prop, preprocess=_preprocess, validator=None):
+def link(graph, arpa, source_prop, target_graph, target_prop, preprocess=_preprocess, validator=None):
     """
-    Link entities based on parameters
+    Link entities with ARPA based on parameters
 
-    :return:
+    :return: target_graph with found links
     """
-    prop_str = str(prop).split('/')[-1]  # Used for logging
+    prop_str = str(source_prop).split('/')[-1]  # Used for logging
+    new_graph = Graph()
 
-    # linked = arpafy(copy.deepcopy(graph), SCHEMA_NS.temp, arpa, SCHEMA_NS.rank, preprocessor=preprocess, progress=True)['graph']
-    #
-    # new_triples = graph_diff(graph, linked)[2]
-
-    for (prisoner, value_literal) in list(graph[:prop:]):
+    for (prisoner, value_literal) in list(graph[:source_prop:]):
         value = preprocess(value_literal, prisoner, graph)
 
         log.debug('Finding links for %s (originally %s)' % (value, value_literal))
@@ -58,15 +55,13 @@ def link(graph, arpa, prop, preprocess=_preprocess, validator=None):
                 log.info('Accepted a match for property {ps} with original value {val} : {res}'.
                          format(ps=prop_str, val=value_literal, res=res))
 
-                # Update property to found value
-                graph.remove((prisoner, prop, value_literal))
-                graph.add((prisoner, prop, URIRef(res)))
+                target_graph.add((prisoner, target_prop, URIRef(res)))
 
                 # TODO: Update reifications
             else:
                 log.warning('No match found for %s: %s' % (prop_str, value))
 
-    return graph
+    return target_graph
 
 
 def link_ranks(graph, endpoint):
@@ -79,23 +74,26 @@ def link_ranks(graph, endpoint):
     :return: RDFLib Graph with updated links
     """
 
-    # TODO: Return only links, not the whole graph
-
     def preprocess(literal, prisoner, subgraph):
         value = re.sub(r'[/\-]', ' ', str(literal)).strip()
-        return mapping[value] if value in mapping else value
+        return rank_mapping[value] if value in rank_mapping else value
 
-    mapping = {'kaart': 'stm',
-               'aliluutn': 'aliluutnantti'}
+    rank_mapping = {
+        'kaart': 'stm',
+        'aliluutn': 'aliluutnantti',
+        'lääk.alik': 'lääkintäalikersantti',
+        'lääk.stm': 'lääkintäsotamies',
+        'ups.kok': 'upseerikokelas',
+    }
 
     query = "PREFIX text: <http://jena.apache.org/text#> " + \
-            "SELECT * { ?id a <http://ldf.fi/warsa/actors/ranks/Rank> . " + \
+            "SELECT * { ?id a <http://ldf.fi/schema/warsa/Rank> . " + \
             "?id text:query \"<VALUES>\" . " + \
             "}"
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
-    return link(graph, arpa, SCHEMA_NS.rank, preprocess=preprocess)
+    return link(graph, arpa, SCHEMA_NS.rank, Graph(), SCHEMA_NS.warsa_rank, preprocess=preprocess)
 
 
 class UnitValidator:

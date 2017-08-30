@@ -205,9 +205,13 @@ class RDFMapper:
 
         :param csv_input: CSV input (filename or buffer)
         """
-        csv_data = pd.read_csv(csv_input, encoding='UTF-8', index_col=False, sep='\t', quotechar='"',
+        csv_data = pd.read_csv(csv_input, encoding='UTF-8', index_col=False, sep=',', quotechar='"',
                                # parse_dates=[1], infer_datetime_format=True, dayfirst=True,
-                               na_values=[' '], converters={'ammatti': lambda x: x.lower()})
+                               na_values=[' '],
+                               converters={
+                                   'ammatti': lambda x: x.lower(),
+                                   'nro': lambda x: int(x) if x else ''
+                               })
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
         self.log.info('Data read from CSV %s' % csv_input)
@@ -226,6 +230,7 @@ class RDFMapper:
         self.data.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
         self.data.bind("foaf", 'http://xmlns.com/foaf/0.1/')
         self.data.bind("bioc", 'http://ldf.fi/schema/bioc/')
+        self.data.bind("dct", 'http://purl.org/dc/terms/')
 
         self.schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
         self.schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
@@ -285,7 +290,7 @@ if __name__ == "__main__":
 
     elif args.mode == "CAMPS":
         mapper = CSV2RDF()
-        mapper.read_csv(args.input, **{'sep': '\t'})
+        mapper.read_csv(args.input, sep='\t')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               SCHEMA_NS.PrisonCamp)
@@ -293,7 +298,7 @@ if __name__ == "__main__":
 
     elif args.mode == "HOSPITALS":
         mapper = CSV2RDF()
-        mapper.read_csv(args.input, **{'sep': '\t'})
+        mapper.read_csv(args.input, sep='\t')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               SCHEMA_NS.Hospital)
