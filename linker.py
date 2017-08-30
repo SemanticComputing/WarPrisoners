@@ -5,21 +5,18 @@
 import argparse
 import logging
 import re
-
-import itertools
 from pprint import pprint
 
-import copy
-
+from SPARQLWrapper import SPARQLWrapper
 from fuzzywuzzy import fuzz
-from rdflib.compare import graph_diff
-
-from arpa_linker.arpa import ArpaMimic, arpafy, Arpa
-from rdflib import Graph
+from rdflib import Graph, Literal
 from rdflib import URIRef
 from rdflib.util import guess_format
 
+from arpa_linker.arpa import ArpaMimic, Arpa, combine_values, process_graph
 from namespaces import *
+from warsa_linkers.units import preprocessor, Validator
+
 
 # TODO: Write some tests using responses
 
@@ -81,6 +78,7 @@ def link_ranks(graph, endpoint):
     :param prop: Property used to give military rank (used for both source and target) 
     :return: RDFLib Graph with updated links
     """
+
     # TODO: Return only links, not the whole graph
 
     def preprocess(literal, prisoner, subgraph):
@@ -90,9 +88,9 @@ def link_ranks(graph, endpoint):
     mapping = {'kaart': 'stm',
                'aliluutn': 'aliluutnantti'}
 
-    query = "PREFIX text: <http://jena.apache.org/text#> " +\
-            "SELECT * { ?id a <http://ldf.fi/warsa/actors/ranks/Rank> . " +\
-            "?id text:query \"<VALUES>\" . " +\
+    query = "PREFIX text: <http://jena.apache.org/text#> " + \
+            "SELECT * { ?id a <http://ldf.fi/warsa/actors/ranks/Rank> . " + \
+            "?id text:query \"<VALUES>\" . " + \
             "}"
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
@@ -100,51 +98,7 @@ def link_ranks(graph, endpoint):
     return link(graph, arpa, SCHEMA_NS.rank, preprocess=preprocess)
 
 
-def _create_unit_abbreviations(text, *args):
-    """
-    Preprocess military unit abbreviation strings for all possible combinations
-
-    :param text: Military unit abbreviation
-    :return: List containing all possible abbrevations
-
-    >>> _create_unit_abbreviations('3./JR 1')
-    '3./JR 1 # 3./JR. 1. # 3./JR.1. # 3./JR1 # 3/JR 1 # 3/JR. 1. # 3/JR.1. # 3/JR1 # JR 1 # JR. 1. # JR.1. # JR1'
-    >>> _create_unit_abbreviations('27.LK')
-    '27 LK # 27. LK. # 27.LK # 27.LK. # 27LK # 27 LK # 27. LK. # 27.LK # 27.LK. # 27LK'
-    >>> _create_unit_abbreviations('P/L Ilmarinen')
-    'P./L Ilmarinen # P./L. Ilmarinen. # P./L.Ilmarinen. # P./LIlmarinen # P/L Ilmarinen # P/L. Ilmarinen. # P/L.Ilmarinen. # P/LIlmarinen # L Ilmarinen # L. Ilmarinen. # L.Ilmarinen. # LIlmarinen # P # P.'
-    >>> '27. Pion.K.' in _create_unit_abbreviations('27.Pion.K.')
-    True
-    """
-
-    def _split(part):
-        return [a for a, b in re.findall(r'(\w+?)(\b|(?<=[a-zäö])(?=[A-ZÄÖ]))', part)]
-
-    def _variations(part):
-        inner_parts = _split(part) + ['']
-
-        spacecombos = list(itertools.product(['.', '. '], repeat=len(inner_parts) - 1))
-        combined = [tuple(zip(inner_parts, spacecombo)) for spacecombo in spacecombos]
-        combined_strings = [''.join(cc[0] + cc[1] for cc in inner).strip() for inner in combined]
-
-        variations = list(set(combined_strings))
-        variations += [' '.join(inner_parts)]
-        variations += [''.join(inner_parts)]
-        return sorted(variations)
-
-    variation_lists = [_variations(part) + [part] for part in text.split('/')]
-
-    combined_variations = sorted(set(['/'.join(combined).strip().replace(' /', '/')
-                                      for combined in sorted(set(itertools.product(*variation_lists)))]))
-
-    variationset = set(variation.strip() for var_list in variation_lists for variation in var_list
-                       if not re.search(r'^[0-9](\.)?$', variation.strip()))
-
-    return ' # '.join(combined_variations) + ' # ' + ' # '.join(sorted(variationset))
-
-
 class UnitValidator:
-
     def __init__(self, graph):
         """
         :type graph: Graph
@@ -202,48 +156,33 @@ def link_units(graph, endpoint):
     :param graph: Data in RDFLib Graph object
     :param endpoint: Endpoint to query
     :param prop: Property used to give military unit (used for both source and target)
-    :return: RDFLib Graph with updated links
+    :return: RDFLib Graph with ONLY unit links
     """
-    # TODO: Return only links, not the whole graph
+    def get_query_template():
+        with open('SPARQL/units.sparql') as f:
+            return f.read()
 
-    def preprocess(literal, prisoner, subgraph):
-        return _create_unit_abbreviations(str(literal).strip())
+    temp_graph = Graph()
 
-    def split_by_war(pgraph: Graph):
-        for person in pgraph[:RDF.type:SCHEMA_NS.PrisonerOfWar]:
-            time_captured = pgraph.value(person, SCHEMA_NS.time_captured)  # Assume duplicates are from same war
-            stime = str(time_captured).lower()
-            unit = pgraph.value(person, SCHEMA_NS.unit)  # Expecting only one unit per person
+    ngram_arpa = Arpa('http://demo.seco.tkk.fi/arpa/warsa_casualties_actor_units', retries=10, wait_between_tries=6)
 
-            if not unit:
-                continue
+    for person in graph[:RDF.type:SCHEMA_NS.PrisonerOfWar]:
 
-            pgraph.remove((person, SCHEMA_NS.unit, None))
+        captured_date = str(graph.value(person, SCHEMA_NS.time_captured))
+        if captured_date < '1941-06-25':
+            temp_graph.add((person, URIRef('http://ldf.fi/schema/warsa/events/related_period'),
+                            URIRef('http://ldf.fi/warsa/conflicts/WinterWar')))
 
-            if stime <= '1941-06-25' or stime == 'talvisota':
-                pgraph.add((person, SCHEMA_NS.unit_winter, unit))
-            else:
-                pgraph.add((person, SCHEMA_NS.unit_continuation, unit))
+        unit = preprocessor(str(graph.value(person, SCHEMA_NS.unit)))
+        ngrams = ngram_arpa.get_candidates(unit)
+        combined = combine_values(ngrams['results'])
+        temp_graph.add((person, SCHEMA_NS.candidate, Literal(combined)))
 
-        return pgraph
-
-    graph = split_by_war(graph)
-    log.debug('Found %s winter war units to link' % len(list(graph[:SCHEMA_NS.unit_winter:])))
-    log.debug('Found %s continuation war units to link' % len(list(graph[:SCHEMA_NS.unit_continuation:])))
-
-    arpa = Arpa('http://demo.seco.tkk.fi/arpa/warsa_actor_units_winterwar')
-    res = arpafy(graph, SCHEMA_NS.unit_linked, arpa, SCHEMA_NS.unit_winter,
-                    preprocessor=_create_unit_abbreviations, progress=True)
-
-    log.debug('arpafy results:  %s' % res)
-
-    arpa = Arpa('http://demo.seco.tkk.fi/arpa/warsa_actor_units_continuationwar')
-    res = arpafy(graph, SCHEMA_NS.unit_linked, arpa, SCHEMA_NS.unit_continuation,
-                    preprocessor=_create_unit_abbreviations, progress=True)
-
-    log.debug('arpafy results:  %s' % res)
-
-    return graph
+    log.info('Linking the found candidates')
+    arpa = ArpaMimic(get_query_template(), endpoint, retries=10, wait_between_tries=6)
+    new_graph = process_graph(temp_graph, SCHEMA_NS.osasto, arpa, progress=True,
+                              validator=Validator(temp_graph), new_graph=True, source_prop=SCHEMA_NS.candidate)
+    return new_graph['graph']
 
 
 if __name__ == '__main__':
@@ -275,5 +214,3 @@ if __name__ == '__main__':
     elif args.task == 'units':
         log.info('Linking units')
         link_units(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
-
-
