@@ -74,9 +74,12 @@ PRISONER_MAPPING = {
             'name_en': 'Military Rank',
             'value_separator': '/'
         },
-    'joukko-osasto': {'uri': SCHEMA_NS.unit,
-                      'name_en': 'Military Unit',
-                      'name_fi': 'Joukko-osasto'},
+    'joukko-osasto':
+        {
+            'uri': SCHEMA_NS.unit,
+            'name_en': 'Military Unit',
+            'name_fi': 'Joukko-osasto'
+        },
     'katoamisaika':
         {
             'uri': SCHEMA_NS.time_gone_missing,
