@@ -11,7 +11,7 @@ from datetime import datetime
 from jellyfish import jaro_winkler
 from fuzzywuzzy import fuzz
 from rdflib import Graph
-from rdflib import URIRef
+from rdflib import URIRef, Literal
 from rdflib.util import guess_format
 
 from arpa_linker.arpa import ArpaMimic, process_graph
@@ -110,6 +110,8 @@ class PersonValidator:
         self.unit_prop = unit_prop
         self.occupation_prop = occupation_prop
         self.disappearance_date_prop = disappearance_date_prop
+
+        self.score_graph = Graph()
 
     def validate(self, results, text, s):
         if not results:
@@ -236,9 +238,11 @@ class PersonValidator:
                     if has_parseable_death_date:
                         score -= 25
                 elif disappearance_date and res_disappearance_date and disappearance_date != res_disappearance_date:
-                    if has_parseable_death_date:
+                    try:
                         datetime.strptime(disappearance_date, DATE_FORMAT)
                         score -= 25
+                    except ValueError:
+                        log.warning('Could not parse disappearance date: {date}'.format(date=disappearance_date))
 
             # If both are single dates, allow one different character before penalizing more
             if has_parseable_death_date and len(res_deathdates) == 1 and \
@@ -260,7 +264,7 @@ class PersonValidator:
                           .format(f1=firstnames, f2=res_firstnames, fuzzy=fuzzy_firstname_match))
 
             if birth_place and res_birth_place and birth_place == res_birth_place:
-                score += 30
+                score += 40
             log.info('BPlace: {b} <-> {rb} -> {s}'.format(b=birth_place, rb=res_birth_place, s=score))
 
             if disappearance_place and res_disappearance_place and disappearance_place == res_disappearance_place:
@@ -291,6 +295,8 @@ class PersonValidator:
                          .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
                                  res_ln=res_lastname, res_uri=res_id, score=score))
 
+        if filtered:
+            self.score_graph.add((s, SCHEMA_NS.score, Literal(max([p['score'] for p in filtered]))))
         if len(filtered) == 1:
             return filtered
         elif len(filtered) > 1:
@@ -326,6 +332,7 @@ def link_persons(graph, endpoint):
     arpa = ArpaMimic(get_query_template(), endpoint, retries=10, wait_between_tries=6)
     new_graph = process_graph(graph, CIDOC.P70_documents, arpa, progress=True,
                               validator=validator, new_graph=True, source_prop=SKOS.prefLabel)
+    validator.score_graph.serialize('scores.ttl', format='turtle')
     return new_graph['graph']
 
 
