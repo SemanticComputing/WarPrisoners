@@ -3,16 +3,16 @@ PREFIX apf: <http://jena.hpl.hp.com/ARQ/property#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX actors: <http://ldf.fi/warsa/actors/>
-PREFIX etype: <http://ldf.fi/warsa/events/event_types/>
+PREFIX actors: <http://ldf.fi/schema/warsa/actors/>
+PREFIX wsch: <http://ldf.fi/schema/warsa/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX cas: <http://ldf.fi/schema/narc-menehtyneet1939-45/>
 PREFIX dc: <http://purl.org/dc/terms/>
 
-SELECT DISTINCT ?id ?ngram (COALESCE(?nlabel, ?plabel) AS ?label) ?rank_id ?etunimet ?sukunimi ?birth_start ?birth_end ?death_start ?death_end
-WHERE
-{
+SELECT DISTINCT ?id ?ngram ?label ?rank_id ?etunimet ?sukunimi ?birth_start ?birth_end ?death_start ?death_end
+    ?disappearance_place ?birth_place ?occupation ?unit ?disappearance_date {
+
     VALUES ?ngram {
         "<VALUES>"
     }
@@ -20,17 +20,17 @@ WHERE
 	BIND(REPLACE(?ngram, "[-/().]", " ") AS ?ngram2)
     BIND(REPLACE(?ngram2,"([a-zåäöéèüáóA-ZÅÄÖÈÉĚȨÜÁÀÃÓÒÕ]+)", IF(?ngram = ?ngram2, "$1~", "$1~1")) AS ?qstring)
 
-    GRAPH <http://ldf.fi/warsa/persons> { ?id text:query ?qstring . }
+    GRAPH <http://ldf.fi/warsa/persons> { ?id text:query (?qstring 50) . }
 	OPTIONAL { ?id dc:source ?source . }
   	#FILTER(IF(BOUND(?source), ?source != <http://ldf.fi/warsa/sources/source9>, 1=1))
     ?id foaf:familyName ?sukunimi .
-    ?id skos:prefLabel ?plabel .
+    ?id skos:prefLabel ?label .
     OPTIONAL { ?id foaf:firstName ?etunimet . }
     OPTIONAL {
-        ?promotion_id a etype:Promotion ;
+        ?promotion_id a wsch:Promotion ;
             crm:P11_had_participant ?id ;
-            actors:hasRank ?rank_id ;
-            crm:P4_has_time-span ?timespan_id .
+            actors:hasRank ?rank_id .
+            #OPTIONAL { ?promotion_id crm:P4_has_time-span ?timespan_id . }
     }
 
     OPTIONAL {
@@ -48,5 +48,13 @@ WHERE
                     crm:P82b_end_of_the_end ?death_end .
     	OPTIONAL { ?death dc:source ?death_source . }
     	#FILTER(IF(BOUND(?death_source), ?death_source != <http://ldf.fi/warsa/sources/source9>, 1=1))
+    }
+    OPTIONAL {
+        ?id ^crm:P70_documents ?cas .
+        OPTIONAL { ?cas cas:katoamispaikka ?disappearance_place . }
+        OPTIONAL { ?cas cas:katoamisaika ?disappearance_date . }
+        OPTIONAL { ?cas cas:synnyinkunta/skos:prefLabel ?birth_place . }
+        OPTIONAL { ?cas cas:ammatti ?occupation . }
+        OPTIONAL { ?cas cas:osasto ?unit . }
     }
 }
