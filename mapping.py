@@ -192,12 +192,12 @@ PRISONER_MAPPING = {
             'name_en': 'Finnish return interrogation file',
             'name_fi': 'Suomalainen paluukuulustelupöytäkirja'
         },
-    'kantakortti':
-        {
-            'uri': SCHEMA_NS.military_record,
-            'name_en': 'Military record',
-            'name_fi': 'Kantakortti'
-        },
+    # 'kantakortti':
+    #     {
+    #         'uri': SCHEMA_NS.military_record,
+    #         'name_en': 'Military record',
+    #         'name_fi': 'Kantakortti'
+    #     },
     'radiossa, PM:n valvontatoimiston radiokatsaukset':
         {
             'uri': SCHEMA_NS.radio_report,
@@ -218,7 +218,7 @@ PRISONER_MAPPING = {
             'name_en': 'Winter War card file',
             'name_fi': 'Talvisodan kortisto'
         },
-    'suomenruotsalainen':
+    'suomenruotsalainen':  # TODO: Tulkitse äidinkieleksi
         {
             'uri': SCHEMA_NS.swedish_finn,
             'name_en': 'Swedish finn',
