@@ -10,8 +10,7 @@ from datetime import datetime
 
 from jellyfish import jaro_winkler
 from fuzzywuzzy import fuzz
-from rdflib import Graph
-from rdflib import URIRef, Literal
+from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.util import guess_format
 
 from arpa_linker.arpa import ArpaMimic, process_graph
@@ -147,8 +146,15 @@ class PersonValidator:
         _FUZZY_FIRSTNAME_MATCH_LIMIT = 0.5
         DATE_FORMAT = '%Y-%m-%d'
 
+        if not birthdates or deathdates:
+            initial_score = -20
+            log.info('No birth or death date for prisoner, initial score: {}'.format(initial_score))
+        else:
+            initial_score = 0
+
         for person in results:
-            score = 0
+            score = initial_score
+
             res_id = None
             try:
                 res_id = person['properties'].get('id')[0].replace('"', '')
@@ -227,22 +233,23 @@ class PersonValidator:
             ddates = set(deathdates)
             if disappearance_date:
                 ddates.add(disappearance_date)
-            if res_deathdates and deathdates or res_disappearance_date and disappearance_date:
-                if deathdates == res_deathdates or disappearance_date == res_disappearance_date:
-                    score += 100
-                elif res_deathdates.issubset(ddates) or res_disappearance_date in ddates:
-                    score += 50
-                elif [d for d in ddates if res_dd[0] <= d <= res_dd[1]]:
-                    score += 50
-                elif deathdates and not (deathdates & res_deathdates):
-                    if has_parseable_death_date:
-                        score -= 25
-                elif disappearance_date and res_disappearance_date and disappearance_date != res_disappearance_date:
-                    try:
-                        datetime.strptime(disappearance_date, DATE_FORMAT)
-                        score -= 25
-                    except ValueError:
-                        log.warning('Could not parse disappearance date: {date}'.format(date=disappearance_date))
+            if res_deathdates and deathdates and deathdates == res_deathdates:
+                score += 100
+            elif res_disappearance_date and disappearance_date and res_disappearance_date == disappearance_date:
+                score += 100
+            elif res_deathdates and ddates and res_deathdates.issubset(ddates) or res_disappearance_date in ddates:
+                score += 50
+            elif [d for d in ddates if res_dd[0] <= d <= res_dd[1]]:
+                score += 50
+            elif deathdates and not (deathdates & res_deathdates):
+                if has_parseable_death_date:
+                    score -= 25
+            elif disappearance_date and res_disappearance_date and disappearance_date != res_disappearance_date:
+                try:
+                    datetime.strptime(disappearance_date, DATE_FORMAT)
+                    score -= 25
+                except ValueError:
+                    log.warning('Could not parse disappearance date: {date}'.format(date=disappearance_date))
 
             # If both are single dates, allow one different character before penalizing more
             if has_parseable_death_date and len(res_deathdates) == 1 and \
@@ -285,6 +292,7 @@ class PersonValidator:
             res_rank_name = ', '.join([re.sub(r'.+/(\w+?)$', r'\1', str(rank)) for rank in res_ranks])
 
             if score > 200:
+                person['score'] = score
                 filtered.append(person)
                 log.info('Found person for {rank} {fn} {ln} {uri} : '
                          '{res_rank} {res_fn} {res_ln} {res_uri} [score: {score}]'
@@ -295,10 +303,10 @@ class PersonValidator:
                          .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
                                  res_ln=res_lastname, res_uri=res_id, score=score))
 
-        if filtered:
-            self.score_graph.add((s, SCHEMA_NS.score, Literal(max([p['score'] for p in filtered]))))
-        if len(filtered) == 1:
-            return filtered
+        if not filtered:
+            return []
+        elif len(filtered) == 1:
+            best_matches = filtered
         elif len(filtered) > 1:
             log.warning('Found several matches for Warsa person {s} ({text}): {ids}'.
                         format(s=s, text=text,
@@ -307,7 +315,24 @@ class PersonValidator:
 
             best_matches = sorted(filtered, key=lambda p: p['score'], reverse=True)
             log.warning('Choosing best match: {id}'.format(id=best_matches[0].get('id')))
-            return [best_matches[0]]
+
+        best_match = best_matches.pop(0)
+
+        m = BNode()
+        self.score_graph.add((s, SCHEMA_NS.best_match, m))
+        self.score_graph.add((m, SCHEMA_NS.match, URIRef(best_match['id'])))
+        self.score_graph.add((m, SCHEMA_NS.score, Literal('%.2f' % best_match['score'])))
+        for p in best_matches:
+            m = BNode()
+            self.score_graph.add((s, SCHEMA_NS.alternative_match, m))
+            self.score_graph.add((m, SCHEMA_NS.match, URIRef(p['id'])))
+            self.score_graph.add((m, SCHEMA_NS.score, Literal('%.2f' % p['score'])))
+
+        best_last = best_match['properties']['sukunimi'][0].replace('"', '').lower()
+        if lastname != best_last:
+            log.warning('Best match last name differs: {ln} <-> {rln}'.format(ln=lastname, rln=best_last))
+
+        return [best_match]
 
         return []
 
