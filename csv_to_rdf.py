@@ -210,7 +210,7 @@ class RDFMapper:
                                na_values=[' '],
                                converters={
                                    'ammatti': lambda x: x.lower(),
-                                   'nro': lambda x: int(x) if x else ''
+                                   0: lambda x: int(x) if x and x.isnumeric() else ''
                                })
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)

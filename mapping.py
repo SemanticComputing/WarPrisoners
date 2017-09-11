@@ -167,7 +167,7 @@ PRISONER_MAPPING = {
             'name_en': 'Captivity locations',
             'name_fi': 'Vankeuspaikat'
         },
-    ' muita tietoja':
+    'muita tietoja':
         {
             'uri': SCHEMA_NS.other_information,
             'value_separator': ';',
