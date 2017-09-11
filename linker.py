@@ -85,9 +85,9 @@ def link_ranks(graph, endpoint):
     }
 
     query = "PREFIX text: <http://jena.apache.org/text#> " + \
-            "SELECT * { ?id a <http://ldf.fi/schema/warsa/Rank> . " + \
+            "SELECT * { GRAPH <http://ldf.fi/warsa/ranks> { ?id a <http://ldf.fi/schema/warsa/Rank> . " + \
             "?id text:query \"<VALUES>\" . " + \
-            "}"
+            "} } LIMIT 1"
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
