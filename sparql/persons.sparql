@@ -55,6 +55,8 @@ SELECT DISTINCT ?id ?ngram ?label ?rank_id ?etunimet ?sukunimi ?birth_start ?bir
         OPTIONAL { ?cas cas:katoamisaika ?disappearance_date . }
         OPTIONAL { ?cas cas:synnyinkunta/skos:prefLabel ?birth_place . }
         OPTIONAL { ?cas cas:ammatti ?occupation . }
-        OPTIONAL { ?cas cas:osasto ?unit . }
+    }
+    OPTIONAL {
+        ?id ^crm:P143_joined/crm:P144_joined_with ?unit .
     }
 }

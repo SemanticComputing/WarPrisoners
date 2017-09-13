@@ -146,8 +146,8 @@ class PersonValidator:
         _FUZZY_FIRSTNAME_MATCH_LIMIT = 0.5
         DATE_FORMAT = '%Y-%m-%d'
 
-        if not birthdates or deathdates:
-            initial_score = -20
+        if not (birthdates or deathdates):
+            initial_score = -50
             log.info('No birth or death date for prisoner, initial score: {}'.format(initial_score))
         else:
             initial_score = 0
@@ -168,8 +168,8 @@ class PersonValidator:
                 res_disappearance_place = person['properties'].get('disappearance_place', [''])[0].replace('"', '').lower()
                 res_disappearance_date = person['properties'].get('disappearance_date', [''])[0].replace('"', '').lower()
                 res_occupation = person['properties'].get('occupation', [''])[0].replace('"', '').lower()
-                res_unit = person['properties'].get('unit', [''])[0]
-                res_unit = URIRef(re.sub(r'[<>]', '', res_unit)) if res_unit else res_unit
+                res_units = person['properties'].get('unit', [''])
+                res_units = set(URIRef(re.sub(r'[<>]', '', u)) for u in res_units if u)
 
                 res_bd = (min(person['properties'].get('birth_start', [''])).split('^')[0].replace('"', ''),
                             max(person['properties'].get('birth_end', [''])).split('^')[0].replace('"', ''))
@@ -241,8 +241,7 @@ class PersonValidator:
                 score += 50
             elif [d for d in ddates if res_dd[0] <= d <= res_dd[1]]:
                 score += 50
-            elif deathdates and not (deathdates & res_deathdates):
-                if has_parseable_death_date:
+            elif deathdates and not (deathdates & res_deathdates) and has_parseable_death_date:
                     score -= 25
             elif disappearance_date and res_disappearance_date and disappearance_date != res_disappearance_date:
                 try:
@@ -278,9 +277,9 @@ class PersonValidator:
                 score += 25
             log.info('DPlace: {b} <-> {rb} -> {s}'.format(b=disappearance_place, rb=res_disappearance_place, s=score))
 
-            if unit and res_unit and unit == res_unit:
+            if unit and res_units and unit in res_units:
                 score += 15
-            log.info('Unit: {b} <-> {rb} -> {s}'.format(b=unit, rb=res_unit, s=score))
+            log.info('Unit: {b} <-> {rb} -> {s}'.format(b=unit, rb=res_units, s=score))
 
             if occupation and res_occupation and occupation == res_occupation:
                 score += 20
@@ -294,12 +293,12 @@ class PersonValidator:
             if score > 200:
                 person['score'] = score
                 filtered.append(person)
-                log.info('Found person for {rank} {fn} {ln} {uri} : '
+                log.info('FOUND person for {rank} {fn} {ln} {uri} : '
                          '{res_rank} {res_fn} {res_ln} {res_uri} [score: {score}]'
                          .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
                                  res_ln=res_lastname, res_uri=res_id, score=score))
             else:
-                log.info('Skip low score [{score}]: {rank} {fn} {ln} {uri} <<-->> {res_rank} {res_fn} {res_ln} {res_uri}'
+                log.info('SKIP low score [{score}]: {rank} {fn} {ln} {uri} <<-->> {res_rank} {res_fn} {res_ln} {res_uri}'
                          .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
                                  res_ln=res_lastname, res_uri=res_id, score=score))
 
@@ -308,7 +307,7 @@ class PersonValidator:
         elif len(filtered) == 1:
             best_matches = filtered
         elif len(filtered) > 1:
-            log.warning('Found several matches for Warsa person {s} ({text}): {ids}'.
+            log.warning('Found several matches for {s} ({text}): {ids}'.
                         format(s=s, text=text,
                                ids=', '.join(p['properties'].get('id')[0].split('^')[0].replace('"', '')
                                              for p in filtered)))

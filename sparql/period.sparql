@@ -22,13 +22,28 @@ construct {
     FILTER(!BOUND(?dd))
     OPTIONAL {
       ?sub wps:time_captured ?date .
-      BIND(IF(REGEX(?date, "talvisota|39", "i"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
+      BIND(IF(REGEX(?date, "talvisota|39|40", "i"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
       FILTER(?war != <>)
     }
     OPTIONAL {
       ?sub wps:time_captured ?date .
-      BIND(IF(REGEX(STR(?date), "(4[012345])|jatkosota", "i"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
+      BIND(IF(REGEX(STR(?date), "(4[12345])|jatkosota", "i"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
       FILTER(?war != <>)
+    }
+    OPTIONAL {
+      ?sub wps:other_information ?date .
+      BIND(IF(REGEX(?date, "19(39|40)"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
+      FILTER(?war != <>)
+    }
+    OPTIONAL {
+      ?sub wps:other_information ?date .
+      BIND(IF(REGEX(?date, "194[12345]"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
+      FILTER(?war != <>)
+    }
+    OPTIONAL {
+      ?sub wps:winter_war_collection|wps:winter_war_collection_from_moscow|wps:winter_war_card_file [] .
+      BIND(<http://ldf.fi/warsa/conflicts/WinterWar> as ?war)
     }
   }
 }
+limit 10
