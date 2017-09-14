@@ -42,7 +42,7 @@ class RDFMapper:
         Read a value with source given in the end in parenthesis
 
         :param orig_value: string in format "value (source)"
-        :return: value, sources
+        :return: value, sources, erroneous content
         """
 
         sourcematch = re.search(r'(.+) \(([^()]+)\)(.*)', orig_value)
@@ -53,24 +53,26 @@ class RDFMapper:
             sources = [s.strip() for s in sources.split(',')]
 
         if trash:
-            self.log.warning('Found some content after sources, reverting to original: %s' % trash)
+            self.log.warning('Found some content after sources, reverting to original: %s' % orig_value)
             value = orig_value
 
-        return value.strip(), sources or []
+        return value.strip(), sources or [], trash or ''
 
     def read_semicolon_separated(self, orig_value):
         """
         Read semicolon separated values (with possible sources and date range)
 
         :param orig_value: string in format "source: value date1-date2", or just "value"
-        :return: value, sources
+        :return: value, sources, date begin, date end, error
         """
 
+        error = None
         if ': ' in orig_value:
             try:
                 (sources, value) = orig_value.split(': ')
-            except ValueError as error:
-                self.log.error('Semicolon separated: %s caused error "%s"' % (orig_value, error))
+            except ValueError as err:
+                self.log.error('Semicolon separated: %s caused error "%s"' % (orig_value, err))
+                error = err
                 (sources, value) = ('', orig_value)
         else:
             (sources, value) = ('', orig_value)
@@ -89,9 +91,9 @@ class RDFMapper:
             sources = [s.strip() for s in sources.split(',')]
 
         if date_begin or date_end:
-            self.log.debug('Found dates for value: %s - %s' % (date_begin, date_end))
+            self.log.debug('Found dates for value %s: %s - %s' % (value, date_begin, date_end))
 
-        return value, sources or [], date_begin, date_end
+        return value, sources or [], date_begin, date_end, error
 
     def map_row_to_rdf(self, entity_uri, row):
         """
@@ -144,11 +146,15 @@ class RDFMapper:
                 sources = []
                 date_begin = None
                 date_end = None
+                trash = None
+                error = None
 
                 if separator == '/':
-                    value, sources = self.read_value_with_source(value)
+                    value, sources, trash = self.read_value_with_source(value)
                 elif separator == ';':
-                    value, sources, date_begin, date_end = self.read_semicolon_separated(value)
+                    value, sources, date_begin, date_end, error = self.read_semicolon_separated(value)
+
+                # TODO: Collect rows with trash or error to CSV
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
@@ -210,10 +216,14 @@ class RDFMapper:
                                na_values=[' '],
                                converters={
                                    'ammatti': lambda x: x.lower(),
-                                   0: lambda x: int(x) if x and x.isnumeric() else ''
+                                   0: lambda x: int(x) if x and x.isnumeric() else -1
                                })
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
+        logging.info('Read {num} rows from CSV'.format(num=len(self.table)))
+        self.table.rename(columns={'Unnamed: 0': 'nro'}, inplace=True)
+        self.table = self.table[self.table.nro >= 0]  # Take out persons which don't have a number
+        logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
         self.log.info('Data read from CSV %s' % csv_input)
 
     def serialize(self, destination_data, destination_schema):
@@ -249,9 +259,7 @@ class RDFMapper:
         """
         Loop through CSV rows and convert them to RDF
         """
-        # column_headers = list(self.table)
-        #
-        for index in range(len(self.table)):
+        for index in self.table.index:
             prisoner_number = self.table.ix[index][0]
             prisoner_uri = DATA_NS['prisoner_' + str(prisoner_number)]
             row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index][1:])
@@ -281,7 +289,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     if args.mode == "PRISONERS":
-        mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerOfWar, loglevel=args.loglevel.upper())
+        mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
         mapper.read_csv(args.input)
 
         mapper.process_rows()

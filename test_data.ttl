@@ -1,7 +1,7 @@
 @prefix bioc: <http://ldf.fi/schema/bioc/> .
 @prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix ns1: <http://purl.org/dc/terms/> .
 @prefix p: <http://ldf.fi/warsa/prisoners/> .
 @prefix ps: <http://ldf.fi/schema/warsa/prisoners/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -11,7 +11,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
-    ns1:source "Voennye memorialy(??)" ;
+    dct:source "Voennye memorialy(??)" ;
     rdf:object "sotavankileiri  ? 58:n hautausmaa ????" ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_1 .
@@ -49,13 +49,13 @@ p:prisoner_1_camps_and_hospitals_2_reification_order a rdf:Statement ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_2_amount_children_1_reification_source a rdf:Statement ;
-    ns1:source "VEN 195" ;
+    dct:source "VEN 195" ;
     rdf:object "2" ;
     rdf:predicate ps:amount_children ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
-    ns1:source "Seppälä Alpo" ;
+    dct:source "Seppälä Alpo" ;
     rdf:object "haudattu Shumihaan." ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_2 .
@@ -132,7 +132,7 @@ p:prisoner_2_camps_and_hospitals_5_reification_order a rdf:Statement ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
-    ns1:source "Karaganda",
+    dct:source "Karaganda",
         "Svry" ;
     rdf:object "1943-02-02"^^xsd:date,
         "2001-01-01"^^xsd:date ;
@@ -140,72 +140,72 @@ p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_death_date_1_reification_source a rdf:Statement ;
-    ns1:source "mikrofilmi" ;
+    dct:source "mikrofilmi" ;
     rdf:object "1943-03-02"^^xsd:date ;
     rdf:predicate ps:death_date ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_death_place_0_reification_source a rdf:Statement ;
-    ns1:source "Budko" ;
+    dct:source "Budko" ;
     rdf:object "1770" ;
     rdf:predicate ps:death_place ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_death_place_1_reification_source a rdf:Statement ;
-    ns1:source "Kyzminyh 1" ;
+    dct:source "Kyzminyh 1" ;
     rdf:object "1170" ;
     rdf:predicate ps:death_place ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_has_occupation_1_reification_source a rdf:Statement ;
-    ns1:source "mikrofilmi" ;
+    dct:source "mikrofilmi" ;
     rdf:object "sekatyömies" ;
     rdf:predicate bioc:has_occupation ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_marital_status_1_reification_source a rdf:Statement ;
-    ns1:source "mikrofilmi" ;
+    dct:source "mikrofilmi" ;
     rdf:object "naimisissa" ;
     rdf:predicate ps:marital_status ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_other_information_0_reification_source a rdf:Statement ;
-    ns1:source "KA T 19472/2" ;
+    dct:source "KA T 19472/2" ;
     rdf:object "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi" ;
     rdf:predicate ps:other_information ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_other_information_1_reification_source a rdf:Statement ;
-    ns1:source "KA-internet" ;
+    dct:source "KA-internet" ;
     rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
     rdf:predicate ps:other_information ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_place_captured_municipality_1_reification_source a rdf:Statement ;
-    ns1:source "Talvisodan kortisto" ;
+    dct:source "Talvisodan kortisto" ;
     rdf:object "Leipäsuo" ;
     rdf:predicate ps:place_captured_municipality ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_rank_1_reification_source a rdf:Statement ;
-    ns1:source "Talvisodan kortisto" ;
+    dct:source "Talvisodan kortisto" ;
     rdf:object "siv" ;
     rdf:predicate ps:rank ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_residence_place_1_reification_source a rdf:Statement ;
-    ns1:source "mikrofilmi" ;
+    dct:source "mikrofilmi" ;
     rdf:object "Hämeenlinna" ;
     rdf:predicate ps:residence_place ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_time_captured_1_reification_source a rdf:Statement ;
-    ns1:source "Talvisodan kortisto" ;
+    dct:source "Talvisodan kortisto" ;
     rdf:object "1939-12-28"^^xsd:date ;
     rdf:predicate ps:time_captured ;
     rdf:subject p:prisoner_2 .
 
-p:prisoner_1 a ps:PrisonerOfWar ;
+p:prisoner_1 a ps:PrisonerRecord ;
     bioc:has_occupation "kaavaaja" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
@@ -227,7 +227,6 @@ p:prisoner_1 a ps:PrisonerOfWar ;
     ps:karelian_archive_documents "kpk" ;
     ps:marital_status "naimaton" ;
     ps:memoirs "Cinderella" ;
-    ps:military_record "kantakortti" ;
     ps:municipality_of_death "Lohjan kunta" ;
     ps:original_name "Testi Testaaja" ;
     ps:other_information "Leningradin radiossa 01.08.1944",
@@ -255,7 +254,7 @@ p:prisoner_1 a ps:PrisonerOfWar ;
     foaf:familyName "Testi" ;
     foaf:givenName "Testaaja" .
 
-p:prisoner_2 a ps:PrisonerOfWar ;
+p:prisoner_2 a ps:PrisonerRecord ;
     bioc:has_occupation "posteljooni",
         "sekatyömies" ;
     ps:amount_children "2" ;
@@ -288,7 +287,6 @@ p:prisoner_2 a ps:PrisonerOfWar ;
     ps:marital_status "naimaton",
         "naimisissa" ;
     ps:memoirs "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150; kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249" ;
-    ps:military_record "Z" ;
     ps:original_name "Harri Hankala" ;
     ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
         "kadonnut, julistettu virallisesti kuolleeksi." ;

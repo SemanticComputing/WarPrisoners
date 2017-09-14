@@ -64,31 +64,20 @@ class TestRDFMapper(unittest.TestCase):
     def test_read_value_with_source(self):
         mapper = RDFMapper({}, '')
 
-        assert mapper.read_value_with_source('Some text') == ('Some text', [])
-        assert mapper.read_value_with_source('Some text (source A)') == ('Some text', ['source A'])
+        assert mapper.read_value_with_source('Some text') == ('Some text', [], '')
+        assert mapper.read_value_with_source('Some text (source A)') == ('Some text', ['source A'], '')
         assert mapper.read_value_with_source('Some text (source A, source B)') == ('Some text',
-                                                                                   ['source A', 'source B'])
+                                                                                   ['source A', 'source B'], '')
 
     def test_read_semicolon_separated(self):
         mapper = RDFMapper({}, '')
 
-        assert mapper.read_semicolon_separated('Some text') == ('Some text', [], None, None)
-        assert mapper.read_semicolon_separated('Source: Value') == ('Value', ['Source'], None, None)
-        assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'], None, None)
-        assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [], None, None)
+        assert mapper.read_semicolon_separated('Some text') == ('Some text', [], None, None, None)
+        assert mapper.read_semicolon_separated('Source: Value') == ('Value', ['Source'], None, None, None)
+        assert mapper.read_semicolon_separated('Source1, Source2: Value') == ('Value', ['Source1', 'Source2'], None, None, None)
+        assert mapper.read_semicolon_separated('http://example.com/') == ('http://example.com/', [], None, None, None)
 
-        assert mapper.read_semicolon_separated('54 13.10.1997-xx.11.1997') == ('54', [], datetime.date(1997, 10, 13), 'xx.11.1997')
-
-    def test_read_csv_simple(self):
-        test_csv = '''col1  col2    col3
-        1   2   3
-        4   5   6
-        7   8   9
-        '''
-
-        mapper = RDFMapper({}, '')
-        mapper.read_csv(io.StringIO(test_csv))
-        assert len(mapper.table) == 3
+        assert mapper.read_semicolon_separated('54 13.10.1997-xx.11.1997') == ('54', [], datetime.date(1997, 10, 13), 'xx.11.1997', None)
 
     def test_read_csv_simple_2(self):
         mapper = RDFMapper({}, '')
@@ -96,7 +85,7 @@ class TestRDFMapper(unittest.TestCase):
         assert len(mapper.table) == 2
 
     def test_mapping_field_contents(self):
-        instance_class = URIRef('http://ldf.fi/schema/warsa/prisoners/PrisonerOfWar')
+        instance_class = URIRef('http://ldf.fi/schema/warsa/prisoners/PrisonerRecord')
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data.csv')

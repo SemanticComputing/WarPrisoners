@@ -18,6 +18,9 @@ python linker.py ranks data/new/prisoners.ttl data/new/rank_links.ttl --endpoint
 # TODO: Link camps
 # TODO: Link places using Arpa-linker
 
+# Add testing triple:
+echo -e '\n<http://ldf.fi/warsa/prisoners/prisoner_858> <http://www.cidoc-crm.org/cidoc-crm/P70_documents> <http://ldf.fi/warsa/actors/person_p753249> .\n' >> data/new/prisoners.ttl
+
 cat data/new/prisoners.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl > data/new/prisoners_full.ttl
 rapper -i turtle data/new/prisoners_full.ttl -o turtle > data/new/prisoners_final.ttl
 
