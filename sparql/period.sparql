@@ -1,12 +1,13 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX wps: <http://ldf.fi/schema/warsa/prisoners/>
+PREFIX wsc: <http://ldf.fi/schema/warsa/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 construct {
   ?sub <http://ldf.fi/schema/warsa/events/related_period> ?war .
 } {
   {
-    ?sub a wps:PrisonerOfWar .
+    ?sub a wsc:PrisonerRecord .
     ?sub wps:time_captured ?date .
     BIND(xsd:date(?date) AS ?dd)
     FILTER(BOUND(?dd))
@@ -14,7 +15,7 @@ construct {
   }
   UNION
   {
-    ?sub a wps:PrisonerOfWar .
+    ?sub a wsc:PrisonerRecord .
     OPTIONAL {
       ?sub wps:time_captured ?date .
       BIND(xsd:date(?date) AS ?dd)
