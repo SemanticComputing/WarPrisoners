@@ -13,4 +13,5 @@ BIOC = Namespace('http://ldf.fi/schema/bioc/')
 
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
+WARSA_NS = Namespace('http://ldf.fi/schema/warsa/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')

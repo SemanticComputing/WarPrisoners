@@ -289,7 +289,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     if args.mode == "PRISONERS":
-        mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
+        mapper = RDFMapper(PRISONER_MAPPING, WARSA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
         mapper.read_csv(args.input)
 
         mapper.process_rows()
@@ -301,7 +301,7 @@ if __name__ == "__main__":
         mapper.read_csv(args.input, sep='\t')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              SCHEMA_NS.PrisonCamp)
+                              WARSA_NS.PrisonCamp)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
     elif args.mode == "HOSPITALS":
@@ -309,6 +309,6 @@ if __name__ == "__main__":
         mapper.read_csv(args.input, sep='\t')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              SCHEMA_NS.Hospital)
+                              WARSA_NS.Hospital)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
