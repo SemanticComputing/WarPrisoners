@@ -120,6 +120,7 @@ PRISONER_MAPPING = {
     'selvitys vangiksi jäämisestä':
         {
             'uri': SCHEMA_NS.explanation,
+            'value_separator': ';',
             'name_en': 'Description of capturing',
             'name_fi': 'Selvitys vangiksi jäämisestä'
         },
@@ -183,6 +184,7 @@ PRISONER_MAPPING = {
     'valokuva':
         {
             'uri': SCHEMA_NS.photograph,
+            'value_separator': ';',
             'name_fi': 'Valokuva',
             'name_en': 'Photograph'
         },
@@ -239,6 +241,7 @@ PRISONER_MAPPING = {
     'Jatkosodan VEN henkilömapit, kuolleet F 465':
         {
             'uri': SCHEMA_NS.continuation_war_russian_card_file_F_465,
+            'value_separator': ';',
             'name_en': 'Continuation War russian card file F 465',
             'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet F 465'
         },
@@ -278,6 +281,7 @@ PRISONER_MAPPING = {
     'muistelmat, lehtijutut, tietokirjat, tutkimukset, Kansa taisteli-lehti, näyttelyt':
         {
             'uri': SCHEMA_NS.memoirs,
+            'value_separator': ';',
             'name_en': 'Memoirs',
             'name_fi': 'Muistelmat ja lehtijutut'
         },
