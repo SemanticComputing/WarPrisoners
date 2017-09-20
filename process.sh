@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 command -v s-put >/dev/null 2>&1 || { echo >&2 "s-put is not available, aborting"; exit 1; }
+command -v rapper >/dev/null 2>&1 || { echo >&2 "rapper is not available, aborting"; exit 1; }
 
 echo "Converting to csv" &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/prisoners.xls --outdir data &&
@@ -41,6 +42,8 @@ echo "Linking people" &&
 cat data/new/prisoners.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl > data/new/prisoners_temp.ttl &&
 python linker.py persons data/new/prisoners_temp.ttl data/new/persons_linked.ttl &&
 rm data/new/prisoners_temp.ttl &&
+
+sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' data/new/persons_linked.ttl > data/new/person_backlinks.ttl &&
 
 # TODO: Link camps
 # TODO: Link places using Arpa-linker
