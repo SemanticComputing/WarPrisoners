@@ -1,5 +1,5 @@
 #!/bin/bash
-PROG="python3 -m warsa-linkers.warsa_linkers.units"
+PROG="python3 -m warsa_linkers.units"
 GET_CANDIDATES="$PROG data/new/prisoners.ttl data/new/unit_candidates.ttl http://candidates/unit http://demo.seco.tkk.fi/arpa/warsa_actor_units --prop http://ldf.fi/schema/warsa/prisoners/unit -n -c -r 3 -w 3"
 JOIN="$PROG join data/new/unit_candidates.ttl data/new/unit_candidates_combined.ttl http://candidates/unit http://localhost:3030/warsa/sparql -n --prop http://candidates/unit"
 CAT_ARGS="data/new/prisoners.ttl data/new/periods.ttl data/new/unit_candidates_combined.ttl"
@@ -18,8 +18,6 @@ while getopts ":d" opt; do
             ;;
     esac
 done
-
-echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > data/new/periods.ttl
 
 if [ "$only_disambiguate" = true ]; then
     cat $CAT_ARGS > data/new/unit_all.ttl && $DISAMBIGUATE
