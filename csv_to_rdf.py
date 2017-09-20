@@ -10,13 +10,13 @@ import logging
 import re
 
 import pandas as pd
-from rdflib import URIRef, Graph, Literal
+from rdflib import URIRef, Graph, Literal, Namespace
 
-from converters import convert_int, convert_person_name, convert_dates
+from converters import convert_person_name, convert_dates
 from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
-from namespaces import *
+from namespaces import RDF, XSD, DC, FOAF, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS
 
 
 class RDFMapper:
@@ -311,4 +311,3 @@ if __name__ == "__main__":
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               WARSA_NS.Hospital)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
-
