@@ -18,15 +18,15 @@ sed -r -i 's/\/prisoners\/r\_/\/prisoners\/hospital_/g' data/new/camps2.ttl &&
 cat data/new/camps.ttl data/new/camps2.ttl > data/new/camps.ttl &&
 rm data/new/camps2.ttl &&
 
-python csv_to_rdf.py PRISONERS data/prisoners.csv --outdata=data/new/prisoners.ttl --outschema=data/new/schema.ttl &&
+python csv_to_rdf.py PRISONERS data/prisoners.csv --outdata=data/new/prisoners_plain.ttl --outschema=data/new/schema.ttl &&
 
 echo "Linking ranks" &&
 
-python linker.py ranks data/new/prisoners.ttl data/new/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
+python linker.py ranks data/new/prisoners_plain.ttl data/new/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
 
 echo "Linking units" &&
 
-cat data/new/prisoners.ttl data/new/rank_links.ttl > data/new/prisoners_temp.ttl &&
+cat data/new/prisoners_plain.ttl data/new/rank_links.ttl > data/new/prisoners_temp.ttl &&
 
 # Updated data needed for unit linking
 s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoners data/new/prisoners_temp.ttl &&
@@ -39,7 +39,7 @@ rm data/new/prisoners_temp.ttl &&
 
 echo "Linking people" &&
 
-cat data/new/prisoners.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl > data/new/prisoners_temp.ttl &&
+cat data/new/prisoners_plain.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl > data/new/prisoners_temp.ttl &&
 python linker.py persons data/new/prisoners_temp.ttl data/new/persons_linked.ttl &&
 rm data/new/prisoners_temp.ttl &&
 
@@ -48,10 +48,7 @@ sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/'
 # TODO: Link camps
 # TODO: Link places using Arpa-linker
 
-# Add testing triple:
-#echo -e '\n<http://ldf.fi/warsa/prisoners/prisoner_858> <http://www.cidoc-crm.org/cidoc-crm/P70_documents> <http://ldf.fi/warsa/actors/person_p753249> .\n' >> data/new/prisoners.ttl &&
-
 echo "Finishing" &&
 
-cat data/new/prisoners.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl data/new/persons_linked.ttl > data/new/prisoners_full.ttl &&
-rapper -i turtle data/new/prisoners_full.ttl -o turtle > data/new/prisoners_final.ttl
+cat data/new/prisoners_plain.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl data/new/persons_linked.ttl > data/new/prisoners_full.ttl &&
+rapper -i turtle data/new/prisoners_full.ttl -o turtle > data/new/prisoners.ttl
