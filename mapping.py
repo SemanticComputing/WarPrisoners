@@ -5,7 +5,7 @@ Mapping of CSV columns to RDF properties
 """
 
 from converters import convert_dates, strip_dash
-from namespaces import *
+from namespaces import SCHEMA_NS, BIOC
 
 # CSV column mapping. Person name and person index number is taken separately.
 
@@ -42,7 +42,7 @@ PRISONER_MAPPING = {
     'kuolinkunta, palanneet':
         {
             'uri': SCHEMA_NS.municipality_of_death,
-            'name_en': 'Municipality of Death',
+            'name_en': 'Municipality of death',
             'name_fi': 'Kuolinkunta'
         },
     'ammatti':
@@ -56,7 +56,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.marital_status,
             'name_fi': 'Siviilisääty',
-            'name_en': 'Marital Status',
+            'name_en': 'Marital status',
             'value_separator': '/'
         },
     'lasten lkm':
@@ -71,13 +71,13 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.rank,
             'name_fi': 'Sotilasarvo',
-            'name_en': 'Military Rank',
+            'name_en': 'Military rank',
             'value_separator': '/'
         },
     'joukko-osasto':
         {
             'uri': SCHEMA_NS.unit,
-            'name_en': 'Military Unit',
+            'name_en': 'Military unit',
             'name_fi': 'Joukko-osasto'
         },
     'katoamisaika':
@@ -85,43 +85,43 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.time_gone_missing,
             'converter': convert_dates,
             'value_separator': '/',
-            'name_en': 'Date captured',
-            'name_fi': 'Vangiksi jäämisen päivämäärä'
+            'name_en': 'Date of disappearance',
+            'name_fi': 'Katoamispäivä'
         },
     'vangiksi aika':
         {
             'uri': SCHEMA_NS.time_captured,
             'converter': convert_dates,
             'value_separator': '/',
-            'name_en': 'Date captured',
+            'name_en': 'Date of capture',
             'name_fi': 'Vangiksi jäämisen päivämäärä'
         },
     'vangiksi paikka, kunta':
         {
             'uri': SCHEMA_NS.place_captured_municipality,
             'value_separator': '/',
-            'name_en': 'Municipality where captured',
+            'name_en': 'Municipality of capture',
             'name_fi': 'Vangiksi jäämisen kunta'
         },
     'vangiksi paikka, kylä, kaupunginosa':
         {
             'uri': SCHEMA_NS.place_captured,
             'value_separator': '/',
-            'name_en': 'Place where captured',
+            'name_en': 'Place of capture',
             'name_fi': 'Vangiksi jäämisen paikka'
         },
     'vangiksi, taistelupaikka':
         {
             'uri': SCHEMA_NS.place_captured_battle,
             'value_separator': '/',
-            'name_en': 'Battle location where captured',
+            'name_en': 'Location of battle in which captured',
             'name_fi': 'Vangiksi jäämisen taistelupaikka'
         },
     'selvitys vangiksi jäämisestä':
         {
             'uri': SCHEMA_NS.explanation,
             'value_separator': ';',
-            'name_en': 'Description of capturing',
+            'name_en': 'Description of capture',
             'name_fi': 'Selvitys vangiksi jäämisestä'
         },
     'palannut':
@@ -129,7 +129,7 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.returned_date,
             'converter': convert_dates,
             'value_separator': '/',
-            'name_en': 'Date of returning',
+            'name_en': 'Date of return',
             'name_fi': 'Palaamisaika'
         },
     'kuollut':
@@ -151,7 +151,7 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.death_place,  # epämääräinen muotoilu
             'value_separator': '/',
             'name_en': 'Place of death',
-            'name_fi': 'kuolinpaikka'
+            'name_fi': 'Kuolinpaikka'
         },
     'hautauspaikka':
         {
@@ -223,7 +223,7 @@ PRISONER_MAPPING = {
     'suomenruotsalainen':  # TODO: Tulkitse äidinkieleksi
         {
             'uri': SCHEMA_NS.swedish_finn,
-            'name_en': 'Swedish finn',
+            'name_en': 'Swedish Finn',
             'name_fi': 'Suomenruotsalainen'
         },
     'Karagandan kortisto':
@@ -242,14 +242,14 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.continuation_war_russian_card_file_F_465,
             'value_separator': ';',
-            'name_en': 'Continuation War russian card file F 465',
-            'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet F 465'
+            'name_en': 'Continuation War Russian card file F 465',
+            'name_fi': 'Kuolleiden jatkosodan venäläiset kuulustelulomakkeet F 465'
         },
     'Jatkosodan VEN henkilömapit, vangitut ja internoidut 461/p':
         {
             'uri': SCHEMA_NS.continuation_war_russian_card_file_461p,
-            'name_en': 'Continuation War russian card file 461/p',
-            'name_fi': 'Kuolleiden Jatkosodan venäläiset kuulustelulomakkeet 461/p'
+            'name_en': 'Continuation War Russian card file 461/p',
+            'name_fi': 'Kuolleiden jatkosodan venäläiset kuulustelulomakkeet 461/p'
         },
     'Talvisodan kokoelma':
         {
