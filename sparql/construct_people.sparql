@@ -1,0 +1,30 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wsch: <http://ldf.fi/schema/warsa/>
+PREFIX wpsc: <http://ldf.fi/schema/warsa/prisoners/>
+PREFIX wpri: <http://ldf.fi/warsa/prisoners/>
+PREFIX wsou: <http://ldf.fi/schema/warsa/sources/>
+PREFIX wacs: <http://ldf.fi/schema/warsa/actors/>
+PREFIX wact: <http://ldf.fi/warsa/actors/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
+CONSTRUCT {
+  ?id a wsch:Person ;
+    crm:P70i_is_documented_in ?sub ;
+    skos:prefLabel ?label ;
+    foaf:firstName ?fn ;
+    dct:source wsou:source_21 ;
+    foaf:familyName ?sn .
+}
+{
+  ?sub a wsch:PrisonerRecord ;
+    foaf:givenName ?fn ;
+    foaf:familyName ?sn .
+  FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
+  BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
+  BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id)
+  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+}

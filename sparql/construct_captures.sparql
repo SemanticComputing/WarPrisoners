@@ -1,0 +1,38 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wsch: <http://ldf.fi/schema/warsa/>
+PREFIX wpsc: <http://ldf.fi/schema/warsa/prisoners/>
+PREFIX wpri: <http://ldf.fi/warsa/prisoners/>
+PREFIX wsou: <http://ldf.fi/schema/warsa/sources/>
+PREFIX wacs: <http://ldf.fi/schema/warsa/actors/>
+PREFIX wact: <http://ldf.fi/warsa/actors/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
+CONSTRUCT {
+  ?capture a wsch:Capture ;
+    crm:P11_had_participant ?id ;
+    crm:P4_has_time-span ?cts ;
+    crm:P7_took_place_at ?cp ;
+    dct:source wsou:source_21 ;
+    skos:prefLabel ?cl_fi, ?cl_en .
+}
+{
+  ?sub a wsch:PrisonerRecord ;
+    foaf:givenName ?fn ;
+    foaf:familyName ?sn ;
+    crm:P70_documents ?id .
+  BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)
+  BIND(URI(CONCAT("http://ldf.fi/warsa/events/capture_", ?no)) AS ?capture)
+  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(STRLANG(CONCAT(?label, " jäi vangiksi"), "fi") AS ?cl_fi)
+  BIND(STRLANG(CONCAT(?label, " was taken prisoner"), "en") AS ?cl_en)
+  OPTIONAL {
+    ?sub wpsc:time_captured ?cd_ .
+    BIND(xsd:date(?cd_) AS ?cd)
+    FILTER(BOUND(?cd))
+    BIND(URI(CONCAT("http://ldf.fi/warsa/events/times/time_", STR(?cd), "-", STR(?cd))) AS ?cts)
+  }
+}
