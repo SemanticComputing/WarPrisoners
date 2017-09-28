@@ -30,7 +30,8 @@ class RDFMapper:
         self.table = None
         self.data = Graph()
         self.schema = Graph()
-        self.errors = pd.DataFrame(columns=['nro', 'sarake', 'virhe', 'arvo'])
+        # self.errors = pd.DataFrame(columns=['nro', 'sarake', 'virhe', 'arvo'])
+        self.errors = []
 
         logging.basicConfig(filename='prisoners.log',
                             filemode='a',
@@ -70,13 +71,12 @@ class RDFMapper:
 
         error = None
         if ': ' in orig_value:
-            try:
-                (sources, value) = orig_value.split(': ')
-            except ValueError as err:
-                self.log.error('Semicolon separated: %s caused error "%s"' % (orig_value, err))
-                error = 'Unable to get source (multiple ": " in value)'
-                (sources, value) = ('', orig_value)
+            (sources, value) = orig_value.split(': ', maxsplit=1)
         else:
+            (sources, value) = ('', orig_value)
+
+        if ': ' in value:
+            error = 'Mahdollinen virhe kentän arvossa, ": " löytyy lähdeviitteen jälkeen'
             (sources, value) = ('', orig_value)
 
         datematch = re.search(r'(.+) ([0-9xX.]{5,})-([0-9xX.]{5,})', value)
@@ -106,14 +106,16 @@ class RDFMapper:
         :return:
         """
         reification_template = '{entity}_{prop}_{id}_reification_{reason}'
-
         row_rdf = Graph()
+        row_errors = []
 
         # Handle first and last names
 
-        (firstnames, lastname, fullname) = convert_person_name(row[0])
+        (firstnames, lastname, fullname, error) = convert_person_name(row[0])
 
         original_name = row[0].strip()
+        if error:
+            row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])  # TODO: lisää nimet
 
         if firstnames:
             row_rdf.add((entity_uri, FOAF.givenName, Literal(firstnames)))
@@ -128,9 +130,7 @@ class RDFMapper:
         for column_name in self.mapping:
 
             mapping = self.mapping[column_name]
-
             value = row[column_name]
-
             separator = mapping.get('value_separator')
 
             # Make an iterable of all values in this field
@@ -149,23 +149,25 @@ class RDFMapper:
                 date_begin = None
                 date_end = None
                 trash = None
-                error = None
+                sep_error = None
+                conv_error = None
                 original_value = value
 
                 if separator == '/':
                     value, sources, trash = self.read_value_with_source(value)
                 elif separator == ';':
-                    value, sources, date_begin, date_end, error = self.read_semicolon_separated(value)
+                    value, sources, date_begin, date_end, sep_error = self.read_semicolon_separated(value)
 
                 if trash:
-                    error = 'Extra content given after source: %s' % original_value
-                if error:
-                    error_row = pd.DataFrame(data=[[prisoner_number, column_name, error, original_value]],
-                                             columns=self.errors.columns)
-                    self.errors = self.errors.append(error_row)
+                    sep_error = 'Ylimääräisiä merkintöjä suluissa annetun lähteen jälkeen: %s' % original_value
+                if sep_error:
+                    row_errors.append([prisoner_number, fullname, column_name, sep_error, original_value])
 
                 converter = mapping.get('converter')
-                value = converter(value) if converter else value
+                value, conv_error = converter(value) if converter else (value, None)
+
+                if conv_error and not sep_error:
+                    row_errors.append([prisoner_number, fullname, column_name, conv_error, original_value])
 
                 if value:
                     liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
@@ -205,11 +207,16 @@ class RDFMapper:
                         row_rdf.add((reification_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
                         row_rdf.add((reification_uri, SCHEMA_NS.date_end, Literal(date_end)))
 
-            if row_rdf:
-                row_rdf.add((entity_uri, RDF.type, self.instance_class))
-            else:
-                # Don't create class instance if there is no data about it
-                logging.debug('No data found for {uri}'.format(uri=entity_uri))
+        if row_rdf:
+            row_rdf.add((entity_uri, RDF.type, self.instance_class))
+        else:
+            # Don't create class instance if there is no data about it
+            logging.debug('No data found for {uri}'.format(uri=entity_uri))
+            row_errors.append([prisoner_number, fullname, '', 'Ei tietoa henkilöstä', ''])
+
+        # self.errors = self.errors.append(pd.DataFrame(data=row_errors, columns=self.errors.columns))
+        for error in row_errors:
+            self.errors.append(error)
 
         return row_rdf
 
@@ -281,7 +288,8 @@ class RDFMapper:
             if 'name_en' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
 
-        self.errors.to_csv('errors.csv', ',', index=False)
+        error_df = pd.DataFrame(columns=['nro', 'nimi', 'sarake', 'virhe', 'arvo'], data=self.errors)
+        error_df.to_csv('errors.csv', ',', index=False)
 
 
 if __name__ == "__main__":
