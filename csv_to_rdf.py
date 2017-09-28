@@ -30,6 +30,8 @@ class RDFMapper:
         self.table = None
         self.data = Graph()
         self.schema = Graph()
+        self.errors = pd.DataFrame(columns=['nro', 'sarake', 'virhe', 'arvo'])
+
         logging.basicConfig(filename='prisoners.log',
                             filemode='a',
                             level=getattr(logging, loglevel),
@@ -58,7 +60,7 @@ class RDFMapper:
 
         return value.strip(), sources or [], trash or ''
 
-    def read_semicolon_separated(self, orig_value):
+    def read_semicolon_separated(self, orig_value: str):
         """
         Read semicolon separated values (with possible sources and date range)
 
@@ -72,7 +74,7 @@ class RDFMapper:
                 (sources, value) = orig_value.split(': ')
             except ValueError as err:
                 self.log.error('Semicolon separated: %s caused error "%s"' % (orig_value, err))
-                error = err
+                error = 'Unable to get source (multiple ": " in value)'
                 (sources, value) = ('', orig_value)
         else:
             (sources, value) = ('', orig_value)
@@ -95,7 +97,7 @@ class RDFMapper:
 
         return value, sources or [], date_begin, date_end, error
 
-    def map_row_to_rdf(self, entity_uri, row):
+    def map_row_to_rdf(self, entity_uri, row, prisoner_number=None):
         """
         Map a single row to RDF.
 
@@ -148,13 +150,19 @@ class RDFMapper:
                 date_end = None
                 trash = None
                 error = None
+                original_value = value
 
                 if separator == '/':
                     value, sources, trash = self.read_value_with_source(value)
                 elif separator == ';':
                     value, sources, date_begin, date_end, error = self.read_semicolon_separated(value)
 
-                # TODO: Collect rows with trash or error to CSV
+                if trash:
+                    error = 'Extra content given after source: %s' % original_value
+                if error:
+                    error_row = pd.DataFrame(data=[[prisoner_number, column_name, error, original_value]],
+                                             columns=self.errors.columns)
+                    self.errors = self.errors.append(error_row)
 
                 converter = mapping.get('converter')
                 value = converter(value) if converter else value
@@ -262,7 +270,7 @@ class RDFMapper:
         for index in self.table.index:
             prisoner_number = self.table.ix[index][0]
             prisoner_uri = DATA_NS['prisoner_' + str(prisoner_number)]
-            row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index][1:])
+            row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index][1:], prisoner_number=prisoner_number)
             if row_rdf:
                 self.data += row_rdf
 
@@ -272,6 +280,8 @@ class RDFMapper:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
             if 'name_en' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
+
+        self.errors.to_csv('errors.csv', ',', index=False)
 
 
 if __name__ == "__main__":
