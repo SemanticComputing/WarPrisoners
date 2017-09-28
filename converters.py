@@ -17,24 +17,6 @@ from namespaces import *
 log = logging.getLogger(__name__)
 
 
-def convert_int(raw_value: str):
-    """
-    Convert string value to integer if possible, if not, return original value
-
-    :param raw_value: original string value
-    :return: converted or original value
-    """
-    if not raw_value:
-        return raw_value
-    try:
-        value = int(raw_value)  # This cannot be directly converted on the DataFrame because of missing values.
-        log.debug('Converted int: %s' % raw_value)
-        return value
-    except (ValueError, TypeError):
-        log.warning('Invalid value for int conversion: %s' % raw_value)
-        return raw_value
-
-
 def convert_dates(raw_date: str):
     """
     Convert date string to iso8601 date

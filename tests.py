@@ -7,32 +7,19 @@ To run all tests (including doctests) you can use for example nose: nosetests --
 """
 import datetime
 import io
-from collections import defaultdict
 import unittest
 from pprint import pprint
 
-from approvaltests.Approvals import verify
 from rdflib import Graph, RDF, URIRef
-from rdflib import Literal
-from rdflib import XSD
 from rdflib.compare import isomorphic, graph_diff
 
 import converters
 from csv_to_rdf import RDFMapper
-from mapping import PRISONER_MAPPING, DATA_NS, DC
+from mapping import PRISONER_MAPPING
+from namespaces import DATA_NS, DC
 
 
 class TestConverters(unittest.TestCase):
-
-    def test_convert_int(self):
-        self.assertIsInstance(converters.convert_int('1234'), int)
-
-        self.assertEqual(converters.convert_int('5'), 5)
-        self.assertEqual(converters.convert_int('0'), 0)
-        self.assertEqual(converters.convert_int('-5'), -5)
-
-        self.assertEqual(converters.convert_int(''), '')
-        self.assertEqual(converters.convert_int('foobar'), 'foobar')
 
     def test_convert_dates(self):
         self.assertEqual(converters.convert_dates('24.12.2016'), datetime.date(2016, 12, 24))
