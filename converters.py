@@ -82,7 +82,10 @@ def convert_person_name(raw_name: str):
         log.warning('New name %s differs from %s' % (original_style_name, raw_name))
         error = 'Tulkittu nimi [%s] poikkeaa alkuperäisestä' % original_style_name
 
+    import pprint
+    pprint.pprint([firstnames, lastname, fullname, error])
     return firstnames, lastname, fullname, error
+
 
 def strip_dash(raw_value: str):
     return ('' if raw_value.strip() == '-' else raw_value), None

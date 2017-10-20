@@ -83,10 +83,10 @@ class RDFMapper:
         (value, date_begin, date_end) = datematch.groups() if datematch else (value, None, None)
 
         if date_begin:
-            date_begin = convert_dates(date_begin)
+            date_begin = convert_dates(date_begin)[0]  # TODO: Take errors
 
         if date_end:
-            date_end = convert_dates(date_end)
+            date_end = convert_dates(date_end)[0]  # TODO: Take errors
 
         if sources:
             self.log.debug('Found sources: %s' % sources)
@@ -237,7 +237,7 @@ class RDFMapper:
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
         logging.info('Read {num} rows from CSV'.format(num=len(self.table)))
         self.table.rename(columns={'Unnamed: 0': 'nro'}, inplace=True)
-        self.table = self.table[self.table.nro >= 0]  # Take out persons which don't have a number
+        self.table = self.table[self.table.nro >= 0]  # Take out persons which don't have a number  # TODO: Correct these to errors.csv
         logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
         self.log.info('Data read from CSV %s' % csv_input)
 

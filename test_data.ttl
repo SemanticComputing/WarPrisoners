@@ -48,6 +48,14 @@ p:prisoner_1_camps_and_hospitals_2_reification_order a rdf:Statement ;
     rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_1 .
 
+p:prisoner_1_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
+    dct:source "0901 2008 1990 - 2008",
+        "465",
+        "Mikrofilmillä IX ? 461/?" ;
+    rdf:object "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
+    rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
+    rdf:subject p:prisoner_1 .
+
 p:prisoner_2_amount_children_1_reification_source a rdf:Statement ;
     dct:source "VEN 195" ;
     rdf:object "2" ;
@@ -129,6 +137,14 @@ p:prisoner_2_camps_and_hospitals_5_reification_order a rdf:Statement ;
     ps:order 50 ;
     rdf:object "158" ;
     rdf:predicate ps:camps_and_hospitals ;
+    rdf:subject p:prisoner_2 .
+
+p:prisoner_2_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
+    dct:source "0901 2008 2338-242",
+        "465",
+        "Mikrofilmillä IX Ф 461/п" ;
+    rdf:object "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
+    rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
@@ -216,7 +232,7 @@ p:prisoner_1 a ps:PrisonerRecord ;
         "270" ;
     ps:cause_of_death "aivokooma" ;
     ps:continuation_war_russian_card_file_461p "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
-    ps:continuation_war_russian_card_file_F_465 "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008: kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
+    ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
     ps:death_date "1944-06-24"^^xsd:date,
         "xx.xx.xxxx" ;
     ps:death_place "99" ;
@@ -271,7 +287,7 @@ p:prisoner_2 a ps:PrisonerRecord ;
         "Vologda" ;
     ps:cause_of_death "joku syy" ;
     ps:continuation_war_russian_card_file_461p "VEN 420 360" ;
-    ps:continuation_war_russian_card_file_F_465 "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242: kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943;" ;
+    ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
     ps:death_date "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
@@ -286,7 +302,8 @@ p:prisoner_2 a ps:PrisonerRecord ;
     ps:karelian_archive_documents "useita dokumentteja" ;
     ps:marital_status "naimaton",
         "naimisissa" ;
-    ps:memoirs "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150; kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249" ;
+    ps:memoirs "kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249",
+        "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150" ;
     ps:original_name "Harri Hankala" ;
     ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
         "kadonnut, julistettu virallisesti kuolleeksi." ;
