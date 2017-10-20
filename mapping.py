@@ -271,7 +271,7 @@ PRISONER_MAPPING = {
             'name_en': 'Flyer',
             'name_fi': 'Lentolehtinen'
         },
-    'Sotilaan Ääni-lehti, Kansan Valta-lehti, Kansan  Mies-lehti':
+    'Sotilaan Ääni -lehti, Kansan Valta -lehti, Kansan  Mies -lehti':
         {
             'uri': SCHEMA_NS.propaganda_magazine,
             'value_separator': ';',
