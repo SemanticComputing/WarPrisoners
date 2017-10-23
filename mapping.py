@@ -184,6 +184,13 @@ PRISONER_MAPPING = {
             'converter': convert_dates,
             'value_separator': '/'
         },
+    'kuolleeksi julistaminen':
+        {
+            'uri': SCHEMA_NS.declared_death,
+            'converter': convert_dates,
+            'name_en': 'Declared death',
+            'name_fi': 'Kuolleeksi julistaminen'
+        },
     'valokuva':
         {
             'uri': SCHEMA_NS.photograph,

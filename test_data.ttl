@@ -235,6 +235,7 @@ p:prisoner_2 a ps:PrisonerRecord ;
         "2001-01-01"^^xsd:date ;
     ps:death_place "1170",
         "1770" ;
+    ps:declared_death "2005-01-11"^^xsd:date ;
     ps:explanation "katosi lähettitehtävissä Räisälän Unnunkoskella (T 26073/33)" ;
     ps:flyer "allekirjoitus lentolehtisessä № 314, 7 allekirjoittajaa",
         "lentolehtisessä 17.08.1941" ;
