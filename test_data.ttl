@@ -190,6 +190,7 @@ p:prisoner_1 a ps:PrisonerRecord ;
         p:prisoner_1_located_in_20 ;
     ps:marital_status "naimaton" ;
     ps:memoirs "Cinderella" ;
+    ps:mother_tongue "http://ldf.fi/schema/warsa/prisoners/finnish" ;
     ps:municipality_of_death "Lohjan kunta" ;
     ps:original_name "Testi Testaaja" ;
     ps:other_information "Leningradin radiossa 01.08.1944",
@@ -205,7 +206,6 @@ p:prisoner_1 a ps:PrisonerRecord ;
     ps:residence_place "Karkkila" ;
     ps:returned_date "1944-11-22"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
-    ps:swedish_finn "?" ;
     ps:time_captured "1944-07-06"^^xsd:date ;
     ps:time_gone_missing "4.7.1944  (KA T 19472/4 [3]" ;
     ps:unit "1./Er.P 25" ;
@@ -251,6 +251,7 @@ p:prisoner_2 a ps:PrisonerRecord ;
         "naimisissa" ;
     ps:memoirs "kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249",
         "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150" ;
+    ps:mother_tongue "http://ldf.fi/schema/warsa/prisoners/swedish" ;
     ps:original_name "Harri Hankala" ;
     ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
         "kadonnut, julistettu virallisesti kuolleeksi." ;
@@ -270,7 +271,6 @@ p:prisoner_2 a ps:PrisonerRecord ;
         "1944-10-10"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 115 53",
         "VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
-    ps:swedish_finn "X" ;
     ps:time_captured "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     ps:time_gone_missing "1944-06-19"^^xsd:date ;

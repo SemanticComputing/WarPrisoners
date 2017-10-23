@@ -91,3 +91,21 @@ def convert_person_name(raw_name: str):
 def strip_dash(raw_value: str):
     return ('' if raw_value.strip() == '-' else raw_value), None
 
+
+def convert_swedish(swedish: str):
+    """
+    Convert boolean value for swedish speaking person to mother tongue.
+    """
+    mother_tongue = SCHEMA_NS.finnish
+    error = None
+
+    if not swedish:
+        return mother_tongue, error
+
+    if swedish.upper() == 'X':
+        mother_tongue = SCHEMA_NS.swedish
+    else:
+        log.warning('Unclear value for finnish swedish %s' % swedish)
+        error = 'Äidinkieltä ei osattu tulkita suomenruotsalainen kentän arvosta: %s' % swedish
+
+    return mother_tongue, error

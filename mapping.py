@@ -4,7 +4,7 @@
 Mapping of CSV columns to RDF properties
 """
 
-from converters import convert_dates, strip_dash
+from converters import convert_dates, strip_dash, convert_swedish
 from namespaces import SCHEMA_NS, BIOC
 
 # CSV column mapping. Person name and person index number is taken separately.
@@ -225,9 +225,10 @@ PRISONER_MAPPING = {
         },
     'suomenruotsalainen':  # TODO: Tulkitse äidinkieleksi
         {
-            'uri': SCHEMA_NS.swedish_finn,
-            'name_en': 'Swedish Finn',
-            'name_fi': 'Suomenruotsalainen'
+            'uri': SCHEMA_NS.mother_tongue,
+            'converter': convert_swedish,
+            'name_en': 'Mother tongue',
+            'name_fi': 'Äidinkieli'
         },
     'Karagandan kortisto':
         {
