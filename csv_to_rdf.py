@@ -106,6 +106,7 @@ class RDFMapper:
         :return:
         """
         reification_template = '{entity}_{prop}_{id}_reification_{reason}'
+        resource_template = '{entity}_{prop}_{id}'
         row_rdf = Graph()
         row_errors = []
 
@@ -170,19 +171,25 @@ class RDFMapper:
                     row_errors.append([prisoner_number, fullname, column_name, conv_error, original_value])
 
                 if value:
-                    liter = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
-                    row_rdf.add((entity_uri, mapping['uri'], liter))
+                    rdf_value = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
 
-                    if mapping.get('reify_order_number'):
-                        reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
-                                                                              prop=mapping['uri'].split('/')[-1],
-                                                                              id=index,
-                                                                              reason='order')]
-                        row_rdf.add((reification_uri, RDF.subject, entity_uri))
-                        row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
-                        row_rdf.add((reification_uri, RDF.object, liter))
-                        row_rdf.add((reification_uri, RDF.type, RDF.Statement))
-                        row_rdf.add((reification_uri, SCHEMA_NS.order, Literal(index * 10)))
+                    if mapping.get('create_resource'):
+                        resource_uri = DATA_NS[resource_template.format(entity=entity_uri.split('/')[-1],
+                                                                        prop=mapping['uri'].split('/')[-1],
+                                                                        id=index * 10)]
+                        row_rdf.add((resource_uri, RDF.type, mapping['create_resource']))
+                        row_rdf.add((resource_uri, mapping['capture_value'], rdf_value))
+
+                        if mapping.get('capture_order_number'):
+                            row_rdf.add((resource_uri, SCHEMA_NS.order, Literal(index * 10)))
+
+                        if mapping.get('capture_dates') and (date_begin or date_end):
+                            row_rdf.add((resource_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
+                            row_rdf.add((resource_uri, SCHEMA_NS.date_end, Literal(date_end)))
+
+                        rdf_value = resource_uri
+
+                    row_rdf.add((entity_uri, mapping['uri'], rdf_value))
 
                     for source in sources:
                         reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
@@ -191,21 +198,9 @@ class RDFMapper:
                                                                               reason='source')]
                         row_rdf.add((reification_uri, RDF.subject, entity_uri))
                         row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
-                        row_rdf.add((reification_uri, RDF.object, liter))
+                        row_rdf.add((reification_uri, RDF.object, rdf_value))
                         row_rdf.add((reification_uri, RDF.type, RDF.Statement))
                         row_rdf.add((reification_uri, DC.source, Literal(source)))
-
-                    if date_begin or date_end:
-                        reification_uri = DATA_NS[reification_template.format(entity=entity_uri.split('/')[-1],
-                                                                              prop=mapping['uri'].split('/')[-1],
-                                                                              id=index,
-                                                                              reason='daterange')]
-                        row_rdf.add((reification_uri, RDF.subject, entity_uri))
-                        row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
-                        row_rdf.add((reification_uri, RDF.object, liter))
-                        row_rdf.add((reification_uri, RDF.type, RDF.Statement))
-                        row_rdf.add((reification_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
-                        row_rdf.add((reification_uri, SCHEMA_NS.date_end, Literal(date_end)))
 
         if row_rdf:
             row_rdf.add((entity_uri, RDF.type, self.instance_class))

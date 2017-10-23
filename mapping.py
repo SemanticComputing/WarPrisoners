@@ -162,9 +162,12 @@ PRISONER_MAPPING = {
         },
     'vankeuspaikat':
         {
-            'uri': SCHEMA_NS.camps_and_hospitals,
+            'uri': SCHEMA_NS.located_in,
             'value_separator': ';',
-            'reify_order_number': True,
+            'create_resource': SCHEMA_NS.Located_in,
+            'capture_value': SCHEMA_NS.place,
+            'capture_order_number': True,
+            'capture_dates': True,
             'name_en': 'Captivity locations',
             'name_fi': 'Vankeuspaikat'
         },

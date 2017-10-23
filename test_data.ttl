@@ -16,38 +16,6 @@ p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_1 .
 
-p:prisoner_1_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
-    ps:date_begin "1944-07-14"^^xsd:date ;
-    ps:date_end "xx.xx.1944" ;
-    rdf:object "135" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_camps_and_hospitals_0_reification_order a rdf:Statement ;
-    ps:order 0 ;
-    rdf:object "135" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_camps_and_hospitals_1_reification_order a rdf:Statement ;
-    ps:order 10 ;
-    rdf:object "270" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_camps_and_hospitals_2_reification_daterange a rdf:Statement ;
-    ps:date_begin "1944-10-17"^^xsd:date ;
-    ps:date_end "1944-11-20"^^xsd:date ;
-    rdf:object "158" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_camps_and_hospitals_2_reification_order a rdf:Statement ;
-    ps:order 20 ;
-    rdf:object "158" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_1 .
-
 p:prisoner_1_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
     dct:source "0901 2008 1990 - 2008",
         "465",
@@ -66,77 +34,6 @@ p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
     dct:source "Seppälä Alpo" ;
     rdf:object "haudattu Shumihaan." ;
     rdf:predicate ps:burial_place ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_0_reification_daterange a rdf:Statement ;
-    ps:date_begin "1941-07-31"^^xsd:date ;
-    ps:date_end "xx.xx.1941" ;
-    rdf:object "Vologda" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_0_reification_order a rdf:Statement ;
-    ps:order 0 ;
-    rdf:object "Vologda" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_1_reification_daterange a rdf:Statement ;
-    ps:date_begin "1941-09-15"^^xsd:date ;
-    ps:date_end "1942-05-25"^^xsd:date ;
-    rdf:object "99" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_1_reification_order a rdf:Statement ;
-    ps:order 10 ;
-    rdf:object "99" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_2_reification_order a rdf:Statement ;
-    ps:order 20 ;
-    rdf:object "100" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_3_reification_daterange a rdf:Statement ;
-    ps:date_begin "1942-06-05"^^xsd:date ;
-    ps:date_end "xx.xx.1942" ;
-    rdf:object "67" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_3_reification_order a rdf:Statement ;
-    ps:order 30 ;
-    rdf:object "67" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_4_reification_daterange a rdf:Statement ;
-    ps:date_begin "1942-09-10"^^xsd:date ;
-    ps:date_end "xx.xx.xxxx" ;
-    rdf:object "84" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_4_reification_order a rdf:Statement ;
-    ps:order 40 ;
-    rdf:object "84" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_5_reification_daterange a rdf:Statement ;
-    ps:date_begin "1943-09-20"^^xsd:date ;
-    ps:date_end "1944-11-20"^^xsd:date ;
-    rdf:object "158" ;
-    rdf:predicate ps:camps_and_hospitals ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_camps_and_hospitals_5_reification_order a rdf:Statement ;
-    ps:order 50 ;
-    rdf:object "158" ;
-    rdf:predicate ps:camps_and_hospitals ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
@@ -221,15 +118,62 @@ p:prisoner_2_time_captured_1_reification_source a rdf:Statement ;
     rdf:predicate ps:time_captured ;
     rdf:subject p:prisoner_2 .
 
+p:prisoner_1_located_in_0 a ps:Located_in ;
+    ps:date_begin "1944-07-14"^^xsd:date ;
+    ps:date_end "xx.xx.1944" ;
+    ps:order 0 ;
+    ps:place "135" .
+
+p:prisoner_1_located_in_10 a ps:Located_in ;
+    ps:order 10 ;
+    ps:place "270" .
+
+p:prisoner_1_located_in_20 a ps:Located_in ;
+    ps:date_begin "1944-10-17"^^xsd:date ;
+    ps:date_end "1944-11-20"^^xsd:date ;
+    ps:order 20 ;
+    ps:place "158" .
+
+p:prisoner_2_located_in_0 a ps:Located_in ;
+    ps:date_begin "1941-07-31"^^xsd:date ;
+    ps:date_end "xx.xx.1941" ;
+    ps:order 0 ;
+    ps:place "Vologda" .
+
+p:prisoner_2_located_in_10 a ps:Located_in ;
+    ps:date_begin "1941-09-15"^^xsd:date ;
+    ps:date_end "1942-05-25"^^xsd:date ;
+    ps:order 10 ;
+    ps:place "99" .
+
+p:prisoner_2_located_in_20 a ps:Located_in ;
+    ps:order 20 ;
+    ps:place "100" .
+
+p:prisoner_2_located_in_30 a ps:Located_in ;
+    ps:date_begin "1942-06-05"^^xsd:date ;
+    ps:date_end "xx.xx.1942" ;
+    ps:order 30 ;
+    ps:place "67" .
+
+p:prisoner_2_located_in_40 a ps:Located_in ;
+    ps:date_begin "1942-09-10"^^xsd:date ;
+    ps:date_end "xx.xx.xxxx" ;
+    ps:order 40 ;
+    ps:place "84" .
+
+p:prisoner_2_located_in_50 a ps:Located_in ;
+    ps:date_begin "1943-09-20"^^xsd:date ;
+    ps:date_end "1944-11-20"^^xsd:date ;
+    ps:order 50 ;
+    ps:place "158" .
+
 p:prisoner_1 a ps:PrisonerRecord ;
     bioc:has_occupation "kaavaaja" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
     ps:birth_place "Karkkila" ;
     ps:burial_place "sotavankileiri  ? 58:n hautausmaa ????" ;
-    ps:camps_and_hospitals "135",
-        "158",
-        "270" ;
     ps:cause_of_death "aivokooma" ;
     ps:continuation_war_russian_card_file_461p "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
     ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
@@ -241,6 +185,9 @@ p:prisoner_1 a ps:PrisonerRecord ;
     ps:home_place "Karkkila" ;
     ps:karaganda_card_file "Karaganda 12" ;
     ps:karelian_archive_documents "kpk" ;
+    ps:located_in p:prisoner_1_located_in_0,
+        p:prisoner_1_located_in_10,
+        p:prisoner_1_located_in_20 ;
     ps:marital_status "naimaton" ;
     ps:memoirs "Cinderella" ;
     ps:municipality_of_death "Lohjan kunta" ;
@@ -279,12 +226,6 @@ p:prisoner_2 a ps:PrisonerRecord ;
     ps:birth_place "Juuka/Kiihtelysvaara" ;
     ps:burial_place "?? sotavankihautausmaa, hauta № 184",
         "haudattu Shumihaan." ;
-    ps:camps_and_hospitals "100",
-        "158",
-        "67",
-        "84",
-        "99",
-        "Vologda" ;
     ps:cause_of_death "joku syy" ;
     ps:continuation_war_russian_card_file_461p "VEN 420 360" ;
     ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
@@ -300,6 +241,12 @@ p:prisoner_2 a ps:PrisonerRecord ;
     ps:home_place "Lavia",
         "Tampere" ;
     ps:karelian_archive_documents "useita dokumentteja" ;
+    ps:located_in p:prisoner_2_located_in_0,
+        p:prisoner_2_located_in_10,
+        p:prisoner_2_located_in_20,
+        p:prisoner_2_located_in_30,
+        p:prisoner_2_located_in_40,
+        p:prisoner_2_located_in_50 ;
     ps:marital_status "naimaton",
         "naimisissa" ;
     ps:memoirs "kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249",

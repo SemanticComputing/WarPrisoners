@@ -35,9 +35,12 @@ def convert_dates(raw_date: str):
             date = datetime.datetime.strptime(str(raw_date).strip(), '%d.%m.%Y').date()
             log.debug('Converted date: %s  to  %s' % (raw_date, date))
         except ValueError:
-            log.warning('Invalid value for date conversion: %s' % raw_date)
             if raw_date[:2] != 'xx':
+                log.warning('Invalid value for date conversion: %s' % raw_date)
                 error = 'Päivämäärä ei ole kelvollinen'
+            else:
+                log.debug('Invalid value for date conversion: %s' % raw_date)
+
             date = raw_date
 
     return date, error
@@ -82,8 +85,6 @@ def convert_person_name(raw_name: str):
         log.warning('New name %s differs from %s' % (original_style_name, raw_name))
         error = 'Tulkittu nimi [%s] poikkeaa alkuperäisestä' % original_style_name
 
-    import pprint
-    pprint.pprint([firstnames, lastname, fullname, error])
     return firstnames, lastname, fullname, error
 
 
