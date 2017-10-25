@@ -24,26 +24,22 @@ def convert_dates(raw_date: str):
     :param raw_date: raw date string from the CSV
     :return: ISO 8601 compliant date if can be parse, otherwise original date string
     """
-    error = None
     if not raw_date:
-        return raw_date, None
+        return raw_date
     try:
         date = datetime.datetime.strptime(str(raw_date).strip(), '%d/%m/%Y').date()
-        log.debug('Converted date: %s  to  %s' % (raw_date, date))
     except ValueError:
         try:
             date = datetime.datetime.strptime(str(raw_date).strip(), '%d.%m.%Y').date()
-            log.debug('Converted date: %s  to  %s' % (raw_date, date))
         except ValueError:
             if raw_date[:2] != 'xx':
                 log.warning('Invalid value for date conversion: %s' % raw_date)
-                error = 'Päivämäärä ei ole kelvollinen'
             else:
                 log.debug('Invalid value for date conversion: %s' % raw_date)
 
             date = raw_date
 
-    return date, error
+    return date
 
 
 def convert_person_name(raw_name: str):
@@ -53,7 +49,6 @@ def convert_person_name(raw_name: str):
     :param raw_name: Original name string
     :return: tuple containing first names, last name and full name
     """
-    error = None
     re_name_split = \
         r'([A-ZÅÄÖÜÉÓÁ/\-]+(?:\s+\(?E(?:NT)?[\.\s]+[A-ZÅÄÖÜÉÓÁ/\-]+)?\)?)\s*(?:(VON))?,?\s*([A-ZÅÄÖÜÉÓÁ/\- \(\)0-9,.]*)'
 
@@ -80,16 +75,11 @@ def convert_person_name(raw_name: str):
 
     log.debug('Name %s was unified to form %s' % (raw_name, fullname))
 
-    original_style_name = ' '.join((lastname, firstnames)) if firstnames else lastname
-    if original_style_name.lower() != raw_name.lower():
-        log.warning('New name %s differs from %s' % (original_style_name, raw_name))
-        error = 'Tulkittu nimi [%s] poikkeaa alkuperäisestä' % original_style_name
-
-    return firstnames, lastname, fullname, error
+    return firstnames, lastname, fullname
 
 
 def strip_dash(raw_value: str):
-    return ('' if raw_value.strip() == '-' else raw_value), None
+    return '' if raw_value.strip() == '-' else raw_value
 
 
 def convert_swedish(swedish: str):
@@ -97,15 +87,13 @@ def convert_swedish(swedish: str):
     Convert boolean value for swedish speaking person to mother tongue.
     """
     mother_tongue = SCHEMA_NS.finnish
-    error = None
 
     if not swedish:
-        return mother_tongue, error
+        return mother_tongue
 
     if swedish.upper() == 'X':
         mother_tongue = SCHEMA_NS.swedish
     else:
         log.warning('Unclear value for finnish swedish %s' % swedish)
-        error = 'Äidinkieltä ei osattu tulkita suomenruotsalainen kentän arvosta: %s' % swedish
 
-    return mother_tongue, error
+    return mother_tongue

@@ -24,28 +24,28 @@ class TestConverters(unittest.TestCase):
     # TODO: Test errors also
 
     def test_convert_dates(self):
-        self.assertEqual(converters.convert_dates('24.12.2016')[0], datetime.date(2016, 12, 24))
-        self.assertEqual(converters.convert_dates('24/12/2016')[0], datetime.date(2016, 12, 24))
+        self.assertEqual(converters.convert_dates('24.12.2016'), datetime.date(2016, 12, 24))
+        self.assertEqual(converters.convert_dates('24/12/2016'), datetime.date(2016, 12, 24))
 
-        self.assertEqual(converters.convert_dates('xx.xx.xxxx')[0], 'xx.xx.xxxx')
-        self.assertEqual(converters.convert_dates('xx.09.2016')[0], 'xx.09.2016')
+        self.assertEqual(converters.convert_dates('xx.xx.xxxx'), 'xx.xx.xxxx')
+        self.assertEqual(converters.convert_dates('xx.09.2016'), 'xx.09.2016')
 
     def test_convert_person_name(self):
         self.assertEqual(converters.convert_person_name('Virtanen Matti Akseli'),
-                         ('Matti Akseli', 'Virtanen', 'Virtanen, Matti Akseli', None))
+                         ('Matti Akseli', 'Virtanen', 'Virtanen, Matti Akseli'))
 
-        self.assertEqual(converters.convert_person_name('Huurre ent. Hildén Aapo Antero')[:-1],
+        self.assertEqual(converters.convert_person_name('Huurre ent. Hildén Aapo Antero'),
                          ('Aapo Antero', 'Huurre (ent. Hildén)', 'Huurre (ent. Hildén), Aapo Antero'))
 
-        self.assertEqual(converters.convert_person_name('Kulento ent. Kulakov Nikolai (Niilo)')[:-1],
+        self.assertEqual(converters.convert_person_name('Kulento ent. Kulakov Nikolai (Niilo)'),
                          ('Nikolai (Niilo)', 'Kulento (ent. Kulakov)', 'Kulento (ent. Kulakov), Nikolai (Niilo)'))
 
-        self.assertEqual(converters.convert_person_name('Ahjo ent. Germanoff Juho ent. Ivan')[:-1],
+        self.assertEqual(converters.convert_person_name('Ahjo ent. Germanoff Juho ent. Ivan'),
                          ('Juho Ent. Ivan', 'Ahjo (ent. Germanoff)', 'Ahjo (ent. Germanoff), Juho Ent. Ivan'))
 
     def test_strip_dash(self):
-        self.assertEqual(converters.strip_dash('-'), ('', None))
-        self.assertEqual(converters.strip_dash('Foo-Bar')[0], 'Foo-Bar')
+        self.assertEqual(converters.strip_dash('-'), '')
+        self.assertEqual(converters.strip_dash('Foo-Bar'), 'Foo-Bar')
 
 
 class TestRDFMapper(unittest.TestCase):

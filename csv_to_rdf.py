@@ -17,6 +17,7 @@ from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
 from namespaces import RDF, XSD, DC, FOAF, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS
+from validators import validate_person_name
 
 
 class RDFMapper:
@@ -83,10 +84,10 @@ class RDFMapper:
         (value, date_begin, date_end) = datematch.groups() if datematch else (value, None, None)
 
         if date_begin:
-            date_begin = convert_dates(date_begin)[0]  # TODO: Take errors
+            date_begin = convert_dates(date_begin)  # TODO: Validate
 
         if date_end:
-            date_end = convert_dates(date_end)[0]  # TODO: Take errors
+            date_end = convert_dates(date_end)  # TODO: Validate
 
         if sources:
             self.log.debug('Found sources: %s' % sources)
@@ -112,11 +113,12 @@ class RDFMapper:
 
         # Handle first and last names
 
-        (firstnames, lastname, fullname, error) = convert_person_name(row[0])
+        (firstnames, lastname, fullname) = convert_person_name(row[0])
+        error = validate_person_name(' '.join((lastname, firstnames)) if firstnames else lastname, row[0])
 
         original_name = row[0].strip()
         if error:
-            row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])  # TODO: lisää nimet
+            row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
 
         if firstnames:
             row_rdf.add((entity_uri, FOAF.givenName, Literal(firstnames)))
@@ -165,7 +167,9 @@ class RDFMapper:
                     row_errors.append([prisoner_number, fullname, column_name, sep_error, original_value])
 
                 converter = mapping.get('converter')
-                value, conv_error = converter(value) if converter else (value, None)
+                validator = mapping.get('validator')
+                value = converter(value) if converter else value
+                conv_error = validator(value, original_value) if validator else None
 
                 if conv_error and not sep_error:
                     row_errors.append([prisoner_number, fullname, column_name, conv_error, original_value])

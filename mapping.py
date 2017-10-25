@@ -3,17 +3,22 @@
 """
 Mapping of CSV columns to RDF properties
 """
+from datetime import date, datetime
+from functools import partial
 
 from converters import convert_dates, strip_dash, convert_swedish
 from namespaces import SCHEMA_NS, BIOC
 
-# CSV column mapping. Person name and person index number is taken separately.
+from validators import validate_dates, validate_mother_tongue
+
+# CSV column mapping. Person name and person index number are taken separately.
 
 PRISONER_MAPPING = {
     'syntymäaika':
         {
             'uri': SCHEMA_NS.birth_date,
             'converter': convert_dates,
+            'validator': partial(validate_dates, after=date(1860, 1, 1), before=date(1935, 1, 1)),
             'value_separator': '/',
             'name_fi': 'Syntymäaika',
             'name_en': 'Date of birth'
@@ -84,6 +89,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.time_gone_missing,
             'converter': convert_dates,
+            'validator': validate_dates,
             'value_separator': '/',
             'name_en': 'Date of disappearance',
             'name_fi': 'Katoamispäivä'
@@ -92,6 +98,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.time_captured,
             'converter': convert_dates,
+            'validator': validate_dates,
             'value_separator': '/',
             'name_en': 'Date of capture',
             'name_fi': 'Vangiksi jäämisen päivämäärä'
@@ -128,6 +135,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.returned_date,
             'converter': convert_dates,
+            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date(1980, 1, 1)),
             'value_separator': '/',
             'name_en': 'Date of return',
             'name_fi': 'Palaamisaika'
@@ -136,6 +144,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.death_date,
             'converter': convert_dates,
+            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'value_separator': '/',
             'name_en': 'Date of death',
             'name_fi': 'Kuolinaika'
@@ -182,12 +191,14 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_NS.death_date,  # Property name given on previous usage
             'converter': convert_dates,
+            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'value_separator': '/'
         },
     'kuolleeksi julistaminen':
         {
             'uri': SCHEMA_NS.declared_death,
             'converter': convert_dates,
+            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'name_en': 'Declared death',
             'name_fi': 'Kuolleeksi julistaminen'
         },
@@ -230,10 +241,11 @@ PRISONER_MAPPING = {
             'name_en': 'Winter War card file',
             'name_fi': 'Talvisodan kortisto'
         },
-    'suomenruotsalainen':  # TODO: Tulkitse äidinkieleksi
+    'suomenruotsalainen':
         {
             'uri': SCHEMA_NS.mother_tongue,
             'converter': convert_swedish,
+            'validator': validate_mother_tongue,
             'name_en': 'Mother tongue',
             'name_fi': 'Äidinkieli'
         },
