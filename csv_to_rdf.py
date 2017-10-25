@@ -8,6 +8,7 @@ import argparse
 import datetime
 import logging
 import re
+from functools import partial
 
 import pandas as pd
 from rdflib import URIRef, Graph, Literal, Namespace
@@ -17,7 +18,7 @@ from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
 from namespaces import RDF, XSD, DC, FOAF, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS
-from validators import validate_person_name
+from validators import validate_person_name, validate_dates
 
 
 class RDFMapper:
@@ -70,24 +71,32 @@ class RDFMapper:
         :return: value, sources, date begin, date end, error
         """
 
-        error = None
+        date_validator = partial(validate_dates, after=datetime.date(1939, 11, 30), before=datetime.date(1960, 1, 1))
+
+        errors = []
         if ': ' in orig_value:
             (sources, value) = orig_value.split(': ', maxsplit=1)
         else:
             (sources, value) = ('', orig_value)
 
         if ': ' in value:
-            error = 'Mahdollinen virhe kentän arvossa, ": " löytyy lähdeviitteen jälkeen'
+            errors.append('Mahdollinen virhe kentän arvossa, ": " löytyy lähdeviitteen jälkeen')
             (sources, value) = ('', orig_value)
 
         datematch = re.search(r'(.+) ([0-9xX.]{5,})-([0-9xX.]{5,})', value)
         (value, date_begin, date_end) = datematch.groups() if datematch else (value, None, None)
 
         if date_begin:
-            date_begin = convert_dates(date_begin)  # TODO: Validate
+            date_begin = convert_dates(date_begin)
+            error = date_validator(date_begin, None)
+            if error:
+                errors.append(error)
 
         if date_end:
-            date_end = convert_dates(date_end)  # TODO: Validate
+            date_end = convert_dates(date_end)
+            error = date_validator(date_end, None)
+            if error:
+                errors.append(error)
 
         if sources:
             self.log.debug('Found sources: %s' % sources)
@@ -96,7 +105,7 @@ class RDFMapper:
         if date_begin or date_end:
             self.log.debug('Found dates for value %s: %s - %s' % (value, date_begin, date_end))
 
-        return value, sources or [], date_begin, date_end, error
+        return value, sources or [], date_begin, date_end, errors
 
     def map_row_to_rdf(self, entity_uri, row, prisoner_number=None):
         """
@@ -104,6 +113,7 @@ class RDFMapper:
 
         :param entity_uri: URI of the instance being created
         :param row: tabular data
+        :param prisoner_number:
         :return:
         """
         reification_template = '{entity}_{prop}_{id}_reification_{reason}'
@@ -152,18 +162,18 @@ class RDFMapper:
                 date_begin = None
                 date_end = None
                 trash = None
-                sep_error = None
+                sep_errors = []
                 conv_error = None
                 original_value = value
 
                 if separator == '/':
                     value, sources, trash = self.read_value_with_source(value)
                 elif separator == ';':
-                    value, sources, date_begin, date_end, sep_error = self.read_semicolon_separated(value)
+                    value, sources, date_begin, date_end, sep_errors = self.read_semicolon_separated(value)
 
                 if trash:
-                    sep_error = 'Ylimääräisiä merkintöjä suluissa annetun lähteen jälkeen: %s' % original_value
-                if sep_error:
+                    sep_errors = ['Ylimääräisiä merkintöjä suluissa annetun lähteen jälkeen: %s' % original_value]
+                for sep_error in sep_errors:
                     row_errors.append([prisoner_number, fullname, column_name, sep_error, original_value])
 
                 converter = mapping.get('converter')
@@ -171,7 +181,7 @@ class RDFMapper:
                 value = converter(value) if converter else value
                 conv_error = validator(value, original_value) if validator else None
 
-                if conv_error and not sep_error:
+                if conv_error and not sep_errors:
                     row_errors.append([prisoner_number, fullname, column_name, conv_error, original_value])
 
                 if value:
@@ -236,7 +246,10 @@ class RDFMapper:
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
         logging.info('Read {num} rows from CSV'.format(num=len(self.table)))
         self.table.rename(columns={'Unnamed: 0': 'nro'}, inplace=True)
-        self.table = self.table[self.table.nro >= 0]  # Take out persons which don't have a number  # TODO: Correct these to errors.csv
+        missing_ids = self.table[self.table.nro < 0]
+        self.table = self.table[self.table.nro >= 0]
+        for missing in missing_ids['suku- ja etunimet']:
+            logging.warning('Person with name %s missing id number' % missing)
         logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
         self.log.info('Data read from CSV %s' % csv_input)
 
