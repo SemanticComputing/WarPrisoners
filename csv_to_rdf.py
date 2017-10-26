@@ -54,8 +54,11 @@ class RDFMapper:
         (value, sources, trash) = sourcematch.groups() if sourcematch else (orig_value, None, None)
 
         if sources:
-            self.log.debug('Found sources: %s' % sources)
-            sources = [s.strip() for s in sources.split(',')]
+            # if ',' in sources:
+            #     print(sources)
+            # self.log.debug('Found sources: %s' % sources)
+            # sources = [s.strip() for s in sources.split(',')]
+            sources = [sources.strip()]
 
         if trash:
             self.log.warning('Found some content after sources, reverting to original: %s' % orig_value)
@@ -99,8 +102,12 @@ class RDFMapper:
                 errors.append(error)
 
         if sources:
-            self.log.debug('Found sources: %s' % sources)
-            sources = [s.strip() for s in sources.split(',')]
+            # if ',' in sources:
+            #     print(sources)
+            #
+            # self.log.debug('Found sources: %s' % sources)
+            # sources = [s.strip() for s in sources.split(',')]
+            sources = [sources.strip()]
 
         if date_begin or date_end:
             self.log.debug('Found dates for value %s: %s - %s' % (value, date_begin, date_end))
@@ -170,6 +177,10 @@ class RDFMapper:
                     value, sources, trash = self.read_value_with_source(value)
                 elif separator == ';':
                     value, sources, date_begin, date_end, sep_errors = self.read_semicolon_separated(value)
+
+                # temp = [s for s in sources if ',' in s]
+                # if temp:
+                #     print(temp)
 
                 if trash:
                     sep_errors = ['Ylimääräisiä merkintöjä suluissa annetun lähteen jälkeen: %s' % original_value]
@@ -301,7 +312,7 @@ class RDFMapper:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
 
         error_df = pd.DataFrame(columns=['nro', 'nimi', 'sarake', 'virhe', 'arvo'], data=self.errors)
-        error_df.to_csv('errors.csv', ',', index=False)
+        error_df.to_csv('data/new/errors.csv', ',', index=False)
 
 
 if __name__ == "__main__":
