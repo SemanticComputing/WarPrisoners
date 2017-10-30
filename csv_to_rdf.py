@@ -138,9 +138,9 @@ class RDFMapper:
             row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
 
         if firstnames:
-            row_rdf.add((entity_uri, FOAF.givenName, Literal(firstnames)))
+            row_rdf.add((entity_uri, SCHEMA_NS.given_name, Literal(firstnames)))
         if lastname:
-            row_rdf.add((entity_uri, FOAF.familyName, Literal(lastname)))
+            row_rdf.add((entity_uri, SCHEMA_NS.family_name, Literal(lastname)))
         if fullname:
             row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
         if original_name:
