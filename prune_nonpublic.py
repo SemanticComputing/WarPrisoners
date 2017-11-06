@@ -76,5 +76,5 @@ if __name__ == "__main__":
     bind_namespaces(pruned)
     bind_namespaces(nonpruned)
 
-    pruned.serialize(format="turtle", destination=args.input + '.pruned.ttl')
-    nonpruned.serialize(format="turtle", destination=args.input + '.nonpruned.ttl')
+    pruned.serialize(format="turtle", destination=args.input + '.secret.ttl')
+    nonpruned.serialize(format="turtle", destination=args.input + '.public.ttl')

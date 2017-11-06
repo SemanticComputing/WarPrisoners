@@ -53,10 +53,14 @@ echo "Finishing prisoners" &&
 cat data/new/prisoners_plain.ttl data/new/rank_links.ttl data/new/unit_linked_validated.ttl data/new/persons_linked.ttl > data/new/prisoners_full.ttl &&
 rapper -i turtle data/new/prisoners_full.ttl -o turtle > data/new/prisoners.ttl &&
 
+echo "Splitting to publishable and nonpublishable prisoners" &&
+python prune_nonpublic.py data/new/prisoners.ttl &&
+rm data/new/prisoners.ttl &&
+
 echo "Generating people..." &&
 
 echo "...Updating db with prisoners" &&
-s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoners data/new/prisoners.ttl &&
+s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoners data/new/prisoners.ttl.public.ttl &&
 
 echo "...Constructing people" &&
 echo 'query=' | cat - sparql/construct_people.sparql | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > data/new/prisoner_people.ttl &&
