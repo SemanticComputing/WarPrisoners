@@ -17,7 +17,7 @@ from converters import convert_person_name, convert_dates
 from mapping import PRISONER_MAPPING
 
 from csv2rdf import CSV2RDF
-from namespaces import RDF, XSD, DC, FOAF, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS
+from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
 from validators import validate_person_name, validate_dates
 
 
@@ -272,19 +272,8 @@ class RDFMapper:
         :param destination_schema: serialization destination for schema
         :return: output from rdflib.Graph.serialize
         """
-        self.data.bind("p", "http://ldf.fi/warsa/prisoners/")
-        self.data.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
-        self.data.bind("skos", "http://www.w3.org/2004/02/skos/core#")
-        self.data.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
-        self.data.bind("foaf", 'http://xmlns.com/foaf/0.1/')
-        self.data.bind("bioc", 'http://ldf.fi/schema/bioc/')
-        self.data.bind("dct", 'http://purl.org/dc/terms/')
-
-        self.schema.bind("ps", "http://ldf.fi/schema/warsa/prisoners/")
-        self.schema.bind("skos", "http://www.w3.org/2004/02/skos/core#")
-        self.schema.bind("cidoc", 'http://www.cidoc-crm.org/cidoc-crm/')
-        self.schema.bind("foaf", 'http://xmlns.com/foaf/0.1/')
-        self.schema.bind("bioc", 'http://ldf.fi/schema/bioc/')
+        bind_namespaces(self.data)
+        bind_namespaces(self.schema)
 
         data = self.data.serialize(format="turtle", destination=destination_data)
         schema = self.schema.serialize(format="turtle", destination=destination_schema)
