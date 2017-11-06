@@ -17,9 +17,7 @@ p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
     rdf:subject p:prisoner_1 .
 
 p:prisoner_1_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
-    dct:source "0901 2008 1990 - 2008",
-        "465",
-        "Mikrofilmillä IX ? 461/?" ;
+    dct:source "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008" ;
     rdf:object "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
     rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
     rdf:subject p:prisoner_1 .
@@ -37,9 +35,7 @@ p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
-    dct:source "0901 2008 2338-242",
-        "465",
-        "Mikrofilmillä IX Ф 461/п" ;
+    dct:source "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242" ;
     rdf:object "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
     rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
     rdf:subject p:prisoner_2 .
@@ -168,7 +164,7 @@ p:prisoner_2_located_in_50 a ps:Located_in ;
     ps:order 50 ;
     ps:place "158" .
 
-p:prisoner_1 a ps:PrisonerRecord ;
+p:prisoner_1 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     bioc:has_occupation "kaavaaja" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
@@ -181,7 +177,9 @@ p:prisoner_1 a ps:PrisonerRecord ;
         "xx.xx.xxxx" ;
     ps:death_place "99" ;
     ps:explanation "Yllätetty etuvartiopaikalla." ;
+    ps:family_name "Testi" ;
     ps:flyer "lentolehtisessä" ;
+    ps:given_name "Testaaja" ;
     ps:home_place "Karkkila" ;
     ps:karaganda_card_file "Karaganda 12" ;
     ps:karelian_archive_documents "kpk" ;
@@ -213,11 +211,9 @@ p:prisoner_1 a ps:PrisonerRecord ;
     ps:winter_war_collection_from_moscow "RGVA 34980-10-1048 l. 69 KL Moskovassa",
         "RGVA 34980-6-345 l. 181-186 KL" ;
     ps:winterwar_card_file "Talvisodan kortisto 31-32" ;
-    skos:prefLabel "Testi, Testaaja" ;
-    foaf:familyName "Testi" ;
-    foaf:givenName "Testaaja" .
+    skos:prefLabel "Testi, Testaaja" .
 
-p:prisoner_2 a ps:PrisonerRecord ;
+p:prisoner_2 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     bioc:has_occupation "posteljooni",
         "sekatyömies" ;
     ps:amount_children "2" ;
@@ -237,8 +233,10 @@ p:prisoner_2 a ps:PrisonerRecord ;
         "1770" ;
     ps:declared_death "2005-01-11"^^xsd:date ;
     ps:explanation "katosi lähettitehtävissä Räisälän Unnunkoskella (T 26073/33)" ;
+    ps:family_name "Harri" ;
     ps:flyer "allekirjoitus lentolehtisessä № 314, 7 allekirjoittajaa",
         "lentolehtisessä 17.08.1941" ;
+    ps:given_name "Hankala" ;
     ps:home_place "Lavia",
         "Tampere" ;
     ps:karelian_archive_documents "useita dokumentteja" ;
@@ -278,7 +276,5 @@ p:prisoner_2 a ps:PrisonerRecord ;
     ps:unit "3./I/KTR15" ;
     ps:winter_war_collection_from_moscow "RGVA 34980-12-737 l. 131-142 kuulustelujen ja kirjeiden yhteenvetoa, pätkä kuulustelusta lainattu",
         "RGVA 34980-6-345, l. 1-7 ja 8-9 OL, l. 10 ehkä saman miehen (nimetön) vetoomus sotilastovereille" ;
-    skos:prefLabel "Harri, Hankala" ;
-    foaf:familyName "Harri" ;
-    foaf:givenName "Hankala" .
+    skos:prefLabel "Harri, Hankala" .
 

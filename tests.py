@@ -16,7 +16,7 @@ from rdflib.compare import isomorphic, graph_diff
 import converters
 from csv_to_rdf import RDFMapper
 from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DC
+from namespaces import DATA_NS, DC, WARSA_NS
 
 
 class TestConverters(unittest.TestCase):
@@ -53,17 +53,17 @@ class TestRDFMapper(unittest.TestCase):
     def test_read_value_with_source(self):
         mapper = RDFMapper({}, '')
 
-        assert mapper.read_value_with_source('Some text') == ('Some text', [], '')
-        assert mapper.read_value_with_source('Some text (source A)') == ('Some text', ['source A'], '')
-        assert mapper.read_value_with_source('Some text (source A, source B)') == ('Some text',
-                                                                                   ['source A', 'source B'], '')
+        self.assertEqual(mapper.read_value_with_source('Some text'), ('Some text', [], ''))
+        self.assertEqual(mapper.read_value_with_source('Some text (source A)'), ('Some text', ['source A'], ''))
+        self.assertEqual(mapper.read_value_with_source('Some text (source A, source B)'), ('Some text',
+                                                                                           ['source A, source B'], ''))
 
     def test_read_semicolon_separated(self):
         mapper = RDFMapper({}, '')
 
         self.assertEquals(mapper.read_semicolon_separated('Some text'), ('Some text', [], None, None, []))
         self.assertEquals(mapper.read_semicolon_separated('Source: Value'), ('Value', ['Source'], None, None, []))
-        self.assertEquals(mapper.read_semicolon_separated('Source1, Source2: Value'), ('Value', ['Source1', 'Source2'], None, None, []))
+        self.assertEquals(mapper.read_semicolon_separated('Source1, Source2: Value'), ('Value', ['Source1, Source2'], None, None, []))
         self.assertEquals(mapper.read_semicolon_separated('http://example.com/'), ('http://example.com/', [], None, None, []))
 
         self.assertEquals(mapper.read_semicolon_separated('54 13.10.1942-xx.11.1942'), ('54', [], datetime.date(1942, 10, 13), 'xx.11.1942', []))
@@ -74,7 +74,7 @@ class TestRDFMapper(unittest.TestCase):
         assert len(mapper.table) == 2
 
     def test_mapping_field_contents(self):
-        instance_class = URIRef('http://ldf.fi/schema/warsa/prisoners/PrisonerRecord')
+        instance_class = URIRef(WARSA_NS.PrisonerRecord)
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data.csv')
