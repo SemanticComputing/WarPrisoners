@@ -20,7 +20,7 @@ CONSTRUCT {
 }
 {
   ?sub wpsc:warsa_unit ?wu ;
-     foaf:givenName ?fn ;
+     wpsc:given_name ?fn ;
      foaf:familyName ?sn ;
      crm:P70_documents ?id .
   ?wu skos:prefLabel ?wul .

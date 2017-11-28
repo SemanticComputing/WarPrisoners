@@ -21,7 +21,7 @@ CONSTRUCT {
 }
 {
   ?sub wpsc:time_gone_missing ?md_ ;
-    foaf:givenName ?fn ;
+    wpsc:given_name ?fn ;
     foaf:familyName ?sn ;
     crm:P70_documents ?id .
   FILTER NOT EXISTS { ?id ^crm:P11_had_participant/a wsch:Disappearing . }

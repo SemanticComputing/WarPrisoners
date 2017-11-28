@@ -21,7 +21,7 @@ CONSTRUCT {
 }
 {
   ?sub a wsch:PrisonerRecord ;
-    foaf:givenName ?fn ;
+    wpsc:given_name ?fn ;
     foaf:familyName ?sn ;
     crm:P70_documents ?id .
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)

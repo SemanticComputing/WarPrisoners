@@ -21,7 +21,7 @@ CONSTRUCT {
 }
 {
   ?sub wpsc:death_date ?dd_ ;
-       foaf:givenName ?fn ;
+       wpsc:given_name ?fn ;
        foaf:familyName ?sn ;
        crm:P70_documents ?id .
   FILTER NOT EXISTS { ?id ^crm:P100_was_death_of [] . }

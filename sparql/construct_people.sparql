@@ -21,7 +21,7 @@ CONSTRUCT {
 }
 {
   ?sub a wsch:PrisonerRecord ;
-    foaf:givenName ?fn ;
+    wpsc:given_name ?fn ;
     foaf:familyName ?sn .
   FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
   BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)

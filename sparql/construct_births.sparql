@@ -22,7 +22,7 @@ CONSTRUCT {
 {
   ?sub a wsch:PrisonerRecord ;
     wpsc:birth_date ?bd_ ;
-    foaf:givenName ?fn ;
+    wpsc:given_name ?fn ;
     foaf:familyName ?sn .
   FILTER NOT EXISTS { ?sub crm:P70_documents/^crm:P98_brought_into_life [] . }
   BIND(xsd:date(?bd_) AS ?bd)
