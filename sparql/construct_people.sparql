@@ -22,7 +22,7 @@ CONSTRUCT {
 {
   ?sub a wsch:PrisonerRecord ;
     wpsc:given_name ?fn ;
-    foaf:familyName ?sn .
+    wpsc:family_name ?sn .
   FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
   BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id)
