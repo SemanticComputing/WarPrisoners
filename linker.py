@@ -350,7 +350,7 @@ def link_persons(graph, endpoint):
             return f.read()
 
     validator = PersonValidator(graph, SCHEMA_NS.birth_date, SCHEMA_NS.death_date,
-            SCHEMA_NS.warsa_rank, FOAF.givenName, FOAF.familyName,
+            SCHEMA_NS.warsa_rank, SCHEMA_NS.given_name, SCHEMA_NS.family_name,
             SCHEMA_NS.place_captured_municipality, SCHEMA_NS.time_captured,
             SCHEMA_NS.birth_place, SCHEMA_NS.warsa_unit, BIOC.has_occupation)
     arpa = ArpaMimic(get_query_template(), endpoint, retries=10, wait_between_tries=6)
