@@ -1,7 +1,6 @@
 @prefix bioc: <http://ldf.fi/schema/bioc/> .
 @prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix p: <http://ldf.fi/warsa/prisoners/> .
 @prefix ps: <http://ldf.fi/schema/warsa/prisoners/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -16,12 +15,6 @@ p:prisoner_1_burial_place_0_reification_source a rdf:Statement ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_1 .
 
-p:prisoner_1_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
-    dct:source "Mikrofilmillä IX ? 461/?, 465, 0901 2008 1990 - 2008" ;
-    rdf:object "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
-    rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
-    rdf:subject p:prisoner_1 .
-
 p:prisoner_2_amount_children_1_reification_source a rdf:Statement ;
     dct:source "VEN 195" ;
     rdf:object "2" ;
@@ -34,17 +27,9 @@ p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
     rdf:predicate ps:burial_place ;
     rdf:subject p:prisoner_2 .
 
-p:prisoner_2_continuation_war_russian_card_file_F_465_0_reification_source a rdf:Statement ;
-    dct:source "Mikrofilmillä IX Ф 461/п, 465, 0901 2008 2338-242" ;
-    rdf:object "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
-    rdf:predicate ps:continuation_war_russian_card_file_F_465 ;
-    rdf:subject p:prisoner_2 .
-
 p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
-    dct:source "Karaganda",
-        "Svry" ;
-    rdf:object "1943-02-02"^^xsd:date,
-        "2001-01-01"^^xsd:date ;
+    dct:source "Karaganda" ;
+    rdf:object "1943-02-02"^^xsd:date ;
     rdf:predicate ps:death_date ;
     rdf:subject p:prisoner_2 .
 
@@ -78,22 +63,22 @@ p:prisoner_2_marital_status_1_reification_source a rdf:Statement ;
     rdf:predicate ps:marital_status ;
     rdf:subject p:prisoner_2 .
 
-p:prisoner_2_other_information_0_reification_source a rdf:Statement ;
+p:prisoner_2_photograph_0_reification_source a rdf:Statement ;
     dct:source "KA T 19472/2" ;
-    rdf:object "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi" ;
-    rdf:predicate ps:other_information ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_other_information_1_reification_source a rdf:Statement ;
-    dct:source "KA-internet" ;
-    rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
-    rdf:predicate ps:other_information ;
+    rdf:object "Pion.P 20" ;
+    rdf:predicate ps:photograph ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_place_captured_municipality_1_reification_source a rdf:Statement ;
     dct:source "Talvisodan kortisto" ;
     rdf:object "Leipäsuo" ;
     rdf:predicate ps:place_captured_municipality ;
+    rdf:subject p:prisoner_2 .
+
+p:prisoner_2_place_gone_missing_0_reification_source a rdf:Statement ;
+    dct:source "KA T 22293/34 [58]" ;
+    rdf:object "Uusikirkko, Peippola" ;
+    rdf:predicate ps:place_gone_missing ;
     rdf:subject p:prisoner_2 .
 
 p:prisoner_2_rank_1_reification_source a rdf:Statement ;
@@ -114,56 +99,6 @@ p:prisoner_2_time_captured_1_reification_source a rdf:Statement ;
     rdf:predicate ps:time_captured ;
     rdf:subject p:prisoner_2 .
 
-p:prisoner_1_located_in_0 a ps:Located_in ;
-    ps:date_begin "1944-07-14"^^xsd:date ;
-    ps:date_end "xx.xx.1944" ;
-    ps:order 0 ;
-    ps:place "135" .
-
-p:prisoner_1_located_in_10 a ps:Located_in ;
-    ps:order 10 ;
-    ps:place "270" .
-
-p:prisoner_1_located_in_20 a ps:Located_in ;
-    ps:date_begin "1944-10-17"^^xsd:date ;
-    ps:date_end "1944-11-20"^^xsd:date ;
-    ps:order 20 ;
-    ps:place "158" .
-
-p:prisoner_2_located_in_0 a ps:Located_in ;
-    ps:date_begin "1941-07-31"^^xsd:date ;
-    ps:date_end "xx.xx.1941" ;
-    ps:order 0 ;
-    ps:place "Vologda" .
-
-p:prisoner_2_located_in_10 a ps:Located_in ;
-    ps:date_begin "1941-09-15"^^xsd:date ;
-    ps:date_end "1942-05-25"^^xsd:date ;
-    ps:order 10 ;
-    ps:place "99" .
-
-p:prisoner_2_located_in_20 a ps:Located_in ;
-    ps:order 20 ;
-    ps:place "100" .
-
-p:prisoner_2_located_in_30 a ps:Located_in ;
-    ps:date_begin "1942-06-05"^^xsd:date ;
-    ps:date_end "xx.xx.1942" ;
-    ps:order 30 ;
-    ps:place "67" .
-
-p:prisoner_2_located_in_40 a ps:Located_in ;
-    ps:date_begin "1942-09-10"^^xsd:date ;
-    ps:date_end "xx.xx.xxxx" ;
-    ps:order 40 ;
-    ps:place "84" .
-
-p:prisoner_2_located_in_50 a ps:Located_in ;
-    ps:date_begin "1943-09-20"^^xsd:date ;
-    ps:date_end "1944-11-20"^^xsd:date ;
-    ps:order 50 ;
-    ps:place "158" .
-
 p:prisoner_1 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     bioc:has_occupation "kaavaaja" ;
     ps:amount_children "0" ;
@@ -171,47 +106,56 @@ p:prisoner_1 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     ps:birth_place "Karkkila" ;
     ps:burial_place "sotavankileiri  ? 58:n hautausmaa ????" ;
     ps:cause_of_death "aivokooma" ;
-    ps:continuation_war_russian_card_file_461p "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
-    ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, luettelo omaisuudesta, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, saksankielinen Krank.List" ;
-    ps:death_date "1944-06-24"^^xsd:date,
+    ps:confiscated_possession "850" ;
+    ps:continuation_war_russian_card_file_461p "Kuulustelulomake Digiarkisto 6:346, suomennettu;" ;
+    ps:continuation_war_russian_card_file_F_465 "VEN 23, 0401 2006 1380-1388 kuulustelulomakkeita 4 kpl" ;
+    ps:death_date "Leningradin radiossa 01.08.1944; allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\".",
         "xx.xx.xxxx" ;
     ps:death_place "99" ;
+    ps:declared_death "KA T 19472/2: epäillään suorittaneen tuhopolton Ähtärissä" ;
     ps:explanation "Yllätetty etuvartiopaikalla." ;
     ps:family_name "Testi" ;
-    ps:flyer "lentolehtisessä" ;
     ps:given_name "Testaaja" ;
     ps:home_place "Karkkila" ;
     ps:karaganda_card_file "Karaganda 12" ;
-    ps:karelian_archive_documents "kpk" ;
-    ps:located_in p:prisoner_1_located_in_0,
-        p:prisoner_1_located_in_10,
-        p:prisoner_1_located_in_20 ;
+    ps:karelian_archive_documents "useita dokumentteja" ;
+    ps:located_in p:prisoner_1_located_in_0 ;
     ps:marital_status "naimaton" ;
-    ps:memoirs "Cinderella" ;
+    ps:memoirs "ryhmäkuvassa 02.09.1941, Rukiver-kirjan kuvaliite." ;
     ps:mother_tongue "http://ldf.fi/schema/warsa/prisoners/finnish" ;
     ps:municipality_of_death "Lohjan kunta" ;
     ps:original_name "Testi Testaaja" ;
-    ps:other_information "Leningradin radiossa 01.08.1944",
-        "allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\"." ;
-    ps:photograph "Hanko" ;
+    ps:other_information "270" ;
+    ps:photograph "kuoli ennen perustamista" ;
     ps:place_captured "Leino" ;
     ps:place_captured_battle "Tuherrusjärvi" ;
     ps:place_captured_municipality "Ylämaa" ;
-    ps:propaganda_magazine "http://www.veteraanienperinto.fi/vepe/index.php/fi/ryhmia/kertomuksia-10/483-kertomukset-34/i5-35/348-sotavankina" ;
-    ps:radio_report "01.08.1944 Leningrad" ;
+    ps:place_gone_missing "Kuuterselkä" ;
+    ps:radio_report "RK ? 16.08.1944 Leningrad" ;
     ps:rank "korpr" ;
-    ps:recording "f. 8, op. 1, d. 1129, l. 34" ;
     ps:residence_place "Karkkila" ;
     ps:returned_date "1944-11-22"^^xsd:date ;
     ps:russian_interrogation_sheets "Mikrofilmi VEN 195 16" ;
+    ps:sotilaan_aani "ns. pärmiläisten lentolehtinen julkaistu Sotilaan Ääni-lehdessä nro 27/25.10.1941 otsikolla \"Suomen kansalle\"" ;
     ps:time_captured "1944-07-06"^^xsd:date ;
     ps:time_gone_missing "4.7.1944  (KA T 19472/4 [3]" ;
     ps:unit "1./Er.P 25" ;
-    ps:winter_war_collection "Kuulustelulomake Digiarkisto 6:346, suomennettu;" ;
-    ps:winter_war_collection_from_moscow "RGVA 34980-10-1048 l. 69 KL Moskovassa",
-        "RGVA 34980-6-345 l. 181-186 KL" ;
+    ps:winter_war_collection "RGVA 34980-10-1048 l. 69 KL Moskovassa" ;
+    ps:winter_war_collection_from_moscow "RGVA 34980-6-345 l. 181-186 KL" ;
     ps:winterwar_card_file "Talvisodan kortisto 31-32" ;
     skos:prefLabel "Testi, Testaaja" .
+
+p:prisoner_1_located_in_0 a ps:Located_in ;
+    ps:date_begin "1944-07-14"^^xsd:date ;
+    ps:date_end "xx.xx.1944" ;
+    ps:order 0 ;
+    ps:place "135" .
+
+p:prisoner_2_located_in_0 a ps:Located_in ;
+    ps:date_begin "1941-07-31"^^xsd:date ;
+    ps:date_end "xx.xx.1941" ;
+    ps:order 0 ;
+    ps:place "Vologda" .
 
 p:prisoner_2 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     bioc:has_occupation "posteljooni",
@@ -223,58 +167,52 @@ p:prisoner_2 a <http://ldf.fi/schema/warsa/PrisonerRecord> ;
     ps:burial_place "?? sotavankihautausmaa, hauta № 184",
         "haudattu Shumihaan." ;
     ps:cause_of_death "joku syy" ;
-    ps:continuation_war_russian_card_file_461p "VEN 420 360" ;
-    ps:continuation_war_russian_card_file_F_465 "kuulustelulomake, kuolinpäiväksi merkitty 2.3.1943" ;
+    ps:confiscated_possession "RK 144/28.06.1944" ;
+    ps:continuation_war_russian_card_file_461p "4.975" ;
+    ps:continuation_war_russian_card_file_F_465 "sot.virk. Vieno Sahia" ;
     ps:death_date "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
-        "2001-01-01"^^xsd:date ;
+        "67 5.6.1942-xx.xx.1942" ;
     ps:death_place "1170",
         "1770" ;
-    ps:declared_death "2005-01-11"^^xsd:date ;
+    ps:declared_death "84 10.9.1942-xx.xx.xxxx" ;
     ps:explanation "katosi lähettitehtävissä Räisälän Unnunkoskella (T 26073/33)" ;
     ps:family_name "Harri" ;
-    ps:flyer "allekirjoitus lentolehtisessä № 314, 7 allekirjoittajaa",
-        "lentolehtisessä 17.08.1941" ;
+    ps:finnish_return_interrogation_file "01.09.1970" ;
+    ps:flyers "allekirjoitus lentolehtisessä \"Äyräpään opetukset Suomen armeijan sotilaille\"." ;
     ps:given_name "Hankala" ;
     ps:home_place "Lavia",
         "Tampere" ;
-    ps:karelian_archive_documents "useita dokumentteja" ;
-    ps:located_in p:prisoner_2_located_in_0,
-        p:prisoner_2_located_in_10,
-        p:prisoner_2_located_in_20,
-        p:prisoner_2_located_in_30,
-        p:prisoner_2_located_in_40,
-        p:prisoner_2_located_in_50 ;
+    ps:karaganda_card_file "Mikrofilmi VEN 115 53; VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
+    ps:karelian_archive_documents "kpk" ;
+    ps:located_in p:prisoner_2_located_in_0 ;
     ps:marital_status "naimaton",
         "naimisissa" ;
-    ps:memoirs "kuulustelupöytäkirja Rukiver-kirjassa s. 243-250, kuva s. 249",
-        "kuvaus vangiksi jäämisestä kirjassa X. s. 148 - 150" ;
-    ps:mother_tongue "http://ldf.fi/schema/warsa/prisoners/swedish" ;
+    ps:mother_tongue "http://ldf.fi/schema/warsa/prisoners/finnish" ;
     ps:original_name "Harri Hankala" ;
-    ps:other_information "Saksjärven koillispuolella ollessaan kaukopartiomatkalla katosi",
-        "kadonnut, julistettu virallisesti kuolleeksi." ;
-    ps:photograph "VEN 196" ;
+    ps:other_information "99" ;
+    ps:photograph "Pion.P 20" ;
     ps:place_captured "Huumola",
         "Näykki" ;
     ps:place_captured_battle "Mäkräjärvi><Kotkatjärvi" ;
     ps:place_captured_municipality "Kannas",
         "Leipäsuo" ;
-    ps:radio_report "RK 136/17.06.1944",
-        "RK 144/28.06.1944" ;
+    ps:place_gone_missing "Uusikirkko, Peippola" ;
+    ps:propaganda_magazine "Kansan Mies-lehdessä (NL) 09.08.1941 haastattelu" ;
     ps:rank "hevosmies",
         "siv" ;
+    ps:recording "Videohaastattelu v. 2000, RN" ;
     ps:residence_place "Hämeenlinna",
         "Viipuri" ;
     ps:returned_date "1944-10-09"^^xsd:date,
         "1944-10-10"^^xsd:date ;
-    ps:russian_interrogation_sheets "Mikrofilmi VEN 115 53",
-        "VEN 42 otos 1538 Kilpeläinen Lauri Henrik Mikaelin henkilömapissa viesti, jossa etsitään OA-todistusta mm. tälle vangille" ;
+    ps:soviet_card_files "Jatkosodan kortisto" ;
     ps:time_captured "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     ps:time_gone_missing "1944-06-19"^^xsd:date ;
     ps:unit "3./I/KTR15" ;
-    ps:winter_war_collection_from_moscow "RGVA 34980-12-737 l. 131-142 kuulustelujen ja kirjeiden yhteenvetoa, pätkä kuulustelusta lainattu",
-        "RGVA 34980-6-345, l. 1-7 ja 8-9 OL, l. 10 ehkä saman miehen (nimetön) vetoomus sotilastovereille" ;
+    ps:winter_war_collection "X" ;
+    ps:winterwar_card_file "Z" ;
     skos:prefLabel "Harri, Hankala" .
 
