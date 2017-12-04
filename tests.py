@@ -10,13 +10,14 @@ import io
 import unittest
 from pprint import pprint
 
-from rdflib import Graph, RDF, URIRef
+from rdflib import Graph, RDF, URIRef, Literal
 from rdflib.compare import isomorphic, graph_diff
 
 import converters
-from csv_to_rdf import RDFMapper
+from csv_to_rdf import RDFMapper, get_triple_reifications
 from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DC, WARSA_NS
+from namespaces import DATA_NS, DC, WARSA_NS, SCHEMA_NS
+from prune_nonpublic import prune_persons
 
 
 class TestConverters(unittest.TestCase):
@@ -94,6 +95,40 @@ class TestRDFMapper(unittest.TestCase):
         pprint([d for d in diffs[2]])
 
         assert isomorphic(g, g2)  # Isomorphic graph comparison
+
+    def test_get_triple_reifications(self):
+        g = Graph().parse('test_data.ttl', format='turtle')
+
+        s = DATA_NS.prisoner_2
+        p = SCHEMA_NS.residence_place
+        o = Literal('Hämeenlinna')
+
+        ref = get_triple_reifications(g, (s, p, o))
+        ref_subs = set(ref.subjects())
+        self.assertEquals(len(ref_subs), 1)
+
+        ref_sub = ref_subs.pop()
+        source = g.value(ref_sub, DC.source)
+        self.assertEquals(source, Literal('mikrofilmi'))
+
+    def test_prune_persons(self):
+        g = Graph().parse('test_data.ttl', format='turtle')
+        public, hidden = prune_persons(g)
+        print(len(public))
+        print(len(hidden))
+
+        g2 = public + hidden
+
+        diffs = graph_diff(g, g2)
+
+        print('In new:')
+        pprint([d for d in diffs[1]])
+
+        print('In old:')
+        pprint([d for d in diffs[2]])
+
+        assert isomorphic(g, g2)
+
 
 if __name__ == '__main__':
     unittest.main()

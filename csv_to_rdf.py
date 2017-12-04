@@ -21,6 +21,31 @@ from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_na
 from validators import validate_person_name, validate_dates
 
 
+def get_triple_reifications(graph, triple):
+    found_reifications = Graph()
+    s, p, o = triple
+    reifications = list(graph.subjects(RDF.subject, s))
+    for reification in reifications:
+        if not (graph[reification:RDF.predicate:p] and
+                    graph[reification:RDF.object:o]):
+            continue
+        for (rs, rp, ro) in graph.triples((reification, None, None)):
+            found_reifications.add((rs, rp, ro))
+
+    return found_reifications
+
+
+def get_person_related_triples(graph, person):
+    found_triples = Graph()
+    for (s, p, o) in graph.triples((person, None, None)):
+        found_triples.add((s, p, o))
+        for (s2, p2, o2) in graph.triples((o, None, None)):
+            found_triples.add((s2, p2, o2))
+        found_triples += get_triple_reifications(graph, (s, p, o))
+
+    return found_triples
+
+
 class RDFMapper:
     """
     Map tabular data (currently pandas DataFrame) to RDF. Create a class instance of each row.
