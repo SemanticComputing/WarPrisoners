@@ -266,13 +266,13 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.continuation_war_russian_card_file_F_465,
             'value_separator': ';',
             'name_en': 'Continuation War Russian card file F 465',
-            'name_fi': 'Kuolleiden jatkosodan venäläiset kuulustelulomakkeet F 465'
+            'name_fi': 'Kuolleiden jatkosodan venäjänkieliset kuulustelulomakkeet F 465'
         },
-    'Jatkosodan VEN henkilömapit, vangitut ja internoidut 461/p':
+    'Jatkosodan VEN henkilömapit, tuomitut ja internoidut 461/p':
         {
             'uri': SCHEMA_NS.continuation_war_russian_card_file_461p,
             'name_en': 'Continuation War Russian card file 461/p',
-            'name_fi': 'Kuolleiden jatkosodan venäläiset kuulustelulomakkeet 461/p'
+            'name_fi': 'Jatkosodan internoitujen venäjänkieliset kuulustelulomakkeet 461/p'
         },
     'Talvisodan kokoelma':
         {
@@ -294,7 +294,14 @@ PRISONER_MAPPING = {
             'name_en': 'Flyer',
             'name_fi': 'Lentolehtinen'
         },
-    'Sotilaan Ääni -lehti, Kansan Valta -lehti, Kansan  Mies -lehti':
+    'Sotilaan Ääni-lehti':
+        {
+            'uri': SCHEMA_NS.sotilaan_aani,
+            'value_separator': ';',
+            'name_en': 'Sotilaan Ääni magazine',
+            'name_fi': 'Sotilaan Ääni'
+        },
+    'Kansan Valta -lehti, Kansan  Mies -lehti, Kansan Ääni':
         {
             'uri': SCHEMA_NS.propaganda_magazine,
             'value_separator': ';',
