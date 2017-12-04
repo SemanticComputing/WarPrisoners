@@ -299,6 +299,8 @@ class RDFMapper:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
             if 'name_en' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
+            if 'description_fi' in prop:
+                self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['description_fi'], lang='fi')))
 
         error_df = pd.DataFrame(columns=['nro', 'nimi', 'sarake', 'virhe', 'arvo'], data=self.errors)
         error_df.to_csv('data/new/errors.csv', ',', index=False)
