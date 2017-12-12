@@ -71,20 +71,20 @@ class TestRDFMapper(unittest.TestCase):
 
     def test_read_csv_simple_2(self):
         mapper = RDFMapper({}, '')
-        mapper.read_csv('test_data.csv')
+        mapper.read_csv('test_data/prisoners.csv')
         assert len(mapper.table) == 2
 
     def test_mapping_field_contents(self):
         instance_class = URIRef(WARSA_NS.PrisonerRecord)
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
-        mapper.read_csv('test_data.csv')
+        mapper.read_csv('test_data/prisoners.csv')
         mapper.process_rows()
         rdf_data, schema = mapper.serialize(None, None)
         g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
 
-        # g.serialize('test_data.ttl', format="turtle")  # Decomment to update file, and verify it by hand
-        g2 = Graph().parse('test_data.ttl', format='turtle')
+        # g.serialize('test_data/prisoners.ttl', format="turtle")  # Decomment to update file, and verify it by hand
+        g2 = Graph().parse('test_data/prisoners.ttl', format='turtle')
 
         diffs = graph_diff(g, g2)
 
@@ -97,7 +97,7 @@ class TestRDFMapper(unittest.TestCase):
         assert isomorphic(g, g2)  # Isomorphic graph comparison
 
     def test_get_triple_reifications(self):
-        g = Graph().parse('test_data.ttl', format='turtle')
+        g = Graph().parse('test_data/prisoners.ttl', format='turtle')
 
         s = DATA_NS.prisoner_2
         p = SCHEMA_NS.residence_place
@@ -112,7 +112,7 @@ class TestRDFMapper(unittest.TestCase):
         self.assertEquals(source, Literal('mikrofilmi'))
 
     def test_prune_persons(self):
-        g = Graph().parse('test_data.ttl', format='turtle')
+        g = Graph().parse('test_data/prisoners.ttl', format='turtle')
         public, hidden = prune_persons(g)
         print(len(public))
         print(len(hidden))
