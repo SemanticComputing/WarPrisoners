@@ -22,6 +22,10 @@ rm output/camps2.ttl &&
 
 python csv_to_rdf.py PRISONERS data/prisoners.csv --outdata=output/prisoners_plain.ttl --outschema=output/schema.ttl &&
 
+cat input_rdf/schema_base.ttl output/schema.ttl > output/schema_full.ttl &&
+rapper -i turtle output/schema_full.ttl -o turtle > output/schema.ttl &&
+rm output/schema_full.ttl &&
+
 echo "Linking ranks" &&
 
 python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
