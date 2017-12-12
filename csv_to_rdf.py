@@ -328,7 +328,7 @@ class RDFMapper:
                 self.schema.add((prop['uri'], DC.description, Literal(prop['description_fi'], lang='fi')))
 
         error_df = pd.DataFrame(columns=['nro', 'nimi', 'sarake', 'virhe', 'arvo'], data=self.errors)
-        error_df.to_csv('data/new/errors.csv', ',', index=False)
+        error_df.to_csv('output/errors.csv', ',', index=False)
 
 
 if __name__ == "__main__":
