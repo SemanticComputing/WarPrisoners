@@ -26,6 +26,8 @@ cat input_rdf/schema_base.ttl output/schema.ttl > output/schema_full.ttl &&
 rapper -i turtle output/schema_full.ttl -o turtle > output/schema.ttl &&
 rm output/schema_full.ttl &&
 
+python vocab.py output/prisoners_plain.ttl output/occupation_links.ttl output/occupations_prisoners.ttl "http://ldf.fi/schema/bioc/has_occupation" "http://ldf.fi/schema/bioc/has_occupation" "http://www.w3.org/2004/02/skos/core#Concept" "http://ldf.fi/schema/warsa/occupations/" &&
+
 echo "Linking ranks" &&
 
 python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
@@ -41,8 +43,6 @@ echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -d @- http:/
 
 ./link_units.sh &&
 
-rm output/prisoners_temp.ttl &&
-
 echo "Linking people" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl > output/prisoners_temp.ttl &&
@@ -56,8 +56,9 @@ sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/'
 
 echo "Finishing prisoners" &&
 
-cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl > output/prisoners_full.ttl &&
+cat output/prisoners_plain.ttl output/occupation_links.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl > output/prisoners_full.ttl &&
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
+rm output/prisoners_full.ttl &&
 
 echo "Splitting to publishable and nonpublishable prisoners" &&
 python prune_nonpublic.py output/prisoners.ttl &&

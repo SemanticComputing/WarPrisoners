@@ -356,7 +356,7 @@ def link_persons(graph, endpoint):
     arpa = ArpaMimic(get_query_template(), endpoint, retries=10, wait_between_tries=6)
     new_graph = process_graph(graph, CIDOC.P70_documents, arpa, progress=True,
                               validator=validator, new_graph=True, source_prop=SKOS.prefLabel)
-    validator.score_graph.serialize('scores.ttl', format='turtle')
+    validator.score_graph.serialize('output/scores.ttl', format='turtle')
     return new_graph['graph']
 
 

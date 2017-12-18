@@ -16,6 +16,9 @@ from rdflib.compare import graph_diff, isomorphic
 from csv_to_rdf import get_triple_reifications, get_person_related_triples
 from namespaces import bind_namespaces, WARSA_NS, DATA_NS, SCHEMA_NS
 
+logging.basicConfig(filename='prisoners.log', filemode='a', level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 log = logging.getLogger(__name__)
 
 
