@@ -26,8 +26,6 @@ cat input_rdf/schema_base.ttl output/schema.ttl > output/schema_full.ttl &&
 rapper -i turtle output/schema_full.ttl -o turtle > output/schema.ttl &&
 rm output/schema_full.ttl &&
 
-python vocab.py output/prisoners_plain.ttl output/occupation_links.ttl output/occupations_prisoners.ttl "http://ldf.fi/schema/bioc/has_occupation" "http://ldf.fi/schema/bioc/has_occupation" "http://www.w3.org/2004/02/skos/core#Concept" "http://ldf.fi/schema/warsa/occupations/" &&
-
 echo "Linking ranks" &&
 
 python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
@@ -51,12 +49,14 @@ rm output/prisoners_temp.ttl &&
 
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl &&
 
+# TODO: Link occupations through ARPA/SPARQL
+
 # TODO: Link camps
 # TODO: Link places using Arpa-linker
 
 echo "Finishing prisoners" &&
 
-cat output/prisoners_plain.ttl output/occupation_links.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl > output/prisoners_full.ttl &&
+cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl > output/prisoners_full.ttl &&
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
 rm output/prisoners_full.ttl &&
 
