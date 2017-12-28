@@ -1,8 +1,9 @@
-arpa-linker==0.5.4
+git+git://github.com/SemanticComputing/python-arpa-linker.git
+git+git://github.com/SemanticComputing/CSV2RDF.git
+git+git://github.com/SemanticComputing/warsa-linkers.git
 certifi==2017.7.27.1
 chardet==3.0.4
 cookies==2.2.1
-csv2rdf==0.1.1
 fuzzywuzzy==0.15.1
 idna==2.6
 iso8601==0.1.12
@@ -23,4 +24,3 @@ six==1.10.0
 SPARQLWrapper==1.8.0
 Unidecode==0.4.21
 urllib3==1.22
-warsa-linkers==0.1.0
