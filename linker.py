@@ -333,8 +333,6 @@ class PersonValidator:
 
         return [best_match]
 
-        return []
-
 
 def link_persons(graph, endpoint):
     """

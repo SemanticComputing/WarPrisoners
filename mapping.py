@@ -7,7 +7,7 @@ from datetime import date, datetime
 from functools import partial
 
 from converters import convert_dates, strip_dash, convert_swedish
-from namespaces import SCHEMA_NS, BIOC
+from namespaces import SCHEMA_NS, BIOC, WARSA_NS
 
 from validators import validate_dates, validate_mother_tongue
 
@@ -26,7 +26,7 @@ PRISONER_MAPPING = {
         },
     'synnyinkunta':
         {
-            'uri': SCHEMA_NS.birth_place,
+            'uri': WARSA_NS.birth_place_literal,
             'value_separator': '/',
             'name_fi': 'Syntymäkunta',
             'name_en': 'Municipality of birth',
@@ -34,7 +34,7 @@ PRISONER_MAPPING = {
         },
     'kotikunta':
         {
-            'uri': SCHEMA_NS.home_place,
+            'uri': SCHEMA_NS.home_place_literal,
             'value_separator': '/',
             'name_fi': 'Kotikunta',
             'name_en': 'Home municipality',
