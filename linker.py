@@ -68,7 +68,6 @@ def link_ranks(graph, endpoint):
 
     :param graph: Data in RDFLib Graph object
     :param endpoint: Endpoint to query military ranks from
-    :param prop: Property used to give military rank (used for both source and target)
     :return: RDFLib Graph with updated links
     """
 
@@ -92,6 +91,39 @@ def link_ranks(graph, endpoint):
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
     return link(graph, arpa, SCHEMA_NS.rank, Graph(), SCHEMA_NS.warsa_rank, preprocess=preprocess)
+
+
+def link_occupations(graph, endpoint):
+    """
+    Link occupations in graph.
+
+    :param graph: Data in RDFLib Graph object
+    :param endpoint: SPARQL endpoint
+    :return: RDFLib Graph with updated links
+    """
+
+    def preprocess(literal, prisoner, subgraph):
+        # TODO: Fix
+        literal = str(literal).strip()
+
+        if '/' not in literal:
+            return literal if literal != '-' else ''
+        values = [s.strip() for s in literal.split(sep='/')]
+        return '" "'.join(values)
+
+    query = "PREFIX text: <http://jena.apache.org/text#> " + \
+            "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " + \
+            "SELECT * { GRAPH <http://ldf.fi/warsa/occupations> { ?id a <http://ldf.fi/schema/bioc/Occupation> . " + \
+            "VALUES ?occu { \"<VALUES>\" } . " + \
+            "?id text:query ?occu . " + \
+            "?id skos:prefLabel|skos:altLabel ?occu2 . " + \
+            "FILTER(lcase(?occu) = lcase(str(?occu2)))" + \
+            "} }"
+
+    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
+
+    # TODO: Keep original occupations with another property
+    return link(graph, arpa, BIOC.has_occupation, Graph(), BIOC.has_occupation,  preprocess=preprocess)
 
 
 class PersonValidator:
@@ -361,7 +393,7 @@ def link_persons(graph, endpoint):
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Linking task to perform", choices=["ranks", "persons"])
+    argparser.add_argument("task", help="Linking task to perform", choices=["occupations", "persons", "ranks"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
@@ -387,3 +419,8 @@ if __name__ == '__main__':
     elif args.task == 'persons':
         log.info('Linking persons')
         link_persons(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+
+    elif args.task == 'occupations':
+        log.info('Linking occupations')
+        link_occupations(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+
