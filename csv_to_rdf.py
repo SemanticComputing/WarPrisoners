@@ -296,9 +296,12 @@ class RDFMapper:
                 continue
             mapping = self.mapping.get(column_name)
 
-            if not mapping:
-                mappings = [(k, v) for k, v in self.mapping.items() if k.startswith(column_name)]
+            if mapping:
+                logging.info(f'Column {column_name} found in mappings')
+            else:
+                mappings = [(k, v) for k, v in self.mapping.items() if column_name.startswith(k)]
                 if len(mappings) == 1:
+                    logging.info(f'Mapping column {column_name} to {mappings[0][0]}')
                     self.table.rename(columns={column_name: mappings[0][0]}, inplace=True)
                 else:
                     if len(mappings) == 0:
