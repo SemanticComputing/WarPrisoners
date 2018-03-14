@@ -56,7 +56,7 @@ PRISONER_MAPPING = {
         },
     'ammatti':
         {
-            'uri': BIOC.has_occupation,
+            'uri': SCHEMA_NS.occupation_literal,
             'name_fi': 'Ammatti',
             'name_en': 'Occupation',
             'value_separator': '/',

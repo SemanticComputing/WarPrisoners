@@ -103,7 +103,6 @@ def link_occupations(graph, endpoint):
     """
 
     def preprocess(literal, prisoner, subgraph):
-        # TODO: Fix
         literal = str(literal).strip()
 
         if '/' not in literal:
@@ -122,8 +121,7 @@ def link_occupations(graph, endpoint):
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
-    # TODO: Keep original occupations with another property
-    return link(graph, arpa, BIOC.has_occupation, Graph(), BIOC.has_occupation,  preprocess=preprocess)
+    return link(graph, arpa, SCHEMA_NS.occupation_literal, Graph(), BIOC.has_occupation,  preprocess=preprocess)
 
 
 class PersonValidator:
