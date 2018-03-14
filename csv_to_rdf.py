@@ -172,9 +172,10 @@ class RDFMapper:
             row_rdf.add((entity_uri, SCHEMA_NS.original_name, Literal(original_name)))
 
         # Loop through the mapping dict and convert data to RDF
-        for column_name in self.mapping:
+        for column_name in row.index:
 
-            mapping = self.mapping[column_name]
+            mapping = self.mapping.get(column_name)
+
             value = row[column_name]
             separator = mapping.get('value_separator')
 
@@ -284,8 +285,33 @@ class RDFMapper:
         self.table.rename(columns={'Unnamed: 0': 'nro'}, inplace=True)
         missing_ids = self.table[self.table.nro < 0]
         self.table = self.table[self.table.nro >= 0]
+
+        columns = list(self.table)
+        logging.info(f'Table contains {len(columns)} columns')
+
+        # Assign columns to mappings, remove the ones that can't be mapped
+        for column_name in columns:
+
+            if column_name == 'nro':
+                continue
+            mapping = self.mapping.get(column_name)
+
+            if not mapping:
+                mappings = [(k, v) for k, v in self.mapping.items() if k.startswith(column_name)]
+                if len(mappings) == 1:
+                    self.table.rename(columns={column_name: mappings[0][0]}, inplace=True)
+                else:
+                    if len(mappings) == 0:
+                        logging.warning(f'No mapping found for column {column_name}')
+                    else:
+                        logging.error(f'Found multiple mappings for column {column_name}')
+                    self.table.drop(columns=[column_name], inplace=True)
+
+        logging.info(f'Using {len(list(self.table))} columns for data conversion')
+
         for missing in missing_ids['suku- ja etunimet']:
             logging.warning('Person with name %s missing id number' % missing)
+
         logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
         self.log.info('Data read from CSV %s' % csv_input)
 
