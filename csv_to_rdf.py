@@ -12,6 +12,7 @@ from functools import partial
 
 import pandas as pd
 from rdflib import URIRef, Graph, Literal, Namespace
+from rdflib.term import Identifier
 
 from converters import convert_person_name, convert_dates
 from mapping import PRISONER_MAPPING
@@ -196,7 +197,6 @@ class RDFMapper:
                 date_end = None
                 trash = None
                 sep_errors = []
-                conv_error = None
                 original_value = value
 
                 if separator == '/':
@@ -222,7 +222,10 @@ class RDFMapper:
                     row_errors.append([prisoner_number, fullname, column_name, conv_error, original_value])
 
                 if value:
-                    rdf_value = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
+                    if isinstance(value, Identifier):
+                        rdf_value = value
+                    else:
+                        rdf_value = Literal(value, datatype=XSD.date) if type(value) == datetime.date else Literal(value)
 
                     if mapping.get('create_resource'):
                         resource_uri = DATA_NS[resource_template.format(entity=entity_uri.split('/')[-1],
