@@ -40,7 +40,7 @@ echo "Linking units" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl > output/prisoners_temp.ttl &&
 
- Updated data needed for unit linking
+# Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl &&
 
 echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -f -d @- $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
