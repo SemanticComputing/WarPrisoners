@@ -1,11 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-mkdir -p output
+mkdir -p output/logs
 
 command -v s-put >/dev/null 2>&1 || { echo >&2 "s-put is not available, aborting"; exit 1; }
 command -v rapper >/dev/null 2>&1 || { echo >&2 "rapper is not available, aborting"; exit 1; }
 
-WARSA_ENDPOINT_URL=${WARSA_ENDPOINT_URL:-$WARSA_ENDPOINT_URL}
+export WARSA_ENDPOINT_URL=${WARSA_ENDPOINT_URL:-http://localhost:3030/warsa}
+export ARPA_URL=${ARPA_URL:-http://demo.seco.tkk.fi/arpa}
+
+echo $WARSA_ENDPOINT_URL
+echo $ARPA_URL
 
 echo "Converting to csv" &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/prisoners.xls --outdir data &&
@@ -36,10 +40,10 @@ echo "Linking units" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl > output/prisoners_temp.ttl &&
 
-# Updated data needed for unit linking
+ Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl &&
 
-echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
+echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -f -d @- $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
 
 ./link_units.sh &&
 

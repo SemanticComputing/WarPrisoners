@@ -61,7 +61,7 @@ class RDFMapper:
         # self.errors = pd.DataFrame(columns=['nro', 'sarake', 'virhe', 'arvo'])
         self.errors = []
 
-        logging.basicConfig(filename='prisoners.log',
+        logging.basicConfig(filename='output/logs/prisoners.log',
                             filemode='a',
                             level=getattr(logging, loglevel),
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

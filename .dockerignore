@@ -1,0 +1,7 @@
+**
+!requirements.txt
+!*.py
+!*.sh
+!sparql
+!s-put
+!s-delete

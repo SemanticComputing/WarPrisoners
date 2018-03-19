@@ -107,7 +107,7 @@ def link_occupations(graph, endpoint):
 
         if '/' not in literal:
             return literal if literal != '-' else ''
-        values = [s.strip() for s in literal.split(sep='/')]
+        values = [s.strip() for s in literal.split(sep='/') if s]
         return '" "'.join(values)
 
     query = "PREFIX text: <http://jena.apache.org/text#> " + \
@@ -121,7 +121,7 @@ def link_occupations(graph, endpoint):
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
-    return link(graph, arpa, SCHEMA_NS.occupation_literal, Graph(), BIOC.has_occupation,  preprocess=preprocess)
+    return link(graph, arpa, SCHEMA_NS.occupation_literal, Graph(), BIOC.has_occupation, preprocess=preprocess)
 
 
 class PersonValidator:
@@ -400,7 +400,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    logging.basicConfig(filename='prisoners-{ts}.log'.format(ts=time.time()),
+    logging.basicConfig(filename='{output}/logs/prisoners-{ts}.log'.format(output=args.output, ts=time.time()),
                         filemode='a',
                         level=getattr(logging, args.loglevel),
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -421,4 +421,3 @@ if __name__ == '__main__':
     elif args.task == 'occupations':
         log.info('Linking occupations')
         link_occupations(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
-
