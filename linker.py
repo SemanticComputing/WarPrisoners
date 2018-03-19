@@ -400,7 +400,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    logging.basicConfig(filename='{output}/logs/prisoners-{ts}.log'.format(output=args.output, ts=time.time()),
+    logging.basicConfig(filename='output/logs/prisoners-{ts}.log'.format(ts=time.time()),
                         filemode='a',
                         level=getattr(logging, args.loglevel),
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
