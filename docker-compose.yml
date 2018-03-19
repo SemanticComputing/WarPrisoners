@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+    fuseki:
+        image: warsa-mod
+    tasks:
+        build:
+            context: .
+            args:
+                warsa_endpoint_url: http://fuseki:3030/warsa
+        volumes:
+            - ./data/:/app/data
+            - ./output/:/app/output

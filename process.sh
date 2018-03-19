@@ -5,6 +5,8 @@ mkdir -p output
 command -v s-put >/dev/null 2>&1 || { echo >&2 "s-put is not available, aborting"; exit 1; }
 command -v rapper >/dev/null 2>&1 || { echo >&2 "rapper is not available, aborting"; exit 1; }
 
+WARSA_ENDPOINT_URL=${WARSA_ENDPOINT_URL:-$WARSA_ENDPOINT_URL}
+
 echo "Converting to csv" &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/prisoners.xls --outdir data &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/camps.xlsx --outdir data &&
@@ -28,22 +30,22 @@ rm output/schema_full.ttl &&
 
 echo "Linking ranks" &&
 
-python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
+python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 
 echo "Linking units" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl > output/prisoners_temp.ttl &&
 
 # Updated data needed for unit linking
-s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl &&
 
-echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > output/periods.ttl &&
+echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
 
 ./link_units.sh &&
 
 echo "Linking occupations" &&
 
-python linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "http://localhost:3030/warsa/sparql" &&
+python linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 
 echo "Linking people" &&
 
@@ -69,26 +71,26 @@ rm output/prisoners.ttl &&
 echo "Generating people..." &&
 
 echo "...Updating db with prisoners" &&
-s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoners output/prisoners.ttl.public.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners.ttl.public.ttl &&
 
 echo "...Constructing people" &&
-echo 'query=' | cat - sparql/construct_people.sparql | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > output/prisoner_people.ttl &&
+echo 'query=' | cat - sparql/construct_people.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl &&
 
 echo "...Constructing documents links" &&
-echo 'query=' | cat - sparql/construct_documents_links.sparql | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > output/prisoner_documents_links.ttl &&
+echo 'query=' | cat - sparql/construct_documents_links.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_documents_links.ttl &&
 
 echo "...Updating db with new people" &&
 cat output/prisoner_people.ttl output/prisoner_documents_links.ttl > prisoners_temp.ttl &&
-s-put http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people.ttl &&
 rm prisoners_temp.ttl &&
 
 for construct in births promotions ranks unit_joinings captures disappearances
 do
     echo "...Constructing $construct" &&
-    echo 'query=' | cat - "sparql/construct_$construct.sparql" | sed 's/&/%26/g' | curl -d @- http://localhost:3030/warsa/sparql -v > "output/prisoner_$construct.ttl"
+    echo 'query=' | cat - "sparql/construct_$construct.sparql" | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > "output/prisoner_$construct.ttl"
 done &&
 
 echo "...Deleting temp graph" &&
-s-delete http://localhost:3030/warsa/data http://ldf.fi/warsa/prisoner_persons &&
+s-delete WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons &&
 
 echo "...Finished"
