@@ -129,6 +129,10 @@ class TestRDFMapper(unittest.TestCase):
 
         assert isomorphic(g, g2)
 
+    def test_get_mapping(self):
+        mapper = RDFMapper({'column1': {}}, '')
+        self.assertEquals(mapper.get_mapping('column1 (kesken)'), {})
+
 
 if __name__ == '__main__':
     unittest.main()

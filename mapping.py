@@ -176,6 +176,7 @@ PRISONER_MAPPING = {
     'kuolinsyy':
         {
             'uri': SCHEMA_NS.cause_of_death,
+            'value_separator': '/',
             'name_en': 'Cause of death',
             'name_fi': 'Kuolinsyy'
         },
@@ -229,12 +230,19 @@ PRISONER_MAPPING = {
             'name_en': 'Declared death',
             'name_fi': 'Kuolleeksi julistaminen'
         },
-    'valokuva':
+    'valokuva KA:n henkilöakteissa, RGVA:n henkilömapeissa, muissa venäläisissä arkistoissa, venäläisessä Sotilaan Ääni-lehdessä':
         {
             'uri': SCHEMA_NS.photograph,
             'value_separator': ';',
             'name_fi': 'Valokuva',
             'name_en': 'Photograph'
+        },
+    'valokuva Sotilaan Äänessä':
+        {
+            'uri': SCHEMA_NS.photograph_sotilaan_aani,
+            'value_separator': ';',
+            'name_fi': 'Valokuva Sotilaan Ääni -lehdessä',
+            'name_en': 'Photograph in Sotilaan Ääni magazine'
         },
     'suomalainen paluukuulustelupöytäkirja':
         {
@@ -256,19 +264,6 @@ PRISONER_MAPPING = {
             'name_fi': 'PM:n valvontatoimiston radiokatsaukset',
             'description_fi': 'Neuvostoliitto lähetti suomenkielisiä propagandalähetyksiä sekä talvi- että jatkosodan aikana, enimmillään 14 lähetystä päivässä. Lähetysasemat sijaitsivat Leningradissa, Moskovassa, Petroskoissa, Karhumäessä ja Sorokassa (Belomorsk). Kadonneiden omaisille radiolähetykset olivat tärkeitä siksi, että niissä luettiin sotavankien kirjeitä ja terveisiä omaisilleen sekä varsinkin kesällä 1944 vankeuteen joutuneiden luetteloja. Joskus lähetettiin myös leireillä levytettyjä haastatteluja. Suomessa lähetysten kuuntelu oli Päämajan valvontatoimiston tehtävänä. Valvontatoimisto laati sotavankinimistä luetteloja jo seuraavaksi päiväksi, viikonlopun jälkeen ensimmäiseksi arkipäiväksi.',
         },
-    'Jatkosodan VEN henkilömapit F 473, palautetut':
-        {
-            'uri': SCHEMA_NS.russian_interrogation_sheets,
-            'value_separator': ';',
-            'name_en': 'Russian interrogation sheets',
-            'name_fi': 'Jatkosodan venäläiset kuulustelulomakkeet'
-        },
-    'Talvisodan kortisto':
-        {
-            'uri': SCHEMA_NS.winterwar_card_file,
-            'name_en': 'Winter War card file',
-            'name_fi': 'Talvisodan kortisto'
-        },
     'vankeudessa takavarikoitu omaisuus markoissa':
         {
             'uri': SCHEMA_NS.confiscated_possession,
@@ -287,42 +282,25 @@ PRISONER_MAPPING = {
     'Karagandan kortisto':
         {
             'uri': SCHEMA_NS.karaganda_card_file,
+            'value_separator': ';',
             'name_en': 'Karaganda card file',
             'name_fi': 'Karagandan kortisto'
         },
     'Neuvostoliittolaiset sotavankikortistot ja henkilömappikokoelmat':
         {
             'uri': SCHEMA_NS.soviet_card_files,
+            'value_separator': ';',
             'name_en': 'Soviet prisoner of war card files and person registers',
             'name_fi': 'Neuvostoliittolaiset sotavankikortistot ja henkilömappikokoelmat',
             'desciption_fi': 'Talvisodan kortisto, Jatkosodan kortisto, Palautettujen henkilömapit, Sotavankeudessa kuolleiden henkilömapit, Vangittujen ja internoitujen henkilömapit. Mikäli korttien tai mappien lukumäärää ei ole mainittu, on kyseisessä kokoelmassa yksi vankia koskeva kortti tai mappi. Mikäli henkilömapin sisältöä ei ole lueteltu, sisältää mappi vain ns. kuulustelulomakkeen. Kokoelmia voi selata Digitaaliarkistossa Kansallisarkiston toimipisteiden yleisöpäätteillä, haku vangin nimellä. Vangittujen ja internoitujen henkilömappien selailu vaatii erillisen luvan hakemista. Asiakirjat ovat pääosin venäjänkielisiä.',
         },
-    'Jatkosodan VEN henkilömapit, kuolleet F 465':
-        {
-            'uri': SCHEMA_NS.continuation_war_russian_card_file_F_465,
-            'value_separator': ';',
-            'name_en': 'Continuation War Russian card file F 465',
-            'name_fi': 'Kuolleiden jatkosodan venäjänkieliset kuulustelulomakkeet F 465'
-        },
-    'Jatkosodan VEN henkilömapit, tuomitut ja internoidut 461/p':
-        {
-            'uri': SCHEMA_NS.continuation_war_russian_card_file_461p,
-            'name_en': 'Continuation War Russian card file 461/p',
-            'name_fi': 'Jatkosodan internoitujen venäjänkieliset kuulustelulomakkeet 461/p'
-        },
     'Talvisodan kokoelma':
         {
             'uri': SCHEMA_NS.winter_war_collection,
+            'value_separator': ';',
             'name_en': 'Winter War collection',
             'name_fi': 'Talvisodan kokoelma',
             'description_fi': 'Venäjän valtion sota-arkisto RGVA, Fondi 34980 Talvisodan kokoelma. Neuvostoliittolaisia talvisotaa koskevia asiakirjoja, jotka ovat selattavissa Digitaaliarkistossa Kansallisarkiston toimipisteiden yleisöpäätteillä. Asiakirjan hakuohje: tee Digitaaliarkiston etusivulla Aineiston haku esim. sanoilla ’talvisodan kokoelma’ -> klikkaa linkkiä ’RGVA Fondi 34980 Talvisodan kokoelma’ -> klikkaa ’asiakirjat’ -> valitse avautuvan sivun ylälaidasta ’kaikki’ -> tee haku sivulta painamalla ensin ctrl + f ja kirjoita hakuruutuun hakemasi arkistoyksikön numerotunnus muotoa x:xxx (tunnuksia on eripituisia) -> klikkaa oikeaa arkistoyksikköä, jolloin pääset selaamaan ko. kansiossa olevia asiakirjoja.',
-        },
-    'Talvisodan kokoelma, Moskovasta tulevat':
-        {
-            'uri': SCHEMA_NS.winter_war_collection_from_moscow,
-            'value_separator': ';',
-            'name_en': 'Winter War collection (Moscow)',
-            'name_fi': 'Talvisodan kokoelma (Moskovasta)'
         },
     'lentolehtinen':
         {
@@ -339,7 +317,7 @@ PRISONER_MAPPING = {
             'name_en': 'Sotilaan Ääni magazine',
             'name_fi': 'Sotilaan Ääni'
         },
-    'Kansan Valta -lehti, Kansan  Mies -lehti, Kansan Ääni':
+    'Kansan Valta -lehti, Kansan Mies -lehti, Kansan Ääni':
         {
             'uri': SCHEMA_NS.propaganda_magazine,
             'value_separator': ';',
@@ -361,7 +339,7 @@ PRISONER_MAPPING = {
             'name_en': 'Recording (video/audio)',
             'name_fi': 'Tallenne (video/audio)'
         },
-    'Karjalan kansallisarkiston dokumentit':
+    'Karjalan tasavallan kansallisarkiston dokumentit':
         {
             'uri': SCHEMA_NS.karelian_archive_documents,
             'name_en': 'Karelian archive documents',
