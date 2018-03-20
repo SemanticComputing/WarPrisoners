@@ -54,7 +54,7 @@ python linker.py occupations output/prisoners_plain.ttl output/occupation_links.
 echo "Linking people" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/occupation_links.ttl > output/prisoners_temp.ttl &&
-python linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl &&
+python linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 rm output/prisoners_temp.ttl &&
 
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl &&

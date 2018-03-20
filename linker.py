@@ -105,10 +105,14 @@ def link_occupations(graph, endpoint):
     def preprocess(literal, prisoner, subgraph):
         literal = str(literal).strip()
 
-        if '/' not in literal:
-            return literal if literal != '-' else ''
-        values = [s.strip() for s in literal.split(sep='/') if s]
-        return '" "'.join(values)
+        if literal == '-':
+            return ''
+
+        escape_regex = r'[\[\]\\/\-&|!(){}^"~*?:+]'
+
+        values = '" "'.join([re.sub(escape_regex, r'\\\\\g<0>', s.strip()) for s in literal.split(sep='/') if s])
+
+        return values
 
     query = "PREFIX text: <http://jena.apache.org/text#> " + \
             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " + \

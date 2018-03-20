@@ -1,6 +1,6 @@
 {
   "name" : "warsa_actor_units",
-  "endpointURL" : "http://ldf.fi/warsa/sparql",
+  "endpointURL" : "http://fuseki:3030/warsa/sparql",
   "lasLocale" : "fi",
   "queryUsingOriginalForm" : true,
   "queryUsingBaseform" : true,
