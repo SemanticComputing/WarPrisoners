@@ -3,11 +3,11 @@
 """
 Mapping of CSV columns to RDF properties
 """
-from datetime import date, datetime
+from datetime import date
 from functools import partial
 
 from converters import convert_dates, strip_dash, convert_swedish
-from namespaces import SCHEMA_NS, BIOC, WARSA_NS
+from namespaces import SCHEMA_NS
 
 from validators import validate_dates, validate_mother_tongue
 
@@ -26,7 +26,7 @@ PRISONER_MAPPING = {
         },
     'synnyinkunta':
         {
-            'uri': WARSA_NS.birth_place_literal,
+            'uri': SCHEMA_NS.birth_place_literal,
             'value_separator': '/',
             'name_fi': 'Syntymäkunta',
             'name_en': 'Municipality of birth',
