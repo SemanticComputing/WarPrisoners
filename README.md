@@ -1,11 +1,24 @@
-Requirements
-------------
+# WarSampo Prisoners of war data conversion
 
-- ARPA linker: https://github.com/SemanticComputing/python-arpa-linker
-- CSV2RDF: https://github.com/SemanticComputing/CSV2RDF
+Convert the Prisoners of War dataset from Excel files to enriched RDF.
 
+## Conversion
 
-WarSampo Prisoners of war data conversion
------------------------------------------
+Requires Docker and Docker Compose.
+
+Create directories `./data/` and `./output/`.
+The initial Excel files (`prisoners.xls`, `hospitals.xlsx`, and `camps.xlsx`) should be placed in `./data/`.
+
+Start the required services:
+
+`docker-compose up -d las arpa fuseki`
+
+Run the conversion process:
+
+`docker-compose run --rm tasks`
+
+The output files will be written to `./output/`, and logs to `./output/logs/`.
+
+## Tests
 
 To run all tests: `nosetests --doctest-tests`
