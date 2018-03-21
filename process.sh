@@ -59,9 +59,9 @@ sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/'
 # TODO: Link camps
 # TODO: Link places using Arpa-linker
 
-echo "Finishing prisoners" &&
+echo "Consolidating prisoners" &&
 
-cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl > output/prisoners_full.ttl &&
+cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl output/occupation_links.ttl > output/prisoners_full.ttl &&
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
 rm output/prisoners_full.ttl &&
 
@@ -89,5 +89,11 @@ done &&
 
 echo "...Deleting temp graph" &&
 s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons &&
+
+echo "Finishing prisoners" &&
+
+cat output/prisoners.ttl output/prisoner_documents_links.ttl > output/prisoners_full.ttl &&
+rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
+rm output/prisoners_full.ttl &&
 
 echo "...Finished"
