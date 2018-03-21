@@ -8,9 +8,6 @@ command -v rapper >/dev/null 2>&1 || { echo >&2 "rapper is not available, aborti
 export WARSA_ENDPOINT_URL=${WARSA_ENDPOINT_URL:-http://localhost:3030/warsa}
 export ARPA_URL=${ARPA_URL:-http://demo.seco.tkk.fi/arpa}
 
-echo $WARSA_ENDPOINT_URL
-echo $ARPA_URL
-
 echo "Converting to csv" &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/prisoners.xls --outdir data &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/camps.xlsx --outdir data &&
@@ -68,14 +65,10 @@ cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validate
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
 rm output/prisoners_full.ttl &&
 
-echo "Splitting to publishable and nonpublishable prisoners" &&
-python prune_nonpublic.py output/prisoners.ttl &&
-rm output/prisoners.ttl &&
-
 echo "Generating people..." &&
 
 echo "...Updating db with prisoners" &&
-s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners.ttl.public.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners.ttl &&
 
 echo "...Constructing people" &&
 echo 'query=' | cat - sparql/construct_people.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl &&
