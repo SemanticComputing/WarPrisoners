@@ -95,6 +95,6 @@ do
 done &&
 
 echo "...Deleting temp graph" &&
-s-delete WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons &&
+s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons &&
 
 echo "...Finished"
