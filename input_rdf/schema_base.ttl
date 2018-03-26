@@ -11,11 +11,26 @@
 
 warsa:PrisonerRecord rdfs:subClassOf <http://www.cidoc-crm.org/cidoc-crm/E31_Document> ;
     a rdfs:Class ;
-    skos:prefLabel "War Prisoner Record"@en,
+    skos:prefLabel "Prisoner of War Record"@en,
         "Sotavankiasiakirja"@fi .
 
 ps:warsa_unit a rdf:Property ;
     rdfs:range warsa:Group ;
     skos:prefLabel "Military Unit"@en,
         "Joukko-osasto"@fi .
+
+warsa:PowLocation a rdfs:Class ;
+    rdfs:subClassOf cidoc:E27_Site , cidoc:E53_Place ;
+    skos:prefLabel "Prisoner-of-War Captivity Location"@en,
+        "Sotavangin sijoituspaikka"@fi .
+
+warsa:PowCamp a rdfs:Class;
+    rdfs:subClassOf warsa:PowLocation ;
+    skos:prefLabel "Prisoner-of-War Camp"@en,
+        "Sotavankileiri"@fi .
+
+warsa:PowHospital a rdfs:Class;
+    rdfs:subClassOf warsa:PowLocation ;
+    skos:prefLabel "Prisoner-of-War Hospital"@en,
+        "Sotavankisairaala"@fi .
 

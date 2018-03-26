@@ -384,7 +384,7 @@ if __name__ == "__main__":
         mapper.read_csv(args.input, sep=',')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              WARSA_NS.PrisonCamp)
+                              WARSA_NS.PowCamp)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
     elif args.mode == "HOSPITALS":
@@ -392,5 +392,5 @@ if __name__ == "__main__":
         mapper.read_csv(args.input, sep=',')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              WARSA_NS.Hospital)
+                              WARSA_NS.PowHospital)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
