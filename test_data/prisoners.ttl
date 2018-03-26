@@ -193,7 +193,7 @@ p:prisoner_2_located_in_40 a ps:Located_in ;
     ps:place "158" .
 
 p:prisoner_1 a ns1:PrisonerRecord ;
-    ns1:birth_place_literal "Karkkila" ;
+    ps:birth_place_literal "Karkkila" ;
     ps:amount_children "0" ;
     ps:birth_date "1908-12-24"^^xsd:date ;
     ps:burial_place "leirin 375 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) / haudattiin leiri № 75:n hautausmaahan Volgalla (Keränen Unto)" ;
@@ -242,7 +242,7 @@ p:prisoner_1 a ns1:PrisonerRecord ;
     skos:prefLabel "Sukunimi, Etunimi Toinennimi" .
 
 p:prisoner_2 a ns1:PrisonerRecord ;
-    ns1:birth_place_literal "Juuka/Kiihtelysvaara" ;
+    ps:birth_place_literal "Juuka/Kiihtelysvaara" ;
     ps:amount_children "2" ;
     ps:birth_date "1907-12-12"^^xsd:date,
         "1907-12-13"^^xsd:date ;
