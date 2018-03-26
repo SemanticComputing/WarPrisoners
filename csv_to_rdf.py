@@ -301,6 +301,8 @@ class RDFMapper:
 
         self.table = csv_data.fillna('').applymap(lambda x: x.strip() if type(x) == str else x)
         logging.info('Read {num} rows from CSV'.format(num=len(self.table)))
+
+    def preprocess_prisoners_data(self):
         self.table.rename(columns={'Unnamed: 0': 'nro'}, inplace=True)
         missing_ids = self.table[self.table.nro < 0]
         self.table = self.table[self.table.nro >= 0]
@@ -311,8 +313,6 @@ class RDFMapper:
             logging.warning('Person with name %s missing id number' % missing)
 
         logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
-
-        self.log.info('Data read from CSV %s' % csv_input)
 
     def serialize(self, destination_data, destination_schema):
         """
@@ -373,6 +373,7 @@ if __name__ == "__main__":
     if args.mode == "PRISONERS":
         mapper = RDFMapper(PRISONER_MAPPING, WARSA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
         mapper.read_csv(args.input)
+        mapper.preprocess_prisoners_data()
 
         mapper.process_rows()
 
@@ -380,7 +381,7 @@ if __name__ == "__main__":
 
     elif args.mode == "CAMPS":
         mapper = CSV2RDF()
-        mapper.read_csv(args.input, sep='\t')
+        mapper.read_csv(args.input, sep=',')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               WARSA_NS.PrisonCamp)
@@ -388,7 +389,7 @@ if __name__ == "__main__":
 
     elif args.mode == "HOSPITALS":
         mapper = CSV2RDF()
-        mapper.read_csv(args.input, sep='\t')
+        mapper.read_csv(args.input, sep=',')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               WARSA_NS.Hospital)
