@@ -40,7 +40,7 @@ cat output/prisoners_plain.ttl output/rank_links.ttl > output/prisoners_temp.ttl
 # Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl &&
 
-echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -f -d @- $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
+curl -f --data-urlencode "query=$(cat sparql/period.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/periods.ttl &&
 
 ./link_units.sh &&
 
@@ -71,10 +71,10 @@ echo "...Updating db with prisoners" &&
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners.ttl &&
 
 echo "...Constructing people" &&
-echo 'query=' | cat - sparql/construct_people.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl &&
+curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl &&
 
 echo "...Constructing documents links" &&
-echo 'query=' | cat - sparql/construct_documents_links.sparql | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_documents_links.ttl &&
+curl -f --data-urlencode "query=$(cat sparql/construct_documents_links.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_documents_links.ttl &&
 
 echo "...Updating db with new people" &&
 cat output/prisoner_people.ttl output/prisoner_documents_links.ttl > prisoners_temp.ttl &&
@@ -84,7 +84,7 @@ rm prisoners_temp.ttl &&
 for construct in births promotions ranks unit_joinings captures disappearances
 do
     echo "...Constructing $construct" &&
-    echo 'query=' | cat - "sparql/construct_$construct.sparql" | sed 's/&/%26/g' | curl -d @- $WARSA_ENDPOINT_URL/sparql -v > "output/prisoner_$construct.ttl"
+curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/prisoner_$construct.ttl"
 done &&
 
 echo "...Deleting temp graph" &&
