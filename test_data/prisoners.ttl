@@ -166,31 +166,31 @@ p:prisoner_1_located_in_0 a ps:Located_in ;
     ps:date_begin "1944-07-14"^^xsd:date ;
     ps:date_end "xx.xx.1944" ;
     ps:order 0 ;
-    ps:place "135" .
+    ps:location_literal "135" .
 
 p:prisoner_2_located_in_0 a ps:Located_in ;
     ps:order 0 ;
-    ps:place "Perkjärvi" .
+    ps:location_literal "Perkjärvi" .
 
 p:prisoner_2_located_in_10 a ps:Located_in ;
     ps:order 10 ;
-    ps:place "SPV 1" .
+    ps:location_literal "SPV 1" .
 
 p:prisoner_2_located_in_20 a ps:Located_in ;
     ps:date_begin "1944-07-10"^^xsd:date ;
     ps:date_end "xx.xx.1944" ;
     ps:order 20 ;
-    ps:place "135" .
+    ps:location_literal "135" .
 
 p:prisoner_2_located_in_30 a ps:Located_in ;
     ps:order 30 ;
-    ps:place "270" .
+    ps:location_literal "270" .
 
 p:prisoner_2_located_in_40 a ps:Located_in ;
     ps:date_begin "1944-10-17"^^xsd:date ;
     ps:date_end "1944-11-20"^^xsd:date ;
     ps:order 40 ;
-    ps:place "158" .
+    ps:location_literal "158" .
 
 p:prisoner_1 a ns1:PrisonerRecord ;
     ps:birth_place_literal "Karkkila" ;

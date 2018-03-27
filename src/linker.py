@@ -126,6 +126,25 @@ def link_occupations(graph, endpoint):
     return link(graph, arpa, SCHEMA_NS.occupation_literal, Graph(), BIOC.has_occupation, preprocess=preprocess)
 
 
+def link_camps(graph, endpoint):
+    """Link PoW camps."""
+
+    def preprocess(literal, prisoner, subgraph):
+        return str(literal).strip().replace('"', '\\"')
+
+    query = "PREFIX ps:<http://ldf.fi/schema/warsa/prisoners/>" + \
+            "SELECT * {" + \
+            "  GRAPH <http://ldf.fi/warsa/prisoners> {" + \
+            "    VALUES ?place { \"<VALUES>\" }" + \
+            "    ?id ps:camp_id|ps:captivity_location ?place . " + \
+            "  }" + \
+            "}"
+
+    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
+
+    return link(graph, arpa, SCHEMA_NS.location_literal, Graph(), SCHEMA_NS.location, preprocess=preprocess)
+
+
 class PersonValidator:
     def __init__(self, graph, birthdate_prop, deathdate_prop, source_rank_prop,
                  source_firstname_prop, source_lastname_prop, disappearance_place_prop,
@@ -393,7 +412,7 @@ def link_persons(graph, endpoint):
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Linking task to perform", choices=["occupations", "persons", "ranks"])
+    argparser.add_argument("task", help="Linking task to perform", choices=["camps", "occupations", "persons", "ranks"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
@@ -423,3 +442,7 @@ if __name__ == '__main__':
     elif args.task == 'occupations':
         log.info('Linking occupations')
         link_occupations(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+
+    elif args.task == 'camps':
+        log.info('Linking camps and hospitals')
+        link_camps(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))

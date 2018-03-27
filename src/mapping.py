@@ -200,7 +200,7 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.located_in,
             'value_separator': ';',
             'create_resource': SCHEMA_NS.Located_in,
-            'capture_value': SCHEMA_NS.place,
+            'capture_value': SCHEMA_NS.location_literal,
             'capture_order_number': True,
             'capture_dates': True,
             'name_en': 'Captivity locations',

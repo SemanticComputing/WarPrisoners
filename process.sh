@@ -44,9 +44,7 @@ sed -r -i 's/\:kuvat /\:camp_photographs /g' output/camps_combined.ttl &&
 sed -r -i 's/\:koordinaatit\-kartalla /\:coordinates /g' output/camps_combined.ttl &&
 
 echo "Updating camps and hospitals to Fuseki" &&
-s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_camps output/camps_combined.ttl &&
-
-rm output/camps_combined.ttl output/camps_raw.ttl output/hospitals_raw.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/camps_combined.ttl &&
 
 curl -f --data-urlencode "query=$(cat sparql/construct_camps.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/camps.ttl &&
 
@@ -83,12 +81,17 @@ rm output/prisoners_temp.ttl &&
 
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl &&
 
-# TODO: Link camps
+echo "Linking camps and hospitals" &&
+cat output/prisoners_plain.ttl output/camps.ttl > output/prisoners_temp_2.ttl &&
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp_2.ttl &&
+
+python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
+
 # TODO: Link places using Arpa-linker
 
 echo "Consolidating prisoners" &&
 
-cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl output/occupation_links.ttl > output/prisoners_full.ttl &&
+cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl output/occupation_links.ttl output/camp_links.ttl > output/prisoners_full.ttl &&
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl &&
 rm output/prisoners_full.ttl &&
 
