@@ -1,0 +1,28 @@
+PREFIX wsch: <http://ldf.fi/schema/warsa/>
+PREFIX wpsc: <http://ldf.fi/schema/warsa/prisoners/>
+PREFIX wpri: <http://ldf.fi/warsa/prisoners/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+CONSTRUCT {
+  ?sub ?p ?o ;
+    wgs:lat ?lat ;
+    wgs:long ?long .
+} WHERE {
+  {
+    ?sub a wsch:PowCamp ;
+         ?p ?o .
+    FILTER(?p != wpsc:huomautuksia-poistetaan-kun-asiat-on-kayty-lapi)
+  }
+  UNION
+  {
+    ?sub a wsch:PowHospital ;
+         ?p ?o .
+    FILTER(?p != wpsc:poistettava-tyosarake)
+  }
+  OPTIONAL{
+    ?sub wpsc:coordinates ?coord
+    BIND(REPLACE(STR(?coord), "(\\d\\d\\.\\d+),.*", "$1") AS ?lat)
+    BIND(REPLACE(STR(?coord), ".*,\\W*(\\d\\d\\.\\d+)$", "$1") AS ?long)
+  }
+}

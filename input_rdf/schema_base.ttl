@@ -19,6 +19,9 @@ ps:warsa_unit a rdf:Property ;
     skos:prefLabel "Military Unit"@en,
         "Joukko-osasto"@fi .
 
+
+# PoW camp classes
+
 warsa:PowLocation a rdfs:Class ;
     rdfs:subClassOf cidoc:E27_Site , cidoc:E53_Place ;
     skos:prefLabel "Prisoner-of-War Captivity Location"@en,
@@ -33,4 +36,49 @@ warsa:PowHospital a rdfs:Class;
     rdfs:subClassOf warsa:PowLocation ;
     skos:prefLabel "Prisoner-of-War Hospital"@en,
         "Sotavankisairaala"@fi .
+
+
+# PoW camp properties
+
+ps:camp_id a rdf:Property ;
+    rdfs:domain warsa:PowLocation ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Prisoners of war captivity location identifier"@en,
+        "Sotavankeuspaikan tunniste"@fi .
+
+ps:location a rdf:Property ;
+    rdfs:domain warsa:PowLocation ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Captivity location whereabouts"@en,
+        "Vankeuspaikan sijainti"@fi .
+
+ps:captivity_location a rdf:Property ;
+    rdfs:domain warsa:PowCamp ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Captivity location"@en,
+        "Vankeuspaikka"@fi .
+
+ps:time_of_operation a rdf:Property ;
+    rdfs:domain warsa:PowCamp ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Time of operation"@en,
+        "Toiminta-aika"@fi .
+
+ps:camp_information a rdf:Property ;
+    rdfs:domain warsa:PowLocation ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Captivity location information"@en,
+        "Tietoja vankeuspaikasta"@fi .
+
+ps:camp_photographs a rdf:Property ;
+    rdfs:domain warsa:PowLocation ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Captivity location photographs"@en,
+        "Vankeuspaikan valokuvia"@fi .
+
+ps:coordinates a rdf:Property ;
+    rdfs:domain warsa:PowLocation ;
+    rdfs:range rdfs:Literal ;
+    skos:prefLabel "Captivity location coordinates"@en,
+        "Vankeuspaikan koordinaatit"@fi .
 
