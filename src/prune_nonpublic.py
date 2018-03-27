@@ -10,11 +10,11 @@ from pprint import pprint
 
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
-from rdflib import Graph, RDF, Namespace
+from namespaces import bind_namespaces, WARSA_NS, SCHEMA_NS
+from rdflib import Graph, RDF
 from rdflib.compare import graph_diff, isomorphic
 
-from csv_to_rdf import get_triple_reifications, get_person_related_triples
-from namespaces import bind_namespaces, WARSA_NS, DATA_NS, SCHEMA_NS
+from csv_to_rdf import get_person_related_triples
 
 logging.basicConfig(filename='output/logs/prisoners.log', filemode='a', level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

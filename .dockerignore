@@ -1,6 +1,6 @@
 **
 !requirements.txt
-!*.py
+!src/*.py
 !*.sh
 !sparql
 !s-put

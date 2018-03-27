@@ -8,11 +8,7 @@ import datetime
 import logging
 import re
 
-from rdflib import Graph, Literal
-from slugify import slugify
-
 from namespaces import *
-
 
 log = logging.getLogger(__name__)
 

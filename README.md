@@ -9,6 +9,10 @@ Requires Docker and Docker Compose.
 Create directories `./data/` and `./output/`.
 The initial Excel files (`prisoners.xls`, `hospitals.xlsx`, and `camps.xlsx`) should be placed in `./data/`.
 
+Build the conversion pipeline:
+
+`docker-compose build`
+
 Start the required services:
 
 `docker-compose up -d las arpa fuseki`

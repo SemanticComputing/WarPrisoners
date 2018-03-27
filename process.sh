@@ -14,8 +14,8 @@ libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/hospitals.xlsx --outdir data &&
 
 echo "Converting to ttl" &&
-python csv_to_rdf.py CAMPS data/camps.csv --outdata=output/camps.ttl --outschema=output/camp_schema.ttl &&
-python csv_to_rdf.py HOSPITALS data/hospitals.csv --outdata=output/camps2.ttl &&
+python src/csv_to_rdf.py CAMPS data/camps.csv --outdata=output/camps.ttl --outschema=output/camp_schema.ttl &&
+python src/csv_to_rdf.py HOSPITALS data/hospitals.csv --outdata=output/camps2.ttl &&
 
 sed -r -i 's/\/prisoners\/r\_/\/prisoners\/camp_/g' output/camps.ttl &&
 sed -r -i 's/\/prisoners\/r\_/\/prisoners\/hospital_/g' output/camps2.ttl &&
@@ -23,7 +23,7 @@ sed -r -i 's/\/prisoners\/r\_/\/prisoners\/hospital_/g' output/camps2.ttl &&
 cat output/camps.ttl output/camps2.ttl > output/camps.ttl &&
 rm output/camps2.ttl &&
 
-python csv_to_rdf.py PRISONERS data/prisoners.csv --outdata=output/prisoners_plain.ttl --outschema=output/schema.ttl &&
+python src/csv_to_rdf.py PRISONERS data/prisoners.csv --outdata=output/prisoners_plain.ttl --outschema=output/schema.ttl &&
 
 cat input_rdf/schema_base.ttl output/schema.ttl > output/schema_full.ttl &&
 rapper -i turtle output/schema_full.ttl -o turtle > output/schema.ttl &&
@@ -31,7 +31,7 @@ rm output/schema_full.ttl &&
 
 echo "Linking ranks" &&
 
-python linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
+python src/linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 
 echo "Linking units" &&
 
@@ -46,12 +46,12 @@ echo 'query=' | cat - sparql/period.sparql | sed 's/&/%26/g' | curl -f -d @- $WA
 
 echo "Linking occupations" &&
 
-python linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
+python src/linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 
 echo "Linking people" &&
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/occupation_links.ttl > output/prisoners_temp.ttl &&
-python linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
+python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" &&
 rm output/prisoners_temp.ttl &&
 
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl &&

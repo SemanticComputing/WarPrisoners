@@ -11,14 +11,13 @@ import re
 from functools import partial
 
 import pandas as pd
+from converters import convert_person_name, convert_dates
+from csv2rdf import CSV2RDF
+from mapping import PRISONER_MAPPING
+from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
 from rdflib import URIRef, Graph, Literal, Namespace
 from rdflib.term import Identifier
 
-from converters import convert_person_name, convert_dates
-from mapping import PRISONER_MAPPING
-
-from csv2rdf import CSV2RDF
-from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
 from validators import validate_person_name, validate_dates
 
 
@@ -272,17 +271,11 @@ class RDFMapper:
         return row_rdf
 
     def get_mapping(self, column_name: str):
+        """
+        Get mapping for column name
+        """
         column_name = column_name.split('(')[0].strip()
         mapping = self.mapping.get(column_name)
-        # if not mapping:
-        #     mappings = [(k, v) for k, v in self.mapping.items() if column_name.startswith(k)]
-        #     if len(mappings) == 0:
-        #         logging.warning(f'No mapping found for column {column_name}')
-        #     if len(mappings) > 1:
-        #         raise Exception(f'Incorrect amount of mappings found for column {column_name}: {len(mappings)}')
-        #     else:
-        #         mapping = mappings[0]
-
         return mapping
 
     def read_csv(self, csv_input):
@@ -352,6 +345,8 @@ class RDFMapper:
             if 'description_fi' in prop:
                 self.schema.add((prop['uri'], DC.description, Literal(prop['description_fi'], lang='fi')))
 
+    def write_errors(self):
+        """Write conversion errors to a CSV file"""
         error_df = pd.DataFrame(columns=['nro', 'nimi', 'sarake', 'virhe', 'arvo'], data=self.errors)
         error_df.to_csv('output/errors.csv', ',', index=False)
 
@@ -376,6 +371,7 @@ if __name__ == "__main__":
         mapper.preprocess_prisoners_data()
 
         mapper.process_rows()
+        mapper.write_errors()
 
         mapper.serialize(args.outdata, args.outschema)
 

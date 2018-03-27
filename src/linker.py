@@ -8,13 +8,13 @@ import re
 import time
 from datetime import datetime
 
-from jellyfish import jaro_winkler
+from arpa_linker.arpa import ArpaMimic, process_graph
 from fuzzywuzzy import fuzz
+from jellyfish import jaro_winkler
 from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.util import guess_format
 
-from arpa_linker.arpa import ArpaMimic, process_graph
-from namespaces import SCHEMA_NS, SKOS, FOAF, CIDOC, BIOC
+from namespaces import SCHEMA_NS, SKOS, CIDOC, BIOC
 
 
 # TODO: Write some tests using responses
@@ -54,8 +54,6 @@ def link(graph, arpa, source_prop, target_graph, target_prop, preprocess=_prepro
                          format(ps=prop_str, val=value_literal, res=res))
 
                 target_graph.add((prisoner, target_prop, URIRef(res)))
-
-                # TODO: Update reifications
             else:
                 log.warning('No match found for %s: %s' % (prop_str, value))
 

@@ -10,14 +10,14 @@ import io
 import unittest
 from pprint import pprint
 
-from rdflib import Graph, RDF, URIRef, Literal
-from rdflib.compare import isomorphic, graph_diff
-
 import converters
-from csv_to_rdf import RDFMapper, get_triple_reifications
 from mapping import PRISONER_MAPPING
 from namespaces import DATA_NS, DC, WARSA_NS, SCHEMA_NS
 from prune_nonpublic import prune_persons
+from rdflib import Graph, URIRef, Literal
+from rdflib.compare import isomorphic, graph_diff
+
+from csv_to_rdf import RDFMapper, get_triple_reifications
 
 
 class TestConverters(unittest.TestCase):
@@ -79,6 +79,7 @@ class TestRDFMapper(unittest.TestCase):
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data/prisoners.csv')
+        mapper.preprocess_prisoners_data()
         mapper.process_rows()
         rdf_data, schema = mapper.serialize(None, None)
         g = Graph().parse(io.StringIO(rdf_data.decode("utf-8")), format='turtle')
