@@ -106,7 +106,7 @@ def link_occupations(graph, endpoint):
         if literal == '-':
             return ''
 
-        escape_regex = r'[\[\]\\/\-&|!(){}^"~*?:+]'
+        escape_regex = r'[\[\]\\/\&|!(){}^"~*?:+]'
 
         values = '" "'.join([re.sub(escape_regex, r'\\\\\g<0>', s.strip()) for s in literal.split(sep='/') if s])
 
@@ -402,7 +402,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    logging.basicConfig(filename='output/logs/prisoners-{ts}.log'.format(ts=time.time()),
+    logging.basicConfig(filename='output/logs/prisoners.log'.format(ts=time.time()),
                         filemode='a',
                         level=getattr(logging, args.loglevel),
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
