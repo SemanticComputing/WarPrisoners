@@ -4,8 +4,11 @@ PREFIX wpri: <http://ldf.fi/warsa/prisoners/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
 CONSTRUCT {
   ?sub ?p ?o ;
+    skos:prefLabel ?label ;
     wgs:lat ?lat ;
     wgs:long ?long .
 } WHERE {
@@ -13,12 +16,17 @@ CONSTRUCT {
     ?sub a wsch:PowCamp ;
          ?p ?o .
     FILTER(?p != wpsc:huomautuksia-poistetaan-kun-asiat-on-kayty-lapi)
+    ?sub wpsc:captivity_location ?loc .
+    BIND(STRLANG(?loc, "fi") as ?label)
   }
   UNION
   {
     ?sub a wsch:PowHospital ;
          ?p ?o .
     FILTER(?p != wpsc:poistettava-tyosarake)
+    OPTIONAL { ?sub wpsc:hospital_type ?type . }
+    OPTIONAL { ?sub wpsc:camp_id ?camp_id . }
+    BIND(STRLANG(CONCAT(COALESCE(?type, ""), IF(BOUND(?type), " ", ""), COALESCE(?camp_id, "")), "fi") as ?label)
   }
   OPTIONAL{
     ?sub wpsc:coordinates ?coord

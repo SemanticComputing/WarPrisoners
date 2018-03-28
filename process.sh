@@ -13,12 +13,14 @@ libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/camps.xlsx --outdir data &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/hospitals.xlsx --outdir data &&
 
-# Remove dummy rows from beginning of CSV
-sed -e 1,3d data/camps.csv > output/camps_cropped.csv
+# Remove dummy rows from beginning and end of CSVs
+# TODO: Remove these in a less error prone way using Python (e.g. pruning the resources)
+tail -n +4 data/camps.csv | head -n -4 > output/camps_cropped.csv
+head -n -2 data/hospitals.csv > output/hospitals_cropped.csv
 
 echo "Converting camps and hospitals to ttl" &&
 python src/csv_to_rdf.py CAMPS output/camps_cropped.csv --outdata=output/camps_raw.ttl --outschema=output/camp_schema.ttl &&
-python src/csv_to_rdf.py HOSPITALS data/hospitals.csv --outdata=output/hospitals_raw.ttl &&
+python src/csv_to_rdf.py HOSPITALS output/hospitals_cropped.csv --outdata=output/hospitals_raw.ttl &&
 
 # Fix resource URIs
 sed -r -i 's/\/prisoners\/r\_/\/prisoners\/camp_/g' output/camps_raw.ttl &&
@@ -27,21 +29,23 @@ sed -r -i 's/\/prisoners\/r\_/\/prisoners\/hospital_/g' output/hospitals_raw.ttl
 # Combine camps and hospitals
 cat output/camps_raw.ttl output/hospitals_raw.ttl > output/camps_combined.ttl &&
 
+# TODO: Transform this all to Python mapping
+
 ## Fix property URIs
-sed -r -i 's/\:sijainti /\:location /g' output/camps_combined.ttl &&
+sed -r -i 's/:sijainti /:location /g' output/camps_combined.ttl &&
 
-sed -r -i 's/\:vankeuspaikannnumero /\:camp_id /g' output/camps_combined.ttl &&
-sed -r -i 's/\:vankeuspaikka /\:captivity_location /g' output/camps_combined.ttl &&
-sed -r -i 's/\:toiminta-aika /\:time_of_operation /g' output/camps_combined.ttl &&
-sed -r -i 's/\:tietoa-vankeuspaikasta /\:camp_information /g' output/camps_combined.ttl &&
-sed -r -i 's/\:valokuvat /\:camp_photographs /g' output/camps_combined.ttl &&
-sed -r -i 's/\:koordinaatit\-kartalla /\:coordinates /g' output/camps_combined.ttl &&
+sed -r -i 's/:vankeuspaikannnumero /:camp_id /g' output/camps_combined.ttl &&
+sed -r -i 's/:vankeuspaikka /:captivity_location /g' output/camps_combined.ttl &&
+sed -r -i 's/:toiminta-aika /:time_of_operation /g' output/camps_combined.ttl &&
+sed -r -i 's/:tietoa-vankeuspaikasta /:camp_information /g' output/camps_combined.ttl &&
+sed -r -i 's/:valokuvat /:camp_photographs /g' output/camps_combined.ttl &&
+sed -r -i 's/:koordinaatit\-kartalla /:coordinates /g' output/camps_combined.ttl &&
 
-sed -r -i 's/\:sairaala /\:camp_id /g' output/camps_combined.ttl &&
-sed -r -i 's/\:sairaalan\-tyyppi /\:hospital_type /g' output/camps_combined.ttl &&
-sed -r -i 's/\:tietoa-sairaalasta /\:camp_information /g' output/camps_combined.ttl &&
-sed -r -i 's/\:kuvat /\:camp_photographs /g' output/camps_combined.ttl &&
-sed -r -i 's/\:koordinaatit\-kartalla /\:coordinates /g' output/camps_combined.ttl &&
+sed -r -i 's/:sairaala /:camp_id /g' output/camps_combined.ttl &&
+sed -r -i 's/:sairaalan\-tyyppi /:hospital_type /g' output/camps_combined.ttl &&
+sed -r -i 's/:tietoa-sairaalasta /:camp_information /g' output/camps_combined.ttl &&
+sed -r -i 's/:kuvat /:camp_photographs /g' output/camps_combined.ttl &&
+sed -r -i 's/:koordinaatit\-kartalla /:coordinates /g' output/camps_combined.ttl &&
 
 echo "Updating camps and hospitals to Fuseki" &&
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/camps_combined.ttl &&

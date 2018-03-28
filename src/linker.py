@@ -129,8 +129,17 @@ def link_occupations(graph, endpoint):
 def link_camps(graph, endpoint):
     """Link PoW camps."""
 
+    value_mapping = {
+        'Siestarjoki': "Siestarjoki, ven. Sestroretsk",
+        'Karhumäki': "Karhumäki, evakuointipiste",
+        'Sorokka': 'Sorokka ven. Belomorsk',
+    }
+
     def preprocess(literal, prisoner, subgraph):
-        return str(literal).strip().replace('"', '\\"')
+        literal = str(literal).strip().replace('"', '\\"')
+
+        log.debug(f'Preprocessing camp for linking, {literal} : {value_mapping.get(literal, literal)}')
+        return value_mapping.get(literal, literal)
 
     query = "PREFIX ps:<http://ldf.fi/schema/warsa/prisoners/>" + \
             "SELECT * {" + \
