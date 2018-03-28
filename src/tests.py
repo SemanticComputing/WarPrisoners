@@ -10,23 +10,22 @@ import io
 import unittest
 from pprint import pprint
 
-import converters
-from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DC, WARSA_NS, SCHEMA_NS
-from prune_nonpublic import prune_persons
 from rdflib import Graph, URIRef, Literal
 from rdflib.compare import isomorphic, graph_diff
 
+import converters
 from csv_to_rdf import RDFMapper, get_triple_reifications
+from mapping import PRISONER_MAPPING
+from namespaces import DATA_NS, DC, WARSA_NS, SCHEMA_NS
+from prune_nonpublic import prune_persons
 
 
 class TestConverters(unittest.TestCase):
-
     # TODO: Test errors also
 
     def test_convert_dates(self):
         self.assertEqual(converters.convert_dates('24.12.2016'), datetime.date(2016, 12, 24))
-        self.assertEqual(converters.convert_dates('24/12/2016'), datetime.date(2016, 12, 24))
+        self.assertEqual(converters.convert_dates('12/24/2016'), datetime.date(2016, 12, 24))
 
         self.assertEqual(converters.convert_dates('xx.xx.xxxx'), 'xx.xx.xxxx')
         self.assertEqual(converters.convert_dates('xx.09.2016'), 'xx.09.2016')
@@ -50,7 +49,6 @@ class TestConverters(unittest.TestCase):
 
 
 class TestRDFMapper(unittest.TestCase):
-
     def test_read_value_with_source(self):
         mapper = RDFMapper({}, '')
 
@@ -64,10 +62,13 @@ class TestRDFMapper(unittest.TestCase):
 
         self.assertEquals(mapper.read_semicolon_separated('Some text'), ('Some text', [], None, None, []))
         self.assertEquals(mapper.read_semicolon_separated('Source: Value'), ('Value', ['Source'], None, None, []))
-        self.assertEquals(mapper.read_semicolon_separated('Source1, Source2: Value'), ('Value', ['Source1, Source2'], None, None, []))
-        self.assertEquals(mapper.read_semicolon_separated('http://example.com/'), ('http://example.com/', [], None, None, []))
+        self.assertEquals(mapper.read_semicolon_separated('Source1, Source2: Value'),
+                          ('Value', ['Source1, Source2'], None, None, []))
+        self.assertEquals(mapper.read_semicolon_separated('http://example.com/'),
+                          ('http://example.com/', [], None, None, []))
 
-        self.assertEquals(mapper.read_semicolon_separated('54 13.10.1942-xx.11.1942'), ('54', [], datetime.date(1942, 10, 13), 'xx.11.1942', []))
+        self.assertEquals(mapper.read_semicolon_separated('54 13.10.1942-xx.11.1942'),
+                          ('54', [], datetime.date(1942, 10, 13), 'xx.11.1942', []))
 
     def test_read_csv_simple_2(self):
         mapper = RDFMapper({}, '')
