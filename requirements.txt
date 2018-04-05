@@ -14,7 +14,7 @@ pandas>=0.22.0
 pyparsing==2.2.0
 PyPrind==2.11.1
 python-dateutil==2.6.1
-python-slugify==1.2.4
+python-slugify==1.2.5
 pytz==2017.2
 rdflib==4.2.2
 requests==2.18.4

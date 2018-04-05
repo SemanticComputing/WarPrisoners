@@ -11,6 +11,8 @@ import re
 from functools import partial
 
 import pandas as pd
+from slugify import slugify
+
 from converters import convert_person_name, convert_dates
 from csv2rdf import CSV2RDF
 from mapping import PRISONER_MAPPING, SOURCE_MAPPING
@@ -351,6 +353,25 @@ class RDFMapper:
         error_df.to_csv('output/errors.csv', ',', index=False)
 
 
+def convert_camps(class_uri, prop1, prop2, namespace):
+    mapper = CSV2RDF()
+    mapper.read_csv(args.input, sep=',')
+    mapper.convert_to_rdf(DATA_NS, SCHEMA_NS, class_uri)
+
+    for old_uri in list(mapper.data.subjects(RDF.type, class_uri)):
+        new_uri = slugify(mapper.data.value(old_uri, prop1, default='') or
+                          mapper.data.value(old_uri, prop2, default='') or
+                          'unknown')
+        new_uri = namespace[new_uri]
+        logging.debug(f'Minted new URI for POW camp/hospital: {old_uri}  -->  {new_uri}')
+        for (sub, pre, obj) in mapper.data.triples((old_uri, None, None)):
+            mapper.data.add((new_uri, pre, obj))
+
+        for (sub, pre, obj) in mapper.data.triples((old_uri, None, None)):
+            mapper.data.remove((old_uri, pre, obj))
+    mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
+
+
 if __name__ == "__main__":
 
     argparser = argparse.ArgumentParser(description="Process war prisoners CSV", fromfile_prefix_chars='@')
@@ -376,20 +397,16 @@ if __name__ == "__main__":
         pow_mapper.serialize(args.outdata, args.outschema)
 
     elif args.mode == "CAMPS":
-        mapper = CSV2RDF()
-        mapper.read_csv(args.input, sep=',')
-        mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
-                              Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              WARSA_NS.PowCamp)
-        mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
+        convert_camps(WARSA_NS.PowCamp,
+                      SCHEMA_NS['vankeuspaikan-numero'],
+                      SCHEMA_NS['vankeuspaikka'],
+                      Namespace('http://ldf.fi/warsa/prisoners/camp_'))
 
     elif args.mode == "HOSPITALS":
-        mapper = CSV2RDF()
-        mapper.read_csv(args.input, sep=',')
-        mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
-                              Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              WARSA_NS.PowHospital)
-        mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
+        convert_camps(WARSA_NS.PowHospital,
+                      SCHEMA_NS['sairaala'],
+                      SCHEMA_NS['sijainti'],
+                      Namespace('http://ldf.fi/warsa/prisoners/hospital_'))
 
     elif args.mode == "SOURCES":
         mapper = CSV2RDF(mapping=SOURCE_MAPPING)
