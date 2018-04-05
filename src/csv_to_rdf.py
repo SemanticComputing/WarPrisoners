@@ -13,7 +13,7 @@ from functools import partial
 import pandas as pd
 from converters import convert_person_name, convert_dates
 from csv2rdf import CSV2RDF
-from mapping import PRISONER_MAPPING
+from mapping import PRISONER_MAPPING, SOURCE_MAPPING
 from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
 from rdflib import URIRef, Graph, Literal, Namespace
 from rdflib.term import Identifier
@@ -336,7 +336,7 @@ class RDFMapper:
             if row_rdf:
                 self.data += row_rdf
 
-        for prop in PRISONER_MAPPING.values():
+        for prop in self.mapping.values():
             self.schema.add((prop['uri'], RDF.type, RDF.Property))
             if 'name_fi' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_fi'], lang='fi')))
@@ -366,14 +366,14 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     if args.mode == "PRISONERS":
-        mapper = RDFMapper(PRISONER_MAPPING, WARSA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
-        mapper.read_csv(args.input)
-        mapper.preprocess_prisoners_data()
+        pow_mapper = RDFMapper(PRISONER_MAPPING, WARSA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
+        pow_mapper.read_csv(args.input)
+        pow_mapper.preprocess_prisoners_data()
 
-        mapper.process_rows()
-        mapper.write_errors()
+        pow_mapper.process_rows()
+        pow_mapper.write_errors()
 
-        mapper.serialize(args.outdata, args.outschema)
+        pow_mapper.serialize(args.outdata, args.outschema)
 
     elif args.mode == "CAMPS":
         mapper = CSV2RDF()
@@ -389,4 +389,12 @@ if __name__ == "__main__":
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
                               WARSA_NS.PowHospital)
+        mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
+
+    elif args.mode == "SOURCES":
+        mapper = CSV2RDF(mapping=SOURCE_MAPPING)
+        mapper.read_csv(args.input, sep=',')
+        mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
+                              Namespace("http://ldf.fi/schema/warsa/prisoners/"),
+                              WARSA_NS.OriginalSource)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')

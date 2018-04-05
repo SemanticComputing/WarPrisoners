@@ -12,11 +12,13 @@ echo "Converting to csv" &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/prisoners.xls --outdir data &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/camps.xlsx --outdir data &&
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/hospitals.xlsx --outdir data &&
+libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/sources.xlsx --outdir data &&
 
 # Remove dummy rows from beginning and end of CSVs
-# TODO: Remove these in a less error prone way using Python (e.g. pruning the resources)
+# TODO: Remove the end-of-file content in a less error prone way using Python (e.g. pruning the resources)
 tail -n +4 data/camps.csv | head -n -4 > output/camps_cropped.csv
 head -n -2 data/hospitals.csv > output/hospitals_cropped.csv
+tail -n +2 data/sources.csv > output/sources_cropped.csv
 
 echo "Converting camps and hospitals to ttl" &&
 python src/csv_to_rdf.py CAMPS output/camps_cropped.csv --outdata=output/camps_raw.ttl --outschema=output/camp_schema.ttl &&

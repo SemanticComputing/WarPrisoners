@@ -7,7 +7,7 @@ from datetime import date
 from functools import partial
 
 from converters import convert_dates, strip_dash, convert_swedish
-from namespaces import SCHEMA_NS
+from namespaces import SCHEMA_NS, DC
 
 from validators import validate_dates, validate_mother_tongue
 
@@ -344,5 +344,18 @@ PRISONER_MAPPING = {
             'uri': SCHEMA_NS.karelian_archive_documents,
             'name_en': 'Karelian archive documents',
             'name_fi': 'Karjalan kansallisarkiston dokumentit'
+        },
+}
+
+SOURCE_MAPPING = {
+    'Merkintä':
+        {
+            'uri': SCHEMA_NS.source_id,
+            'name_en': 'Source identifier',
+            'name_fi': 'Lähteen tunniste',
+        },
+    'Selitys':
+        {
+            'uri': DC.description,
         },
 }
