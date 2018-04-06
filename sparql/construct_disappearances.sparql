@@ -16,7 +16,7 @@ CONSTRUCT {
     crm:P11_had_participant ?id ;
     crm:P4_has_time-span ?vts ;
     crm:P7_took_place_at ?vp ;
-    dct:source wsou:source_21 ;
+    dct:source wsou:source22 ;
     skos:prefLabel ?vl_fi, ?vl_en .
 }
 {

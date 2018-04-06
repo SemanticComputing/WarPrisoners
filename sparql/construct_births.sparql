@@ -16,7 +16,7 @@ CONSTRUCT {
     crm:P98_brought_into_life ?id ;
     crm:P4_has_time-span ?bts ;
     crm:P7_took_place_at ?bp ;
-    dct:source wsou:source_21 ;
+    dct:source wsou:source22 ;
     skos:prefLabel ?bl_fi, ?bl_en .
 }
 {

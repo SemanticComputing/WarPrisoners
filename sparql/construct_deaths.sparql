@@ -16,7 +16,7 @@ CONSTRUCT {
     crm:P100_was_death_of ?id ;
     crm:P4_has_time-span ?dts ;
     crm:P7_took_place_at ?dp ;
-    dct:source wsou:source_21 ;
+    dct:source wsou:source22 ;
     skos:prefLabel ?dl_fi, ?dl_en .
 }
 {

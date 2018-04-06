@@ -16,7 +16,7 @@ CONSTRUCT {
     crm:P70i_is_documented_in ?sub ;
     skos:prefLabel ?label ;
     foaf:firstName ?fn ;
-    dct:source wsou:source_21 ;
+    dct:source wsou:source22 ;
     foaf:familyName ?sn .
 }
 {

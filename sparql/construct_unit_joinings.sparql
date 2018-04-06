@@ -15,7 +15,7 @@ CONSTRUCT {
   ?unit_joining a wsch:PersonJoining ;
     crm:P143_joined ?id ;
     crm:P144_joined_with ?wu ;
-    dct:source wsou:source_21 ;
+    dct:source wsou:source22 ;
     skos:prefLabel ?jlbl .
 }
 {
