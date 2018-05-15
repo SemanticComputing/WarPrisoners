@@ -13,8 +13,9 @@ from fuzzywuzzy import fuzz
 from jellyfish import jaro_winkler
 from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.util import guess_format
+from warsa_linkers.ranks import link_ranks
 
-from namespaces import SCHEMA_NS, SKOS, CIDOC, BIOC
+from namespaces import SCHEMA_NS, SKOS, CIDOC, BIOC, WARSA_NS
 
 
 # TODO: Write some tests using responses
@@ -58,37 +59,6 @@ def link(graph, arpa, source_prop, target_graph, target_prop, preprocess=_prepro
                 log.warning('No match found for %s: %s' % (prop_str, value))
 
     return target_graph
-
-
-def link_ranks(graph, endpoint):
-    """
-    Link military ranks in graph.
-
-    :param graph: Data in RDFLib Graph object
-    :param endpoint: Endpoint to query military ranks from
-    :return: RDFLib Graph with updated links
-    """
-
-    def preprocess(literal, prisoner, subgraph):
-        value = re.sub(r'[/\-]', ' ', str(literal)).strip()
-        return rank_mapping[value] if value in rank_mapping else value
-
-    rank_mapping = {
-        'kaart': 'stm',
-        'aliluutn': 'aliluutnantti',
-        'lääk.alik': 'lääkintäalikersantti',
-        'lääk.stm': 'lääkintäsotamies',
-        'ups.kok': 'upseerikokelas',
-    }
-
-    query = "PREFIX text: <http://jena.apache.org/text#> " + \
-            "SELECT * { GRAPH <http://ldf.fi/warsa/ranks> { ?id a <http://ldf.fi/schema/warsa/Rank> . " + \
-            "?id text:query \"<VALUES>\" . " + \
-            "} } LIMIT 1"
-
-    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
-
-    return link(graph, arpa, SCHEMA_NS.rank, Graph(), SCHEMA_NS.warsa_rank, preprocess=preprocess)
 
 
 def link_occupations(graph, endpoint):
@@ -442,7 +412,8 @@ if __name__ == '__main__':
 
     if args.task == 'ranks':
         log.info('Linking ranks')
-        link_ranks(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+        link_ranks(input_graph, args.endpoint, SCHEMA_NS.rank, SCHEMA_NS.warsa_rank,
+                   WARSA_NS.PrisonerRecord).serialize(args.output, format=guess_format(args.output))
 
     elif args.task == 'persons':
         log.info('Linking persons')

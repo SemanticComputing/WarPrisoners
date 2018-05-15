@@ -89,7 +89,7 @@ PRISONER_MAPPING = {
         },
     'joukko-osasto':
         {
-            'uri': SCHEMA_NS.unit,
+            'uri': SCHEMA_NS.unit,  # TODO: unit_literal (ja unit)
             'name_en': 'Military unit',
             'name_fi': 'Joukko-osasto',
             'description_fi': 'Henkilön tiedossa oleva joukko-osasto vangitsemishetkellä',
