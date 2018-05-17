@@ -64,7 +64,7 @@ rm output/schema_full.ttl
 
 echo "Linking ranks"
 
-python src/linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"
+python src/linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log
 
 echo "Linking units"
 
@@ -79,16 +79,16 @@ curl -f --data-urlencode "query=$(cat sparql/period.sparql)" $WARSA_ENDPOINT_URL
 
 echo "Linking occupations"
 
-python src/linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"
+python src/linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log
 
 echo "Linking municipalities"
 
-python src/linker.py municipalities output/prisoners_plain.ttl output/munic_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL
+python src/linker.py municipalities output/prisoners_plain.ttl output/munic_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL --logfile output/logs/linker.log
 
 echo "Linking people"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/occupation_links.ttl > output/prisoners_temp.ttl
-python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"
+python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log
 rm output/prisoners_temp.ttl
 
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl
@@ -97,7 +97,7 @@ echo "Linking camps and hospitals"
 cat output/prisoners_plain.ttl output/camps.ttl > output/prisoners_temp_2.ttl
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp_2.ttl
 
-python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"
+python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log
 
 # TODO: Link places using Arpa-linker
 
@@ -123,7 +123,7 @@ cat output/prisoner_people.ttl output/prisoner_documents_links.ttl > prisoners_t
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people.ttl
 rm prisoners_temp.ttl
 
-for construct in births promotions ranks unit_joinings captures disappearances
+for construct in births promotions unit_joinings captures disappearances
 do
     echo "...Constructing $construct"
 curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/prisoner_$construct.ttl"

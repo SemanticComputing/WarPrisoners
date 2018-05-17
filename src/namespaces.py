@@ -15,9 +15,11 @@ DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
 SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 WARSA_NS = Namespace('http://ldf.fi/schema/warsa/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
+RANKS_NS = Namespace('http://ldf.fi/schema/warsa/actors/ranks/')
 
 ACTORS = Namespace('http://ldf.fi/warsa/actors/')
 SCHEMA_ACTORS = Namespace('http://ldf.fi/schema/warsa/actors/')
+MUNICIPALITIES = Namespace('http://ldf.fi/warsa/places/municipalities/')
 
 
 def bind_namespaces(graph: Graph):
@@ -31,5 +33,7 @@ def bind_namespaces(graph: Graph):
 
     graph.bind("wsch", WARSA_NS)
     graph.bind("wac", ACTORS)
+    graph.bind("war", RANKS_NS)
+    graph.bind("wam", MUNICIPALITIES)
 
     return graph

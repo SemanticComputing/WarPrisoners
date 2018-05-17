@@ -1,313 +1,336 @@
 @prefix bioc: <http://ldf.fi/schema/bioc/> .
-@prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix ns1: <http://ldf.fi/schema/warsa/> .
-@prefix p: <http://ldf.fi/warsa/prisoners/> .
-@prefix ps: <http://ldf.fi/schema/warsa/prisoners/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix wac: <http://ldf.fi/warsa/actors/> .
+@prefix wam: <http://ldf.fi/warsa/places/municipalities/> .
+@prefix war: <http://ldf.fi/schema/warsa/actors/ranks/> .
+@prefix wp: <http://ldf.fi/warsa/prisoners/> .
+@prefix wps: <http://ldf.fi/schema/warsa/prisoners/> .
+@prefix wsch: <http://ldf.fi/schema/warsa/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-p:prisoner_1_explanation_0_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/18 Tervo Jaakko Olavi henkilöakti" ;
-    rdf:object "Joutui 13.3.1942 Kiestingin Vihtavaarassa vangiksi kaukopartiomatkalla haavoittuneena. Samalla kertaa vangeiksi joutuivat korpr. Rajalampi Edvin, stm. Paadar Matti, stm. Räsänen Reino, stm. Luukinen Lauri, stm. Vihtaniemi Väinö, korpr. Pelli Antti, stm. Aikio Johan, stm. Kaleton Reino, stm. Rautio Hannu ja 2 muuta" ;
-    rdf:predicate ps:explanation ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_explanation_1_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/13 Paadar Matti henkilöakti" ;
-    rdf:object "Kuulusteltavan pataljoona oli suorittamassa tuhoamistehtävää venäläisten puolella. Tehtävän epäonnistuttua haavoittui taistelun aikana vaikeasti olkapäähän ja lonkkaan ja tuli liikuntakyvyttömäksi joutuen vangiksi. Samalla kertaa vangeiksi joutuivat stm. Tervo Olavi, korpr. Rajalampi Edvin, stm. Aikio Johan Paulus, korpr. Pöllä [Pelli] Antti, stm. Vihtaniemi Väinö, stm. Rautio Erkki, stm. Räsänen Reino, stm. Luukinen Lauri ja stm. Kaleton Reino" ;
-    rdf:predicate ps:explanation ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_explanation_2_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/48" ;
-    rdf:object "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi." ;
-    rdf:predicate ps:explanation ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_flyers_0_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/48" ;
-    rdf:object "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
-    rdf:predicate ps:flyers ;
-    rdf:subject p:prisoner_1 .
-
-p:prisoner_1_other_information_0_reification_source a rdf:Statement ;
+wp:prisoner_1_additional_information_0_reification_source a rdf:Statement ;
     dct:source "KA Suomen sodissa 1939-1945 menehtyneet" ;
     rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
-    rdf:predicate ps:other_information ;
-    rdf:subject p:prisoner_1 .
+    rdf:predicate wps:additional_information ;
+    rdf:subject wp:prisoner_1 .
 
-p:prisoner_1_soviet_card_files_0_reification_source a rdf:Statement ;
+wp:prisoner_1_description_of_capture_0_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/18 Tervo Jaakko Olavi henkilöakti" ;
+    rdf:object "Joutui 13.3.1942 Kiestingin Vihtavaarassa vangiksi kaukopartiomatkalla haavoittuneena. Samalla kertaa vangeiksi joutuivat korpr. Rajalampi Edvin, stm. Paadar Matti, stm. Räsänen Reino, stm. Luukinen Lauri, stm. Vihtaniemi Väinö, korpr. Pelli Antti, stm. Aikio Johan, stm. Kaleton Reino, stm. Rautio Hannu ja 2 muuta" ;
+    rdf:predicate wps:description_of_capture ;
+    rdf:subject wp:prisoner_1 .
+
+wp:prisoner_1_description_of_capture_1_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/13 Paadar Matti henkilöakti" ;
+    rdf:object "Kuulusteltavan pataljoona oli suorittamassa tuhoamistehtävää venäläisten puolella. Tehtävän epäonnistuttua haavoittui taistelun aikana vaikeasti olkapäähän ja lonkkaan ja tuli liikuntakyvyttömäksi joutuen vangiksi. Samalla kertaa vangeiksi joutuivat stm. Tervo Olavi, korpr. Rajalampi Edvin, stm. Aikio Johan Paulus, korpr. Pöllä [Pelli] Antti, stm. Vihtaniemi Väinö, stm. Rautio Erkki, stm. Räsänen Reino, stm. Luukinen Lauri ja stm. Kaleton Reino" ;
+    rdf:predicate wps:description_of_capture ;
+    rdf:subject wp:prisoner_1 .
+
+wp:prisoner_1_description_of_capture_2_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/48" ;
+    rdf:object "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi." ;
+    rdf:predicate wps:description_of_capture ;
+    rdf:subject wp:prisoner_1 .
+
+wp:prisoner_1_flyer_0_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/48" ;
+    rdf:object "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
+    rdf:predicate wps:flyer ;
+    rdf:subject wp:prisoner_1 .
+
+wp:prisoner_1_soviet_card_files_0_reification_source a rdf:Statement ;
     dct:source "Kuolleiden henkilömapit" ;
     rdf:object "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
-    rdf:predicate ps:soviet_card_files ;
-    rdf:subject p:prisoner_1 .
+    rdf:predicate wps:soviet_card_files ;
+    rdf:subject wp:prisoner_1 .
 
-p:prisoner_2_amount_children_1_reification_source a rdf:Statement ;
-    dct:source "VEN 195" ;
-    rdf:object "2" ;
-    rdf:predicate ps:amount_children ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_burial_place_1_reification_source a rdf:Statement ;
-    dct:source "Seppälä Alpo" ;
-    rdf:object "haudattu Shumihaan." ;
-    rdf:predicate ps:burial_place ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_cause_of_death_0_reification_source a rdf:Statement ;
+wp:prisoner_2_cause_of_death_0_reification_source a rdf:Statement ;
     dct:source "Keränen Unto" ;
     rdf:object "vatsatauti" ;
-    rdf:predicate ps:cause_of_death ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:cause_of_death ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_death_date_0_reification_source a rdf:Statement ;
+wp:prisoner_2_date_of_capture_1_reification_source a rdf:Statement ;
+    dct:source "Talvisodan kortisto" ;
+    rdf:object "1939-12-28"^^xsd:date ;
+    rdf:predicate wps:date_of_capture ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_date_of_death_0_reification_source a rdf:Statement ;
     dct:source "KansA, Sotavangit ry./80",
         "Karaganda" ;
     rdf:object "1943-02-02"^^xsd:date,
         "xx.xx.2001" ;
-    rdf:predicate ps:death_date ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:date_of_death ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_death_date_1_reification_source a rdf:Statement ;
+wp:prisoner_2_date_of_death_1_reification_source a rdf:Statement ;
     dct:source "mikrofilmi" ;
     rdf:object "1943-03-02"^^xsd:date ;
-    rdf:predicate ps:death_date ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:date_of_death ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_death_place_0_reification_source a rdf:Statement ;
-    dct:source "Budko" ;
-    rdf:object "1770" ;
-    rdf:predicate ps:death_place ;
-    rdf:subject p:prisoner_2 .
+wp:prisoner_2_description_of_capture_0_reification_source a rdf:Statement ;
+    dct:source "T 26073/33 Laitinen Lauri henkilöakti" ;
+    rdf:object "katosi lähettitehtävissä Räisälän Unnunkoskella" ;
+    rdf:predicate wps:description_of_capture ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_death_place_1_reification_source a rdf:Statement ;
-    dct:source "Kyzminyh 1" ;
-    rdf:object "1170" ;
-    rdf:predicate ps:death_place ;
-    rdf:subject p:prisoner_2 .
+wp:prisoner_2_description_of_capture_1_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/48" ;
+    rdf:object "14.8.1941 lähettitehtävissä Unnunkoskella Räisälässä kadonnut" ;
+    rdf:predicate wps:description_of_capture ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_karaganda_card_file_0_reification_source a rdf:Statement ;
+wp:prisoner_2_finnish_return_interrogation_file_0_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/5 Ikävalko Arvo henkilöakti" ;
+    rdf:object "kuulustelu Lauritsalan poliisivartiokonttorissa 6.4.1945" ;
+    rdf:predicate wps:finnish_return_interrogation_file ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_karaganda_card_file_0_reification_source a rdf:Statement ;
     dct:source "Karaganda 92" ;
     rdf:object "kortissa ilmoitettu saapumispäiväksi leirille virheellisesti 16.6.1941." ;
-    rdf:predicate ps:karaganda_card_file ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:karaganda_card_file ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_marital_status_1_reification_source a rdf:Statement ;
+wp:prisoner_2_marital_status_literal_1_reification_source a rdf:Statement ;
     dct:source "mikrofilmi" ;
     rdf:object "naimisissa" ;
-    rdf:predicate ps:marital_status ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:marital_status_literal ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_memoirs_0_reification_source a rdf:Statement ;
+wp:prisoner_2_memoir_0_reification_source a rdf:Statement ;
     dct:source "Pravda 18.2.1942" ;
     rdf:object "autonkuljettaja Helsingistä, puhui suomalaisten sotavankien 1. konferenssissa Karagandassa tammikuussa 1942" ;
-    rdf:predicate ps:memoirs ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:memoir ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_occupation_literal_1_reification_source a rdf:Statement ;
-    dct:source "mikrofilmi" ;
-    rdf:object "sekatyömies" ;
-    rdf:predicate ps:occupation_literal ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_place_captured_municipality_1_reification_source a rdf:Statement ;
+wp:prisoner_2_municipality_of_capture_literal_1_reification_source a rdf:Statement ;
     dct:source "Talvisodan kortisto" ;
     rdf:object "Leipäsuo" ;
-    rdf:predicate ps:place_captured_municipality ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:municipality_of_capture_literal ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_place_gone_missing_0_reification_source a rdf:Statement ;
-    dct:source "KA T 22293/34 [58]" ;
-    rdf:object "Uusikirkko, Peippola" ;
-    rdf:predicate ps:place_gone_missing ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_radio_report_0_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/48" ;
-    rdf:object "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
-    rdf:predicate ps:radio_report ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_rank_1_reification_source a rdf:Statement ;
-    dct:source "Talvisodan kortisto" ;
-    rdf:object "siv" ;
-    rdf:predicate ps:rank ;
-    rdf:subject p:prisoner_2 .
-
-p:prisoner_2_residence_place_1_reification_source a rdf:Statement ;
+wp:prisoner_2_municipality_of_residence_literal_1_reification_source a rdf:Statement ;
     dct:source "mikrofilmi" ;
     rdf:object "Hämeenlinna" ;
-    rdf:predicate ps:residence_place ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:municipality_of_residence_literal ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_soviet_card_files_0_reification_source a rdf:Statement ;
+wp:prisoner_2_number_of_children_1_reification_source a rdf:Statement ;
+    dct:source "VEN 195" ;
+    rdf:object "2" ;
+    rdf:predicate wps:number_of_children ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_occupation_literal_1_reification_source a rdf:Statement ;
+    dct:source "mikrofilmi" ;
+    rdf:object "sekatyömies" ;
+    rdf:predicate wps:occupation_literal ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_place_of_burial_literal_1_reification_source a rdf:Statement ;
+    dct:source "Seppälä Alpo" ;
+    rdf:object "haudattu Shumihaan." ;
+    rdf:predicate wps:place_of_burial_literal ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_place_of_death_0_reification_source a rdf:Statement ;
+    dct:source "Budko" ;
+    rdf:object "1770" ;
+    rdf:predicate wps:place_of_death ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_place_of_death_1_reification_source a rdf:Statement ;
+    dct:source "Kyzminyh 1" ;
+    rdf:object "1170" ;
+    rdf:predicate wps:place_of_death ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_place_of_going_mia_literal_0_reification_source a rdf:Statement ;
+    dct:source "KA T 22293/34 [58]" ;
+    rdf:object "Uusikirkko, Peippola" ;
+    rdf:predicate wps:place_of_going_mia_literal ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_radio_report_0_reification_source a rdf:Statement ;
+    dct:source "KA T-26073/48" ;
+    rdf:object "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
+    rdf:predicate wps:radio_report ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_rank_literal_1_reification_source a rdf:Statement ;
+    dct:source "Talvisodan kortisto" ;
+    rdf:object "siv" ;
+    rdf:predicate wps:rank_literal ;
+    rdf:subject wp:prisoner_2 .
+
+wp:prisoner_2_soviet_card_files_0_reification_source a rdf:Statement ;
     dct:source "Kuolleiden henkilömapit" ;
     rdf:object "2 mappia, joista toisessa kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja. Toisessa mapissa kuulustelulomake ja lisälehti 2 kpl" ;
-    rdf:predicate ps:soviet_card_files ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:soviet_card_files ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_soviet_card_files_1_reification_source a rdf:Statement ;
+wp:prisoner_2_soviet_card_files_1_reification_source a rdf:Statement ;
     dct:source "Jatkosodan kortisto" ;
     rdf:object "3 korttia" ;
-    rdf:predicate ps:soviet_card_files ;
-    rdf:subject p:prisoner_2 .
+    rdf:predicate wps:soviet_card_files ;
+    rdf:subject wp:prisoner_2 .
 
-p:prisoner_2_time_captured_1_reification_source a rdf:Statement ;
-    dct:source "Talvisodan kortisto" ;
-    rdf:object "1939-12-28"^^xsd:date ;
-    rdf:predicate ps:time_captured ;
-    rdf:subject p:prisoner_2 .
+wp:prisoner_1_captivity_0 a wps:Captivity ;
+    wps:date_begin "1944-07-14"^^xsd:date ;
+    wps:date_end "xx.xx.1944" ;
+    wps:location_literal "135" ;
+    wps:order 0 .
 
-p:prisoner_1_located_in_0 a ps:Located_in ;
-    ps:date_begin "1944-07-14"^^xsd:date ;
-    ps:date_end "xx.xx.1944" ;
-    ps:order 0 ;
-    ps:location_literal "135" .
+wp:prisoner_2_captivity_0 a wps:Captivity ;
+    wps:location_literal "Perkjärvi" ;
+    wps:order 0 .
 
-p:prisoner_2_located_in_0 a ps:Located_in ;
-    ps:order 0 ;
-    ps:location_literal "Perkjärvi" .
+wp:prisoner_2_captivity_10 a wps:Captivity ;
+    wps:location_literal "SPV 1" ;
+    wps:order 10 .
 
-p:prisoner_2_located_in_10 a ps:Located_in ;
-    ps:order 10 ;
-    ps:location_literal "SPV 1" .
+wp:prisoner_2_captivity_20 a wps:Captivity ;
+    wps:date_begin "1944-07-10"^^xsd:date ;
+    wps:date_end "xx.xx.1944" ;
+    wps:location_literal "135" ;
+    wps:order 20 .
 
-p:prisoner_2_located_in_20 a ps:Located_in ;
-    ps:date_begin "1944-07-10"^^xsd:date ;
-    ps:date_end "xx.xx.1944" ;
-    ps:order 20 ;
-    ps:location_literal "135" .
+wp:prisoner_2_captivity_30 a wps:Captivity ;
+    wps:location_literal "270" ;
+    wps:order 30 .
 
-p:prisoner_2_located_in_30 a ps:Located_in ;
-    ps:order 30 ;
-    ps:location_literal "270" .
+wp:prisoner_2_captivity_40 a wps:Captivity ;
+    wps:date_begin "1944-10-17"^^xsd:date ;
+    wps:date_end "1944-11-20"^^xsd:date ;
+    wps:location_literal "158" ;
+    wps:order 40 .
 
-p:prisoner_2_located_in_40 a ps:Located_in ;
-    ps:date_begin "1944-10-17"^^xsd:date ;
-    ps:date_end "1944-11-20"^^xsd:date ;
-    ps:order 40 ;
-    ps:location_literal "158" .
-
-p:prisoner_1 a ns1:PrisonerRecord ;
-    ps:birth_place_literal "Karkkila" ;
-    ps:amount_children "0" ;
-    ps:birth_date "1908-12-24"^^xsd:date ;
-    ps:burial_place "leirin 375 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) / haudattiin leiri № 75:n hautausmaahan Volgalla (Keränen Unto)" ;
-    ps:cause_of_death "aivokooma" ;
-    ps:confiscated_possession "rahaa 90 mk, lompakko nahkainen 175 mk, puukko tupen kanssa 130 mk, yht. 395 mk" ;
-    ps:death_date "1979-02-27"^^xsd:date,
+wp:prisoner_1 a wsch:PrisonerRecord ;
+    wsch:family_name "Sukunimi" ;
+    wsch:given_names "Etunimi Toinennimi" ;
+    wsch:mother_tongue wps:finnish ;
+    wps:additional_information "kadonnut, julistettu virallisesti kuolleeksi." ;
+    wps:captivity wp:prisoner_1_captivity_0 ;
+    wps:cause_of_death "aivokooma" ;
+    wps:confiscated_possession "rahaa 90 mk, lompakko nahkainen 175 mk, puukko tupen kanssa 130 mk, yht. 395 mk" ;
+    wps:date_of_birth "1908-12-24"^^xsd:date ;
+    wps:date_of_capture "1944-07-06"^^xsd:date ;
+    wps:date_of_death "1979-02-27"^^xsd:date,
         "xx.xx.xxxx" ;
-    ps:death_place "99" ;
-    ps:declared_death "2003-05-19"^^xsd:date ;
-    ps:explanation "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi.",
+    wps:date_of_declaration_of_death "2003-05-19"^^xsd:date ;
+    wps:date_of_going_mia "4.7.1944  (KA T 19472/4 [3]" ;
+    wps:date_of_return "1944-11-22"^^xsd:date ;
+    wps:description_of_capture "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi.",
         "Joutui 13.3.1942 Kiestingin Vihtavaarassa vangiksi kaukopartiomatkalla haavoittuneena. Samalla kertaa vangeiksi joutuivat korpr. Rajalampi Edvin, stm. Paadar Matti, stm. Räsänen Reino, stm. Luukinen Lauri, stm. Vihtaniemi Väinö, korpr. Pelli Antti, stm. Aikio Johan, stm. Kaleton Reino, stm. Rautio Hannu ja 2 muuta",
         "Kuulusteltavan pataljoona oli suorittamassa tuhoamistehtävää venäläisten puolella. Tehtävän epäonnistuttua haavoittui taistelun aikana vaikeasti olkapäähän ja lonkkaan ja tuli liikuntakyvyttömäksi joutuen vangiksi. Samalla kertaa vangeiksi joutuivat stm. Tervo Olavi, korpr. Rajalampi Edvin, stm. Aikio Johan Paulus, korpr. Pöllä [Pelli] Antti, stm. Vihtaniemi Väinö, stm. Rautio Erkki, stm. Räsänen Reino, stm. Luukinen Lauri ja stm. Kaleton Reino" ;
-    ps:family_name "Sukunimi" ;
-    ps:finnish_return_interrogation_file "ei kuulusteltu" ;
-    ps:flyers "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
-    ps:given_name "Etunimi Toinennimi" ;
-    ps:home_place_literal "Karkkila" ;
-    ps:karaganda_card_file "Karaganda 216" ;
-    ps:karelian_archive_documents "f. 8, op. 1, d. 1129, l. 34" ;
-    ps:located_in p:prisoner_1_located_in_0 ;
-    ps:marital_status "naimaton" ;
-    ps:mother_tongue ps:finnish ;
-    ps:municipality_of_death "Lohjan kunta" ;
-    ps:occupation_literal "kaavaaja" ;
-    ps:original_name "Sukunimi Etunimi Toinennimi" ;
-    ps:other_information "kadonnut, julistettu virallisesti kuolleeksi." ;
-    ps:photograph "Hanko" ;
-    ps:photograph_sotilaan_aani "nro 69/1944 25.7. s. 4, Kuka on sotavankina?, nimilista" ;
-    ps:place_captured "Leino" ;
-    ps:place_captured_battle "Tuherrusjärvi" ;
-    ps:place_captured_municipality "Ylämaa" ;
-    ps:place_gone_missing "Kuuterselkä" ;
-    ps:propaganda_magazine "lähetti Suomen Kansan Ääni-lehdessä 7/1940 terveisiä Venäjältä Rönnynniemen reserviläisille." ;
-    ps:radio_report "RK 137/18.6.1943, Leningradin radiossa 17.6.1943 luettu kirje Vilja Kalmukoskelle." ;
-    ps:rank "korpr" ;
-    ps:recording "haastattelunauha 70-luvun alusta saatu lahjaksi Mietoisten kunnalta vuonna 2017, digitoitu." ;
-    ps:residence_place "Karkkila" ;
-    ps:returned_date "1944-11-22"^^xsd:date ;
-    ps:sotilaan_aani "nro 76/1944 16.8. s. 4, Kuka on sotavankina?, nimilista" ;
-    ps:soviet_card_files "Jatkosodan kortisto",
+    wps:finnish_return_interrogation_file "ei kuulusteltu" ;
+    wps:flyer "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
+    wps:karaganda_card_file "Karaganda 216" ;
+    wps:karelian_archive_documents "f. 8, op. 1, d. 1129, l. 34" ;
+    wps:marital_status_literal "naimaton" ;
+    wps:municipality_of_birth_literal "Karkkila" ;
+    wps:municipality_of_capture_literal "Ylämaa" ;
+    wps:municipality_of_death_literal "Lohjan kunta" ;
+    wps:municipality_of_domicile_literal "Karkkila" ;
+    wps:municipality_of_residence_literal "Karkkila" ;
+    wps:number_of_children "0" ;
+    wps:occupation_literal "kaavaaja" ;
+    wps:original_name "Sukunimi Etunimi Toinennimi" ;
+    wps:photograph "Hanko" ;
+    wps:photograph_sotilaan_aani "nro 69/1944 25.7. s. 4, Kuka on sotavankina?, nimilista" ;
+    wps:place_of_burial_literal "leirin 375 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) / haudattiin leiri № 75:n hautausmaahan Volgalla (Keränen Unto)" ;
+    wps:place_of_capture_battle_literal "Tuherrusjärvi" ;
+    wps:place_of_capture_literal "Leino" ;
+    wps:place_of_death "99" ;
+    wps:place_of_going_mia_literal "Kuuterselkä" ;
+    wps:propaganda_magazine "lähetti Suomen Kansan Ääni-lehdessä 7/1940 terveisiä Venäjältä Rönnynniemen reserviläisille." ;
+    wps:radio_report "RK 137/18.6.1943, Leningradin radiossa 17.6.1943 luettu kirje Vilja Kalmukoskelle." ;
+    wps:rank_literal "korpr" ;
+    wps:recording "haastattelunauha 70-luvun alusta saatu lahjaksi Mietoisten kunnalta vuonna 2017, digitoitu." ;
+    wps:sotilaan_aani "nro 76/1944 16.8. s. 4, Kuka on sotavankina?, nimilista" ;
+    wps:soviet_card_files "Jatkosodan kortisto",
         "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
-    ps:time_captured "1944-07-06"^^xsd:date ;
-    ps:time_gone_missing "4.7.1944  (KA T 19472/4 [3]" ;
-    ps:unit "1./Er.P 25" ;
-    ps:winter_war_collection "Digitaaliarkisto 7:78, 5 kuulustelupöytäkirja, jonka mukaan ei ole antanut mitään tietoja, suomennettu. 63 käsinkirjoitettuja tietoja perheestä. 65 osittain täytetty kuulustelulomake. 68 käsinkirjoitettuja vastauksia kysymyksiin" ;
+    wps:unit_literal "1./Er.P 25" ;
+    wps:winter_war_collection "Digitaaliarkisto 7:78, 5 kuulustelupöytäkirja, jonka mukaan ei ole antanut mitään tietoja, suomennettu. 63 käsinkirjoitettuja tietoja perheestä. 65 osittain täytetty kuulustelulomake. 68 käsinkirjoitettuja vastauksia kysymyksiin" ;
     skos:prefLabel "Sukunimi, Etunimi Toinennimi" .
 
-p:prisoner_2 a ns1:PrisonerRecord ;
-    ps:birth_place_literal "Juuka/Kiihtelysvaara" ;
-    ps:amount_children "2" ;
-    ps:birth_date "1907-12-12"^^xsd:date,
+wp:prisoner_2 a wsch:PrisonerRecord ;
+    wsch:family_name "Hankala" ;
+    wsch:given_names "Harri" ;
+    wsch:mother_tongue wps:swedish ;
+    wps:additional_information "Kuusisen armeijassa - 6 v. kuritushuonetta Suomessa 19.6.1940." ;
+    wps:captivity wp:prisoner_2_captivity_0,
+        wp:prisoner_2_captivity_10,
+        wp:prisoner_2_captivity_20,
+        wp:prisoner_2_captivity_30,
+        wp:prisoner_2_captivity_40 ;
+    wps:cause_of_death "vatsatauti" ;
+    wps:confiscated_possession "Leijona-kello 4.000 mk, lompakko 350 mk, sormus kultaa 1.500 mk, rahaa 100 mk, yht. 5.950 mk" ;
+    wps:date_of_birth "1907-12-12"^^xsd:date,
         "1907-12-13"^^xsd:date ;
-    ps:burial_place "?? sotavankihautausmaa, hauta № 184",
-        "haudattu Shumihaan." ;
-    ps:cause_of_death "vatsatauti" ;
-    ps:confiscated_possession "Leijona-kello 4.000 mk, lompakko 350 mk, sormus kultaa 1.500 mk, rahaa 100 mk, yht. 5.950 mk" ;
-    ps:death_date "1943-02-02"^^xsd:date,
+    wps:date_of_capture "1939-12-03"^^xsd:date,
+        "1939-12-28"^^xsd:date ;
+    wps:date_of_death "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
         "xx.xx.2001" ;
-    ps:death_place "1170",
-        "1770" ;
-    ps:explanation "katosi lähettitehtävissä Räisälän Unnunkoskella (T 26073/33)" ;
-    ps:family_name "Hankala" ;
-    ps:finnish_return_interrogation_file "KA T-26073/5 Ikävalko Arvo henkilöakti: kuulustelu Lauritsalan poliisivartiokonttorissa 6.4.1945" ;
-    ps:flyers "ns. pärmiläisten lentolehtisessä syksyllä 1941." ;
-    ps:given_name "Harri" ;
-    ps:home_place_literal "Lavia",
-        "Tampere" ;
-    ps:karaganda_card_file "kortissa ilmoitettu saapumispäiväksi leirille virheellisesti 16.6.1941." ;
-    ps:karelian_archive_documents "useita dokumentteja" ;
-    ps:located_in p:prisoner_2_located_in_0,
-        p:prisoner_2_located_in_10,
-        p:prisoner_2_located_in_20,
-        p:prisoner_2_located_in_30,
-        p:prisoner_2_located_in_40 ;
-    ps:marital_status "naimaton",
+    wps:date_of_going_mia "1942-05-21"^^xsd:date ;
+    wps:date_of_return "1944-10-09"^^xsd:date,
+        "1944-10-10"^^xsd:date ;
+    wps:description_of_capture "14.8.1941 lähettitehtävissä Unnunkoskella Räisälässä kadonnut",
+        "katosi lähettitehtävissä Räisälän Unnunkoskella" ;
+    wps:finnish_return_interrogation_file "kuulustelu Lauritsalan poliisivartiokonttorissa 6.4.1945" ;
+    wps:flyer "ns. pärmiläisten lentolehtisessä syksyllä 1941." ;
+    wps:karaganda_card_file "kortissa ilmoitettu saapumispäiväksi leirille virheellisesti 16.6.1941." ;
+    wps:karelian_archive_documents "useita dokumentteja" ;
+    wps:marital_status_literal "naimaton",
         "naimisissa" ;
-    ps:memoirs "autonkuljettaja Helsingistä, puhui suomalaisten sotavankien 1. konferenssissa Karagandassa tammikuussa 1942" ;
-    ps:mother_tongue ps:swedish ;
-    ps:occupation_literal "posteljooni",
+    wps:memoir "autonkuljettaja Helsingistä, puhui suomalaisten sotavankien 1. konferenssissa Karagandassa tammikuussa 1942" ;
+    wps:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
+    wps:municipality_of_capture_literal "Kannas",
+        "Leipäsuo" ;
+    wps:municipality_of_domicile_literal "Lavia",
+        "Tampere" ;
+    wps:municipality_of_residence_literal "Hämeenlinna",
+        "Viipuri" ;
+    wps:number_of_children "2" ;
+    wps:occupation_literal "posteljooni",
         "sekatyömies" ;
-    ps:original_name "Hankala Harri" ;
-    ps:other_information "Kuusisen armeijassa - 6 v. kuritushuonetta Suomessa 19.6.1940." ;
-    ps:photograph "SÄ nro 112/1942 10.11. s. 4",
+    wps:original_name "Hankala Harri" ;
+    wps:photograph "SÄ nro 112/1942 10.11. s. 4",
         "SÄ nro 24/1943 19.3. s. 3" ;
-    ps:photograph_sotilaan_aani ", Sotavangit kirjoittavat ruotukavereilleen ja kotiin, kirje",
+    wps:photograph_sotilaan_aani ", Sotavangit kirjoittavat ruotukavereilleen ja kotiin, kirje",
         "Kukaan ei ehtinyt edes aseita hapuilla, haastattelu",
         "nro 109/1943 19.12. s. 3, Karjalaisten evakkojen kohtalo, suomalaiset sotamiehet kumoavat herra Rydin valheen, propagandistinen lausunto",
         "nro 26/1943, 25.3. s. 3, Sotavankien terveisiä omaisilleen, tuttavilleen ja ruotukavereilleen",
         "nro 9/1943 25.1. s. 3, Mitä suomalaiset sotavangit kertovat, ”Sodassa on mennyt jo satoja tuhansia Suomen miehiä”, propagandistinen vetoomus" ;
-    ps:place_captured "Huumola",
+    wps:place_of_burial_literal "?? sotavankihautausmaa, hauta № 184",
+        "haudattu Shumihaan." ;
+    wps:place_of_capture_battle_literal "Mäkräjärvi><Kotkatjärvi" ;
+    wps:place_of_capture_literal "Huumola",
         "Näykki" ;
-    ps:place_captured_battle "Mäkräjärvi><Kotkatjärvi" ;
-    ps:place_captured_municipality "Kannas",
-        "Leipäsuo" ;
-    ps:place_gone_missing "Uusikirkko, Peippola" ;
-    ps:propaganda_magazine "Kansan Mies-lehdessä № 2/3.7.1941 kuva, jossa \"Erkki Nuutinen ja Unto Seppälä kirjoittavat vetoomusta Suomen armeijan sotilaille\". Kuvan alla kirje kokonaisuudessaan käsinkirjoitettuna" ;
-    ps:radio_report "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
-    ps:rank "hevosmies",
+    wps:place_of_death "1170",
+        "1770" ;
+    wps:place_of_going_mia_literal "Uusikirkko, Peippola" ;
+    wps:propaganda_magazine "Kansan Mies-lehdessä № 2/3.7.1941 kuva, jossa \"Erkki Nuutinen ja Unto Seppälä kirjoittavat vetoomusta Suomen armeijan sotilaille\". Kuvan alla kirje kokonaisuudessaan käsinkirjoitettuna" ;
+    wps:radio_report "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
+    wps:rank_literal "hevosmies",
         "siv" ;
-    ps:recording "http://heikkikoskela.blogspot.fi/2012/10/kolme-sotavankia.html" ;
-    ps:residence_place "Hämeenlinna",
-        "Viipuri" ;
-    ps:returned_date "1944-10-09"^^xsd:date,
-        "1944-10-10"^^xsd:date ;
-    ps:sotilaan_aani "nro 54/1944 10.6. s. 3, Sotavangit kirjoittavat omaisilleen ja tuttavilleen, kirje" ;
-    ps:soviet_card_files "2 mappia, joista toisessa kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja. Toisessa mapissa kuulustelulomake ja lisälehti 2 kpl",
+    wps:recording "http://heikkikoskela.blogspot.fi/2012/10/kolme-sotavankia.html" ;
+    wps:sotilaan_aani "nro 54/1944 10.6. s. 3, Sotavangit kirjoittavat omaisilleen ja tuttavilleen, kirje" ;
+    wps:soviet_card_files "2 mappia, joista toisessa kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja. Toisessa mapissa kuulustelulomake ja lisälehti 2 kpl",
         "3 korttia" ;
-    ps:time_captured "1939-12-03"^^xsd:date,
-        "1939-12-28"^^xsd:date ;
-    ps:time_gone_missing "1942-05-21"^^xsd:date ;
-    ps:unit "3./I/KTR15" ;
-    ps:winter_war_collection "6:38, 21-22 vanki kirjoittanut useita neuvostomyönteisiä kirjeitä tovereilleen",
+    wps:unit_literal "3./I/KTR15" ;
+    wps:winter_war_collection "6:38, 21-22 vanki kirjoittanut useita neuvostomyönteisiä kirjeitä tovereilleen",
         "Digitaaliarkisto 6:54 14-15 propagandan taustamateriaalissa Monthanin kertomus siitä, etteivät upseerit anna lukea lentolehtisiä, sotilaat ottavat ne talteen ja lukevat yöaikaan. 16 lainattu vangin kertomusta, miten oli kuullut Kuusisen hallituksesta kovaäänisen kautta" ;
     skos:prefLabel "Hankala, Harri" .
 

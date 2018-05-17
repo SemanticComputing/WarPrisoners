@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
+from datetime import date
 from itertools import chain
 
 import argparse
@@ -10,17 +11,19 @@ import re
 import time
 
 from arpa_linker.arpa import ArpaMimic, Arpa
-from rdflib import Graph, URIRef, RDF
+from rdflib import Graph, URIRef, RDF, Literal
 from rdflib.exceptions import UniquenessError
 from rdflib.util import guess_format
 import rdf_dm as r
 
-from namespaces import SCHEMA_NS, BIOC, WARSA_NS, bind_namespaces, SCHEMA_ACTORS, SKOS
+from namespaces import SCHEMA_NS, BIOC, WARSA_NS, bind_namespaces, SCHEMA_ACTORS, SKOS, RANKS_NS, MUNICIPALITIES
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
     get_date_value
 from warsa_linkers.ranks import link_ranks
+
+log = logging.getLogger(__name__)
 
 
 # TODO: Write some tests using responses
@@ -96,40 +99,49 @@ def link_camps(graph, endpoint):
 
 def _generate_prisoners_dict(graph: Graph, ranks: Graph):
     """
-    Generate a persons dict from POW records
+    Generate a persons dict from POW records.
     """
+
+    # TODO: Occupation, municipality_of_death
+
     prisoners = {}
     for person in graph[:RDF.type:WARSA_NS.PrisonerRecord]:
-        rank_uri = graph.value(person, SCHEMA_NS.rank)
+        rank_uris = list(graph.objects(person, SCHEMA_NS.rank))
 
         given = str(graph.value(person, WARSA_NS.given_names, any=False))
         family = str(graph.value(person, WARSA_NS.family_name, any=False))
-        rank = str(rank_uri) if rank_uri else None
+        rank = [str(r) for r in rank_uris if r] or None
         birth_places = graph.objects(person, SCHEMA_NS.municipality_of_birth)
 
-        datebirth = get_date_value(graph.value(person, SCHEMA_NS.date_of_birth, default=''))
-        datedeath = get_date_value(graph.value(person, SCHEMA_NS.date_of_death, default=''))
+        births = sorted(get_date_value(bd) for bd in graph.objects(person, SCHEMA_NS.date_of_birth))
+        deaths = sorted(get_date_value(dd) for dd in graph.objects(person, SCHEMA_NS.date_of_death))
+        birth_begin = min((d for d in births if d)) or None
+        birth_end = max((d for d in births if d)) or None
+        death_begin = min((d for d in deaths if d)) or None
+        death_end = max((d for d in deaths if d)) or None
 
+        rank_levels = []
         try:
-            rank_level = int(ranks.value(rank_uri, SCHEMA_ACTORS.level, any=False))
+            for rank_uri in rank_uris:
+                rank_levels.append(int(ranks.value(rank_uri, SCHEMA_ACTORS.level, any=False)))
         except (TypeError, UniquenessError):
-            rank_level = None
+            pass
 
         prisoner = {'person': None,
-                    'rank': rank,
-                    'rank_level': rank_level,
+                    'rank': set(rank) if rank else None,
+                    'rank_level': max(rank_levels or [None]),
                     'given': given,
                     'family': re.sub(r'\(Ent\.\s*(.+)\)', r'\1', family),
-                    'birth_place': list(set(birth_places)),
-                    'birth_begin': datebirth,
-                    'birth_end': datebirth,
-                    'death_begin': datedeath,
-                    'death_end': datedeath,
-                    'activity_end': datedeath,
+                    'birth_place': set(birth_places) if birth_places else None,
+                    'birth_begin': birth_begin,
+                    'birth_end': birth_end,
+                    'death_begin': death_begin,
+                    'death_end': death_end,
+                    'activity_end': death_end,
                     }
         prisoners[str(person)] = prisoner
 
-    log.debug('Casualty person: {}'.format(prisoner))
+    log.debug('Prisoner: {}'.format(prisoner))
 
     return prisoners
 
@@ -144,7 +156,7 @@ def link_prisoners(input_graph, endpoint):
         {'field': 'death_begin', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'death_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'activity_end', 'type': 'Custom', 'comparator': activity_comparator, 'has missing': True},
-        {'field': 'rank', 'type': 'Exact', 'has missing': True},
+        {'field': 'rank', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'rank_level', 'type': 'Price', 'has missing': True},
     ]
 
@@ -213,6 +225,7 @@ if __name__ == '__main__':
                            choices=["camps", "occupations", "municipalities", "persons", "ranks"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
+    argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--endpoint", default='http://localhost:3030/warsa/sparql', help="SPARQL Endpoint")
@@ -220,12 +233,10 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    logging.basicConfig(filename='output/logs/prisoners.log'.format(ts=time.time()),
-                        filemode='a',
-                        level=getattr(logging, args.loglevel),
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-    log = logging.getLogger(__name__)
+    log_handler = logging.FileHandler(args.logfile)
+    log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    log.addHandler(log_handler)
+    log.setLevel(args.loglevel)
 
     input_graph = Graph()
     input_graph.parse(args.input, format=guess_format(args.input))

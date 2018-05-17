@@ -165,7 +165,7 @@ class RDFMapper:
             row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
 
         if firstnames:
-            row_rdf.add((entity_uri, WARSA_NS.given_name, Literal(firstnames)))
+            row_rdf.add((entity_uri, WARSA_NS.given_names, Literal(firstnames)))
         if lastname:
             row_rdf.add((entity_uri, WARSA_NS.family_name, Literal(lastname)))
         if fullname:

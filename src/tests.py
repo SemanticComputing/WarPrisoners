@@ -8,15 +8,16 @@ To run all tests (including doctests) you can use for example nose: nosetests --
 import datetime
 import io
 import unittest
-from pprint import pprint
+from pprint import pprint, pformat
 
-from rdflib import Graph, URIRef, Literal
+from rdflib import Graph, URIRef, Literal, RDF
 from rdflib.compare import isomorphic, graph_diff
 
 import converters
 from csv_to_rdf import RDFMapper, get_triple_reifications
+from linker import _generate_prisoners_dict
 from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DCT, WARSA_NS, SCHEMA_NS
+from namespaces import DATA_NS, DCT, WARSA_NS, SCHEMA_NS, RANKS_NS, SKOS, MUNICIPALITIES, SCHEMA_ACTORS
 from prune_nonpublic import prune_persons
 
 
@@ -102,7 +103,7 @@ class TestRDFMapper(unittest.TestCase):
         g = Graph().parse('test_data/prisoners.ttl', format='turtle')
 
         s = DATA_NS.prisoner_2
-        p = SCHEMA_NS.residence_place
+        p = SCHEMA_NS.municipality_of_residence_literal
         o = Literal('Hämeenlinna')
 
         ref = get_triple_reifications(g, (s, p, o))
@@ -134,6 +135,78 @@ class TestRDFMapper(unittest.TestCase):
     def test_get_mapping(self):
         mapper = RDFMapper({'column1': {}}, '')
         self.assertEquals(mapper.get_mapping('column1 (kesken)'), {})
+
+
+class TestPersonLinking(unittest.TestCase):
+    maxDiff = None
+
+    ranks = Graph()
+    ranks.add((RANKS_NS.Korpraali, SKOS.prefLabel, Literal('Korpraali', lang='fi')))
+    ranks.add((RANKS_NS.Kapteeni, SKOS.prefLabel, Literal('Kapteeni', lang='fi')))
+    ranks.add((RANKS_NS.Korpraali, SCHEMA_ACTORS.level, Literal(3)))
+    ranks.add((RANKS_NS.Kapteeni, SCHEMA_ACTORS.level, Literal(11)))
+
+    def test_generate_prisoners_dict(self):
+        expected = {
+            'foo': {'activity_end': '1941-12-23',
+                    'birth_begin': '1906-12-23',
+                    'birth_end': '1906-12-23',
+                    'birth_place': {URIRef('http://ldf.fi/warsa/places/municipalities/k123')},
+                    'death_begin': '1941-12-23',
+                    'death_end': '1941-12-23',
+                    'family': 'Heino',
+                    'given': 'Eino Ilmari',
+                    'person': None,
+                    'rank': {'http://ldf.fi/schema/warsa/actors/ranks/Korpraali'},
+                    'rank_level': 3}
+        }
+
+        g = Graph()
+        p = URIRef('foo')
+        g.add((p, RDF.type, WARSA_NS.PrisonerRecord))
+        g.add((p, SCHEMA_NS.rank, RANKS_NS.Korpraali))
+        g.add((p, WARSA_NS.given_names, Literal("Eino Ilmari")))
+        g.add((p, WARSA_NS.family_name, Literal("Heino")))
+        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1941, 12, 23))))
+        pd = _generate_prisoners_dict(g, self.ranks)
+
+        self.assertEqual(expected, pd, pformat(pd))
+
+    def test_generate_prisoners_dict_2(self):
+        expected = {
+            'foo': {'activity_end': '1943-02-03',
+                    'birth_begin': '1906-12-23',
+                    'birth_end': '1916-06-03',
+                    'birth_place': {URIRef('http://ldf.fi/warsa/places/municipalities/k234'),
+                                    URIRef('http://ldf.fi/warsa/places/municipalities/k123')},
+                    'death_begin': '1941-12-23',
+                    'death_end': '1943-02-03',
+                    'family': 'Heino',
+                    'given': 'Eino Ilmari',
+                    'person': None,
+                    'rank': {'http://ldf.fi/schema/warsa/actors/ranks/Kapteeni',
+                             'http://ldf.fi/schema/warsa/actors/ranks/Korpraali'},
+                    'rank_level': 11}
+        }
+
+        g = Graph()
+        p = URIRef('foo')
+        g.add((p, RDF.type, WARSA_NS.PrisonerRecord))
+        g.add((p, SCHEMA_NS.rank, RANKS_NS.Korpraali))
+        g.add((p, SCHEMA_NS.rank, RANKS_NS.Kapteeni))
+        g.add((p, WARSA_NS.given_names, Literal("Eino Ilmari")))
+        g.add((p, WARSA_NS.family_name, Literal("Heino")))
+        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k234))
+        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1916, 6, 3))))
+        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1941, 12, 23))))
+        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1943, 2, 3))))
+        pd = _generate_prisoners_dict(g, self.ranks)
+
+        self.assertEqual(expected, pd, pformat(pd))
 
 
 if __name__ == '__main__':

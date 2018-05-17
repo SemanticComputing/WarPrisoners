@@ -286,6 +286,7 @@ PRISONER_MAPPING = {
     'suomalainen paluukuulustelupöytäkirja':
         {
             'uri': SCHEMA_NS.finnish_return_interrogation_file,
+            'value_separator': ';',
             'name_en': 'Finnish return interrogation file',
             'name_fi': 'Suomalainen paluukuulustelupöytäkirja'
         },
