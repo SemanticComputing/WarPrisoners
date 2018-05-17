@@ -16,7 +16,7 @@ from slugify import slugify
 from converters import convert_person_name, convert_dates
 from csv2rdf import CSV2RDF
 from mapping import PRISONER_MAPPING, SOURCE_MAPPING
-from namespaces import RDF, XSD, DC, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
+from namespaces import RDF, XSD, DCT, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
 from rdflib import URIRef, Graph, Literal, Namespace
 from rdflib.term import Identifier
 
@@ -165,9 +165,9 @@ class RDFMapper:
             row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
 
         if firstnames:
-            row_rdf.add((entity_uri, SCHEMA_NS.given_name, Literal(firstnames)))
+            row_rdf.add((entity_uri, WARSA_NS.given_name, Literal(firstnames)))
         if lastname:
-            row_rdf.add((entity_uri, SCHEMA_NS.family_name, Literal(lastname)))
+            row_rdf.add((entity_uri, WARSA_NS.family_name, Literal(lastname)))
         if fullname:
             row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
         if original_name:
@@ -257,7 +257,7 @@ class RDFMapper:
                         row_rdf.add((reification_uri, RDF.predicate, mapping['uri']))
                         row_rdf.add((reification_uri, RDF.object, rdf_value))
                         row_rdf.add((reification_uri, RDF.type, RDF.Statement))
-                        row_rdf.add((reification_uri, DC.source, Literal(source)))
+                        row_rdf.add((reification_uri, DCT.source, Literal(source)))
 
         if row_rdf:
             row_rdf.add((entity_uri, RDF.type, self.instance_class))
@@ -317,11 +317,8 @@ class RDFMapper:
         :param destination_schema: serialization destination for schema
         :return: output from rdflib.Graph.serialize
         """
-        bind_namespaces(self.data)
-        bind_namespaces(self.schema)
-
-        data = self.data.serialize(format="turtle", destination=destination_data)
-        schema = self.schema.serialize(format="turtle", destination=destination_schema)
+        data = bind_namespaces(self.data).serialize(format="turtle", destination=destination_data)
+        schema = bind_namespaces(self.schema).serialize(format="turtle", destination=destination_schema)
         self.log.info('Data serialized to %s' % destination_data)
         self.log.info('Schema serialized to %s' % destination_schema)
 
@@ -331,9 +328,13 @@ class RDFMapper:
         """
         Loop through CSV rows and convert them to RDF
         """
+        used_ids = []
         for index in self.table.index:
-            prisoner_number = self.table.ix[index][0]
-            prisoner_uri = DATA_NS['prisoner_' + str(prisoner_number)]
+            prisoner_number = str(self.table.ix[index][0])
+            while prisoner_number in used_ids:
+                prisoner_number += '_duplicate'
+            used_ids.append(prisoner_number)
+            prisoner_uri = DATA_NS['prisoner_' + prisoner_number]
             row_rdf = self.map_row_to_rdf(prisoner_uri, self.table.ix[index][1:], prisoner_number=prisoner_number)
             if row_rdf:
                 self.data += row_rdf
@@ -345,7 +346,7 @@ class RDFMapper:
             if 'name_en' in prop:
                 self.schema.add((prop['uri'], SKOS.prefLabel, Literal(prop['name_en'], lang='en')))
             if 'description_fi' in prop:
-                self.schema.add((prop['uri'], DC.description, Literal(prop['description_fi'], lang='fi')))
+                self.schema.add((prop['uri'], DCT.description, Literal(prop['description_fi'], lang='fi')))
 
     def write_errors(self):
         """Write conversion errors to a CSV file"""

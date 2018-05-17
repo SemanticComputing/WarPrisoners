@@ -16,7 +16,7 @@ from rdflib.compare import isomorphic, graph_diff
 import converters
 from csv_to_rdf import RDFMapper, get_triple_reifications
 from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DC, WARSA_NS, SCHEMA_NS
+from namespaces import DATA_NS, DCT, WARSA_NS, SCHEMA_NS
 from prune_nonpublic import prune_persons
 
 
@@ -110,7 +110,7 @@ class TestRDFMapper(unittest.TestCase):
         self.assertEquals(len(ref_subs), 1)
 
         ref_sub = ref_subs.pop()
-        source = g.value(ref_sub, DC.source)
+        source = g.value(ref_sub, DCT.source)
         self.assertEquals(source, Literal('mikrofilmi'))
 
     def test_prune_persons(self):

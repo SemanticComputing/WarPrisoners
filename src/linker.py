@@ -1,21 +1,26 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
+from itertools import chain
 
 import argparse
 import logging
+import random
 import re
 import time
-from datetime import datetime
 
-from arpa_linker.arpa import ArpaMimic, process_graph
-from fuzzywuzzy import fuzz
-from jellyfish import jaro_winkler
-from rdflib import Graph, URIRef, Literal, BNode
+from arpa_linker.arpa import ArpaMimic, Arpa
+from rdflib import Graph, URIRef, RDF
+from rdflib.exceptions import UniquenessError
 from rdflib.util import guess_format
-from warsa_linkers.ranks import link_ranks
+import rdf_dm as r
 
-from namespaces import SCHEMA_NS, SKOS, CIDOC, BIOC, WARSA_NS
+from namespaces import SCHEMA_NS, BIOC, WARSA_NS, bind_namespaces, SCHEMA_ACTORS, SKOS
+from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
+from warsa_linkers.occupations import link_occupations
+from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
+    get_date_value
+from warsa_linkers.ranks import link_ranks
 
 
 # TODO: Write some tests using responses
@@ -61,41 +66,6 @@ def link(graph, arpa, source_prop, target_graph, target_prop, preprocess=_prepro
     return target_graph
 
 
-def link_occupations(graph, endpoint):
-    """
-    Link occupations in graph.
-
-    :param graph: Data in RDFLib Graph object
-    :param endpoint: SPARQL endpoint
-    :return: RDFLib Graph with updated links
-    """
-
-    def preprocess(literal, prisoner, subgraph):
-        literal = str(literal).strip()
-
-        if literal == '-':
-            return ''
-
-        escape_regex = r'[\[\]\\/\&|!(){}^"~*?:+]'
-
-        values = '" "'.join([re.sub(escape_regex, r'\\\\\g<0>', s.strip()) for s in literal.split(sep='/') if s])
-
-        return values
-
-    query = "PREFIX text: <http://jena.apache.org/text#> " + \
-            "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " + \
-            "SELECT * { GRAPH <http://ldf.fi/warsa/occupations> { ?id a <http://ldf.fi/schema/bioc/Occupation> . " + \
-            "VALUES ?occu { \"<VALUES>\" } . " + \
-            "?id text:query ?occu . " + \
-            "?id skos:prefLabel|skos:altLabel ?occu2 . " + \
-            "FILTER(lcase(?occu) = lcase(str(?occu2)))" + \
-            "} }"
-
-    arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
-
-    return link(graph, arpa, SCHEMA_NS.occupation_literal, Graph(), BIOC.has_occupation, preprocess=preprocess)
-
-
 def link_camps(graph, endpoint):
     """Link PoW camps."""
 
@@ -124,279 +94,129 @@ def link_camps(graph, endpoint):
     return link(graph, arpa, SCHEMA_NS.location_literal, Graph(), SCHEMA_NS.location, preprocess=preprocess)
 
 
-class PersonValidator:
-    def __init__(self, graph, birthdate_prop, deathdate_prop, source_rank_prop,
-                 source_firstname_prop, source_lastname_prop, disappearance_place_prop,
-                 disappearance_date_prop, birth_place_prop, unit_prop, occupation_prop):
-        self.graph = graph
-        self.birthdate_prop = birthdate_prop
-        self.deathdate_prop = deathdate_prop
-        self.source_rank_prop = source_rank_prop
-        self.source_firstname_prop = source_firstname_prop
-        self.source_lastname_prop = source_lastname_prop
-        self.birth_place_prop = birth_place_prop
-        self.disappearance_place_prop = disappearance_place_prop
-        self.unit_prop = unit_prop
-        self.occupation_prop = occupation_prop
-        self.disappearance_date_prop = disappearance_date_prop
+def _generate_prisoners_dict(graph: Graph, ranks: Graph):
+    """
+    Generate a persons dict from POW records
+    """
+    prisoners = {}
+    for person in graph[:RDF.type:WARSA_NS.PrisonerRecord]:
+        rank_uri = graph.value(person, SCHEMA_NS.rank)
 
-        self.score_graph = Graph()
+        given = str(graph.value(person, WARSA_NS.given_names, any=False))
+        family = str(graph.value(person, WARSA_NS.family_name, any=False))
+        rank = str(rank_uri) if rank_uri else None
+        birth_places = graph.objects(person, SCHEMA_NS.municipality_of_birth)
 
-    def validate(self, results, text, s):
-        if not results:
-            return results
+        datebirth = get_date_value(graph.value(person, SCHEMA_NS.date_of_birth, default=''))
+        datedeath = get_date_value(graph.value(person, SCHEMA_NS.date_of_death, default=''))
 
-        rank = self.graph.value(s, self.source_rank_prop)
-        unit = self.graph.value(s, self.unit_prop)
-        firstnames = str(self.graph.value(s, self.source_firstname_prop)).replace('/', ' ').lower().split()
-        lastname = str(self.graph.value(s, self.source_lastname_prop)).replace('/', ' ').lower()
-        birth_place = (self.graph.value(s, self.birth_place_prop) or '').lower()
-        disappearance_place = (self.graph.value(s, self.disappearance_place_prop) or '').lower()
-        disappearance_date = (self.graph.value(s, self.disappearance_date_prop) or '').lower()
-        occupation = (self.graph.value(s, self.occupation_prop) or '').lower()
+        try:
+            rank_level = int(ranks.value(rank_uri, SCHEMA_ACTORS.level, any=False))
+        except (TypeError, UniquenessError):
+            rank_level = None
 
-        bd = [str(b) for b in self.graph.objects(s, self.birthdate_prop)]
-        birthdates = set()
-        for b in bd:
-            if len(re.findall('x', b, re.I)) < 2:
-                birthdates.add(b)
+        prisoner = {'person': None,
+                    'rank': rank,
+                    'rank_level': rank_level,
+                    'given': given,
+                    'family': re.sub(r'\(Ent\.\s*(.+)\)', r'\1', family),
+                    'birth_place': list(set(birth_places)),
+                    'birth_begin': datebirth,
+                    'birth_end': datebirth,
+                    'death_begin': datedeath,
+                    'death_end': datedeath,
+                    'activity_end': datedeath,
+                    }
+        prisoners[str(person)] = prisoner
 
-        dd = [str(d) for d in self.graph.objects(s, self.deathdate_prop)]
-        deathdates = set()
-        for d in dd:
-            if len(re.findall('x', d, re.I)) < 2:
-                deathdates.add(d)
+    log.debug('Casualty person: {}'.format(prisoner))
 
-        disappearance_date = str(self.graph.value(s, self.disappearance_date_prop))
-        if len(re.findall('x', disappearance_date, re.I)) > 1:
-            disappearance_date = None
+    return prisoners
 
-        filtered = []
-        _FUZZY_LASTNAME_MATCH_LIMIT = 0.5
-        _FUZZY_FIRSTNAME_MATCH_LIMIT = 0.5
-        DATE_FORMAT = '%Y-%m-%d'
 
-        if not (birthdates or deathdates):
-            initial_score = -50
-            log.info('No birth or death date for prisoner, initial score: {}'.format(initial_score))
+def link_prisoners(input_graph, endpoint):
+    data_fields = [
+        {'field': 'given', 'type': 'String'},
+        {'field': 'family', 'type': 'String'},
+        {'field': 'birth_place', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
+        {'field': 'birth_begin', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
+        {'field': 'birth_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
+        {'field': 'death_begin', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
+        {'field': 'death_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
+        {'field': 'activity_end', 'type': 'Custom', 'comparator': activity_comparator, 'has missing': True},
+        {'field': 'rank', 'type': 'Exact', 'has missing': True},
+        {'field': 'rank_level', 'type': 'Price', 'has missing': True},
+    ]
+
+    ranks = r.read_graph_from_sparql(endpoint, "http://ldf.fi/warsa/ranks")
+
+    random.seed(42)  # Initialize randomization to create deterministic results
+
+    return link_persons(input_graph, endpoint, _generate_prisoners_dict(input_graph, ranks),
+                        data_fields, 'data/person_links.json')
+
+
+def add_link(graph: Graph, munic_mapping: dict, sourceprop: URIRef, targetprop: URIRef):
+    literals = graph.subject_objects(sourceprop)
+    munic_links = Graph()
+    for sub, obj in literals:
+        try:
+            munic_links.add((sub, targetprop, munic_mapping[str(obj)]))
+        except KeyError:
+            pass
+
+    return munic_links
+
+
+def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
+    """
+    Link to Warsa municipalities.
+    """
+
+    warsa_munics = r.helpers.read_graph_from_sparql(warsa_endpoint,
+                                                    graph_name='http://ldf.fi/warsa/places/municipalities')
+
+    log.info('Using Warsa municipalities with {n} triples'.format(n=len(warsa_munics)))
+
+    pnr_arpa = Arpa(arpa_endpoint)
+    pnr_links = link_to_pnr(g, SCHEMA_NS.municipality_of_death,
+                            SCHEMA_NS.municipality_of_death_literal, pnr_arpa)['graph']
+
+    war_munics = set(g.objects(None, SCHEMA_NS.municipality_of_birth_literal)) | \
+                 set(g.objects(None, SCHEMA_NS.municipality_of_domicile_literal)) | \
+                 set(g.objects(None, SCHEMA_NS.municipality_of_residence_literal)) | \
+                 set(g.objects(None, SCHEMA_NS.municipality_of_capture_literal))
+
+    war_munic_mapping = {}
+    war_munic_links = Graph()
+
+    for munic_literal in war_munics:
+        warsa_match = link_warsa_municipality(warsa_munics, [str(munic_literal)])
+        if warsa_match:
+            war_munic_mapping[str(munic_literal)] = warsa_match
         else:
-            initial_score = 0
+            log.warning('No warsa link found for municipality {}'.format(munic_literal))
 
-        for person in results:
-            score = initial_score
+    for source, target in [(SCHEMA_NS.municipality_of_birth_literal, SCHEMA_NS.municipality_of_birth),
+                           (SCHEMA_NS.municipality_of_domicile_literal, SCHEMA_NS.municipality_of_domicile),
+                           (SCHEMA_NS.municipality_of_residence_literal, SCHEMA_NS.municipality_of_residence),
+                           (SCHEMA_NS.municipality_of_capture_literal, SCHEMA_NS.municipality_of_capture)]:
+        war_munic_links += add_link(g, war_munic_mapping, source, target)
 
-            res_id = None
-            try:
-                res_id = person['properties'].get('id')[0].replace('"', '')
-                res_ranks = [URIRef(re.sub(r'[<>]', '', r)) for r in person['properties'].get('rank_id', ['']) if r]
-
-                res_lastname = person['properties'].get('sukunimi')[0].replace('"', '').lower()
-                res_firstnames = person['properties'].get('etunimet')[0].split('^')[0].replace('"', '').lower()
-                res_firstnames = res_firstnames.split()
-
-                res_birth_place = person['properties'].get('birth_place', [''])[0].replace('"', '').lower()
-                res_disappearance_place = person['properties'].get('disappearance_place', [''])[0].replace('"', '').lower()
-                res_disappearance_date = person['properties'].get('disappearance_date', [''])[0].replace('"', '').lower()
-                res_occupation = person['properties'].get('occupation', [''])[0].replace('"', '').lower()
-                res_units = person['properties'].get('unit', [''])
-                res_units = set(URIRef(re.sub(r'[<>]', '', u)) for u in res_units if u)
-
-                res_bd = (min(person['properties'].get('birth_start', [''])).split('^')[0].replace('"', ''),
-                            max(person['properties'].get('birth_end', [''])).split('^')[0].replace('"', ''))
-                res_birthdates = set(filter(bool, res_bd))
-                res_dd = (min(person['properties'].get('death_start', [''])).split('^')[0].replace('"', ''),
-                            max(person['properties'].get('death_end', [''])).split('^')[0].replace('"', ''))
-                res_deathdates = set(filter(bool, res_dd))
-
-            except TypeError:
-                log.info('Unable to read data for validation for {uri} , skipping result...'.format(uri=res_id))
-                continue
-
-            log.debug('Potential match for person {p1text} <{p1}> : {p2text} {p2}'.
-                      format(p1text=' '.join([rank or ''] + firstnames + [lastname]),
-                             p1=s,
-                             p2text=' '.join(res_ranks + res_firstnames + [res_lastname]),
-                             p2=res_id))
-
-            fuzzy_lastname_match = jaro_winkler(lastname, res_lastname)
-
-            if fuzzy_lastname_match >= _FUZZY_LASTNAME_MATCH_LIMIT:
-                log.debug('Fuzzy last name match for {f1} and {f2}: {fuzzy}'
-                          .format(f1=lastname, f2=res_lastname, fuzzy=fuzzy_lastname_match))
-                score += (fuzzy_lastname_match - _FUZZY_LASTNAME_MATCH_LIMIT) / (1 - _FUZZY_LASTNAME_MATCH_LIMIT) * 100
-
-            log.info('Lastname: {b} <-> {rb}: -> {s}'.format(b=lastname, rb=res_lastname, s=score))
-
-            if rank and res_ranks and rank != 'tuntematon':
-                if rank in res_ranks:
-                    score += 25
-                    if rank not in [URIRef('http://ldf.fi/warsa/actors/ranks/Sotamies'), URIRef('http://ldf.fi/warsa/actors/ranks/Korpraali')]:
-                        # More than half of the casualties have rank private and about 15% are corporals.
-                        # Give points to ranks higher than these.
-                        score += 25
-                else:
-                    score -= 25
-
-            log.info('Rank: {b} <-> {rb}: -> {s}'.format(b=rank, rb=res_ranks, s=score))
-
-            if res_birthdates and birthdates:
-                if res_birthdates.issubset(birthdates):
-                    score += 100
-                elif [d for d in birthdates if res_bd[0] <= d <= res_bd[1]]:
-                    score += 50
-                else:
-                    score -= 25
-
-                # If both are single dates, allow one different character before penalizing more
-                if len(res_birthdates) == 1 and max([fuzz.partial_ratio(next(iter(res_birthdates)), d) for d in birthdates] or [0]) <= 80:
-                    score -= 25
-
-            log.info('Birth: {b} <-> {rb}: -> {s}'.format(b=birthdates, rb=res_birthdates, s=score))
-
-            try:
-                [datetime.strptime(d, DATE_FORMAT) for d in deathdates]
-                has_parseable_death_date = True if deathdates else False
-            except ValueError:
-                has_parseable_death_date = False
-                log.warning('Could not parse death date: {date}'.format(date=deathdates))
-
-            ddates = set(deathdates)
-            if disappearance_date:
-                ddates.add(disappearance_date)
-            if res_deathdates and deathdates and deathdates == res_deathdates:
-                score += 100
-            elif res_disappearance_date and disappearance_date and res_disappearance_date == disappearance_date:
-                score += 100
-            elif res_deathdates and ddates and res_deathdates.issubset(ddates) or res_disappearance_date in ddates:
-                score += 50
-            elif [d for d in ddates if res_dd[0] <= d <= res_dd[1]]:
-                score += 50
-            elif deathdates and not (deathdates & res_deathdates) and has_parseable_death_date:
-                    score -= 25
-            elif disappearance_date and res_disappearance_date and disappearance_date != res_disappearance_date:
-                try:
-                    datetime.strptime(disappearance_date, DATE_FORMAT)
-                    score -= 25
-                except ValueError:
-                    log.warning('Could not parse disappearance date: {date}'.format(date=disappearance_date))
-
-            # If both are single dates, allow one different character before penalizing more
-            if has_parseable_death_date and len(res_deathdates) == 1 and \
-                    max([fuzz.partial_ratio(next(iter(res_deathdates)), d) for d in deathdates]) <= 80:
-                score -= 25
-
-            log.info('Death: {b} <-> {rb}: -> {s}'.format(b=ddates, rb=res_deathdates, s=score))
-
-            s_first1 = ' '.join(firstnames)
-            s_first2 = ' '.join(res_firstnames)
-            fuzzy_firstname_match = fuzz.token_set_ratio(s_first1, s_first2) / 100
-
-            if fuzzy_firstname_match >= _FUZZY_FIRSTNAME_MATCH_LIMIT:
-                score += (fuzzy_firstname_match - _FUZZY_FIRSTNAME_MATCH_LIMIT) / (1 - _FUZZY_FIRSTNAME_MATCH_LIMIT) * 75
-                log.info('Fuzzy first name match for {f1} and {f2}: {fuzzy} -> {score}'
-                          .format(f1=firstnames, f2=res_firstnames, fuzzy=fuzzy_firstname_match, score=score))
-            else:
-                log.info('No fuzzy first name match for {f1} and {f2}: {fuzzy}'
-                          .format(f1=firstnames, f2=res_firstnames, fuzzy=fuzzy_firstname_match))
-
-            if birth_place and res_birth_place and birth_place == res_birth_place:
-                score += 40
-            log.info('BPlace: {b} <-> {rb} -> {s}'.format(b=birth_place, rb=res_birth_place, s=score))
-
-            if disappearance_place and res_disappearance_place and disappearance_place == res_disappearance_place:
-                score += 25
-            log.info('DPlace: {b} <-> {rb} -> {s}'.format(b=disappearance_place, rb=res_disappearance_place, s=score))
-
-            if unit and res_units and unit in res_units:
-                score += 15
-            log.info('Unit: {b} <-> {rb} -> {s}'.format(b=unit, rb=res_units, s=score))
-
-            if occupation and res_occupation and occupation == res_occupation:
-                score += 20
-            log.info('Occupation: {b} <-> {rb} -> {s}'.format(b=occupation, rb=res_occupation, s=score))
-
-            person['score'] = score
-
-            rank_name = re.sub(r'.+/(\w+?)$', r'\1', str(rank))
-            res_rank_name = ', '.join([re.sub(r'.+/(\w+?)$', r'\1', str(rank)) for rank in res_ranks])
-
-            if score > 200:
-                person['score'] = score
-                filtered.append(person)
-                log.info('FOUND person for {rank} {fn} {ln} {uri} : '
-                         '{res_rank} {res_fn} {res_ln} {res_uri} [score: {score}]'
-                         .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
-                                 res_ln=res_lastname, res_uri=res_id, score=score))
-            else:
-                log.info('SKIP low score [{score}]: {rank} {fn} {ln} {uri} <<-->> {res_rank} {res_fn} {res_ln} {res_uri}'
-                         .format(rank=rank_name, fn=s_first1, ln=lastname, uri=s, res_rank=res_rank_name, res_fn=s_first2,
-                                 res_ln=res_lastname, res_uri=res_id, score=score))
-
-        if not filtered:
-            return []
-        elif len(filtered) == 1:
-            best_matches = filtered
-        elif len(filtered) > 1:
-            log.warning('Found several matches for {s} ({text}): {ids}'.
-                        format(s=s, text=text,
-                               ids=', '.join(p['properties'].get('id')[0].split('^')[0].replace('"', '')
-                                             for p in filtered)))
-
-            best_matches = sorted(filtered, key=lambda p: p['score'], reverse=True)
-            log.warning('Choosing best match: {id}'.format(id=best_matches[0].get('id')))
-
-        best_match = best_matches.pop(0)
-
-        m = BNode()
-        self.score_graph.add((s, SCHEMA_NS.best_match, m))
-        self.score_graph.add((m, SCHEMA_NS.match, URIRef(best_match['id'])))
-        self.score_graph.add((m, SCHEMA_NS.score, Literal('%.2f' % best_match['score'])))
-        for p in best_matches:
-            m = BNode()
-            self.score_graph.add((s, SCHEMA_NS.alternative_match, m))
-            self.score_graph.add((m, SCHEMA_NS.match, URIRef(p['id'])))
-            self.score_graph.add((m, SCHEMA_NS.score, Literal('%.2f' % p['score'])))
-
-        best_last = best_match['properties']['sukunimi'][0].replace('"', '').lower()
-        if lastname != best_last:
-            log.warning('Best match last name differs: {ln} <-> {rln}'.format(ln=lastname, rln=best_last))
-
-        return [best_match]
-
-
-def link_persons(graph, endpoint):
-    """
-    Link military persons in graph.
-
-    :param graph: Data in RDFLib Graph object
-    :param endpoint: Endpoint to query persons from
-    :return: RDFLib Graph with updated links
-    """
-
-    def get_query_template():
-        with open('sparql/persons.sparql') as f:
-            return f.read()
-
-    validator = PersonValidator(graph, SCHEMA_NS.birth_date, SCHEMA_NS.death_date,
-            SCHEMA_NS.warsa_rank, SCHEMA_NS.given_name, SCHEMA_NS.family_name,
-            SCHEMA_NS.place_captured_municipality, SCHEMA_NS.time_captured,
-            SCHEMA_NS.birth_place, SCHEMA_NS.warsa_unit, BIOC.has_occupation)
-    arpa = ArpaMimic(get_query_template(), endpoint, retries=10, wait_between_tries=6)
-    new_graph = process_graph(graph, CIDOC.P70_documents, arpa, progress=True,
-                              validator=validator, new_graph=True, source_prop=SKOS.prefLabel)
-    validator.score_graph.serialize('output/scores.ttl', format='turtle')
-    return new_graph['graph']
+    return war_munic_links + pnr_links
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Linking task to perform", choices=["camps", "occupations", "persons", "ranks"])
+    argparser.add_argument("task", help="Linking task to perform",
+                           choices=["camps", "occupations", "municipalities", "persons", "ranks"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level, default is INFO.",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--endpoint", default='http://localhost:3030/warsa/sparql', help="SPARQL Endpoint")
+    argparser.add_argument("--arpa", type=str, help="ARPA instance URL for linking")
 
     args = argparser.parse_args()
 
@@ -410,19 +230,25 @@ if __name__ == '__main__':
     input_graph = Graph()
     input_graph.parse(args.input, format=guess_format(args.input))
 
-    if args.task == 'ranks':
-        log.info('Linking ranks')
-        link_ranks(input_graph, args.endpoint, SCHEMA_NS.rank, SCHEMA_NS.warsa_rank,
-                   WARSA_NS.PrisonerRecord).serialize(args.output, format=guess_format(args.output))
+    if args.task == 'camps':
+        log.info('Linking camps and hospitals')
+        bind_namespaces(link_camps(input_graph, args.endpoint)).serialize(args.output, format=guess_format(args.output))
 
-    elif args.task == 'persons':
-        log.info('Linking persons')
-        link_persons(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+    elif args.task == 'municipalities':
+        log.info('Linking municipalities')
+        link_municipalities(input_graph, args.endpoint, args.arpa)
 
     elif args.task == 'occupations':
         log.info('Linking occupations')
-        link_occupations(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(link_occupations(input_graph, args.endpoint, SCHEMA_NS.occupation_literal, BIOC.has_occupation,
+                         WARSA_NS.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
 
-    elif args.task == 'camps':
-        log.info('Linking camps and hospitals')
-        link_camps(input_graph, args.endpoint).serialize(args.output, format=guess_format(args.output))
+    elif args.task == 'persons':
+        log.info('Linking persons')
+        bind_namespaces(link_prisoners(input_graph, args.endpoint)).serialize(args.output, format=guess_format(args.output))
+
+    elif args.task == 'ranks':
+        log.info('Linking ranks')
+        bind_namespaces(link_ranks(input_graph, args.endpoint, SCHEMA_NS.rank_literal, SCHEMA_NS.rank,
+                   WARSA_NS.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
+
