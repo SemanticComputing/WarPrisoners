@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
+import json
+
+import numpy
 from datetime import date
 from itertools import chain
 
@@ -20,7 +23,7 @@ from namespaces import SCHEMA_NS, BIOC, WARSA_NS, bind_namespaces, SCHEMA_ACTORS
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
-    get_date_value
+    get_date_value, read_person_links
 from warsa_linkers.ranks import link_ranks
 
 log = logging.getLogger(__name__)
@@ -102,7 +105,7 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
     Generate a persons dict from POW records.
     """
 
-    # TODO: Occupation, municipality_of_death
+    # TODO: municipality_of_death
 
     prisoners = {}
     for person in graph[:RDF.type:WARSA_NS.PrisonerRecord]:
@@ -112,13 +115,15 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
         family = str(graph.value(person, WARSA_NS.family_name, any=False))
         rank = [str(r) for r in rank_uris if r] or None
         birth_places = graph.objects(person, SCHEMA_NS.municipality_of_birth)
+        units = graph.objects(person, SCHEMA_NS.unit)
+        occupations = graph.objects(person, BIOC.has_occupation)
 
-        births = sorted(get_date_value(bd) for bd in graph.objects(person, SCHEMA_NS.date_of_birth))
-        deaths = sorted(get_date_value(dd) for dd in graph.objects(person, SCHEMA_NS.date_of_death))
-        birth_begin = min((d for d in births if d)) or None
-        birth_end = max((d for d in births if d)) or None
-        death_begin = min((d for d in deaths if d)) or None
-        death_end = max((d for d in deaths if d)) or None
+        births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_NS.date_of_birth)]
+        deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_NS.date_of_death)]
+        birth_begin = min([d for d in births if d] or [None])
+        birth_end = max([d for d in births if d] or [None])
+        death_begin = min([d for d in deaths if d] or [None])
+        death_end = max([d for d in deaths if d] or [None])
 
         rank_levels = []
         try:
@@ -128,20 +133,22 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
             pass
 
         prisoner = {'person': None,
-                    'rank': set(rank) if rank else None,
+                    'rank': sorted(rank) if rank else None,
                     'rank_level': max(rank_levels or [None]),
                     'given': given,
-                    'family': re.sub(r'\(Ent\.\s*(.+)\)', r'\1', family),
-                    'birth_place': set(birth_places) if birth_places else None,
+                    'family': re.sub(r'\(ent\.\s*(.+)\)', r'\1', family),
+                    'birth_place': sorted(birth_places) if birth_places else None,
                     'birth_begin': birth_begin,
                     'birth_end': birth_end,
                     'death_begin': death_begin,
                     'death_end': death_end,
                     'activity_end': death_end,
+                    'unit': sorted(units) or None,
+                    'occupation': sorted(occupations) or None
                     }
         prisoners[str(person)] = prisoner
 
-    log.debug('Prisoner: {}'.format(prisoner))
+        log.debug('Prisoner: {}'.format(prisoner))
 
     return prisoners
 
@@ -158,14 +165,21 @@ def link_prisoners(input_graph, endpoint):
         {'field': 'activity_end', 'type': 'Custom', 'comparator': activity_comparator, 'has missing': True},
         {'field': 'rank', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'rank_level', 'type': 'Price', 'has missing': True},
+        {'field': 'unit', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
     ]
 
     ranks = r.read_graph_from_sparql(endpoint, "http://ldf.fi/warsa/ranks")
 
     random.seed(42)  # Initialize randomization to create deterministic results
+    numpy.random.seed(42)
 
-    return link_persons(input_graph, endpoint, _generate_prisoners_dict(input_graph, ranks),
-                        data_fields, 'data/person_links.json')
+    training_links = read_person_links('data/person_links.json')
+
+    return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
+                        threshold_ratio=0.8
+                        # training_data_file='data/training_data.json',
+                        # training_settings_file='data/training_settings.pkl'
+                        )
 
 
 def add_link(graph: Graph, munic_mapping: dict, sourceprop: URIRef, targetprop: URIRef):

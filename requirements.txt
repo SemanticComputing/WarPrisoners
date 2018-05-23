@@ -1,4 +1,4 @@
-git+git://github.com/SemanticComputing/python-arpa-linker.git#0.6.0
+git+git://github.com/SemanticComputing/python-arpa-linker.git#0.6.1
 git+git://github.com/SemanticComputing/CSV2RDF.git
 git+https://github.com/SemanticComputing/warsa-linkers.git#0.4.1
 git+https://github.com/SemanticComputing/rdf_dm.git#0.1.2
