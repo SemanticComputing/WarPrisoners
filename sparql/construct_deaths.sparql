@@ -21,8 +21,8 @@ CONSTRUCT {
 }
 {
   ?sub wpsc:death_date ?dd_ ;
-       wpsc:given_name ?fn ;
-       wpsc:family_name ?sn ;
+       wsch:given_names ?fn ;
+       wsch:family_name ?sn ;
        crm:P70_documents ?id .
   FILTER NOT EXISTS { ?id ^crm:P100_was_death_of [] . }
   BIND(xsd:date(?dd_) AS ?dd)

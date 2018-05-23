@@ -21,9 +21,9 @@ CONSTRUCT {
 }
 {
   ?sub a wsch:PrisonerRecord ;
-    wpsc:birth_date ?bd_ ;
-    wpsc:given_name ?fn ;
-    wpsc:family_name ?sn .
+    wpsc:date_of_birth ?bd_ ;
+    wsch:given_names ?fn ;
+    wsch:family_name ?sn .
   FILTER NOT EXISTS { ?sub crm:P70_documents/^crm:P98_brought_into_life [] . }
   BIND(xsd:date(?bd_) AS ?bd)
   FILTER(BOUND(?bd))

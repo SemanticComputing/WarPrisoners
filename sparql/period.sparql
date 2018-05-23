@@ -8,7 +8,7 @@ construct {
 } {
   {
     ?sub a wsc:PrisonerRecord .
-    ?sub wps:time_captured ?date .
+    ?sub wps:date_of_capture ?date .
     BIND(xsd:date(?date) AS ?dd)
     FILTER(BOUND(?dd))
     BIND(IF(?dd < "1941-06-24"^^xsd:date, <http://ldf.fi/warsa/conflicts/WinterWar>, <http://ldf.fi/warsa/conflicts/ContinuationWar>) AS ?war)
@@ -17,32 +17,32 @@ construct {
   {
     ?sub a wsc:PrisonerRecord .
     OPTIONAL {
-      ?sub wps:time_captured ?date .
+      ?sub wps:date_of_capture ?date .
       BIND(xsd:date(?date) AS ?dd)
     }
     FILTER(!BOUND(?dd))
     OPTIONAL {
-      ?sub wps:time_captured ?date .
+      ?sub wps:date_of_capture ?date .
       BIND(IF(REGEX(?date, "talvisota|39|40", "i"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
       FILTER(?war != <>)
     }
     OPTIONAL {
-      ?sub wps:time_captured ?date .
+      ?sub wps:date_of_capture ?date .
       BIND(IF(REGEX(STR(?date), "(4[12345])|jatkosota", "i"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
       FILTER(?war != <>)
     }
     OPTIONAL {
-      ?sub wps:other_information ?date .
+      ?sub wps:additional_information ?date .
       BIND(IF(REGEX(?date, "19(39|40)"), <http://ldf.fi/warsa/conflicts/WinterWar>, <>) AS ?war)
       FILTER(?war != <>)
     }
     OPTIONAL {
-      ?sub wps:other_information ?date .
+      ?sub wps:additional_information ?date .
       BIND(IF(REGEX(?date, "194[12345]"), <http://ldf.fi/warsa/conflicts/ContinuationWar>, <>) AS ?war)
       FILTER(?war != <>)
     }
     OPTIONAL {
-      ?sub wps:winter_war_collection|wps:winter_war_collection_from_moscow|wps:winter_war_card_file [] .
+      ?sub wps:winter_war_collection [] .
       BIND(<http://ldf.fi/warsa/conflicts/WinterWar> as ?war)
     }
   }
