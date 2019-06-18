@@ -7,7 +7,7 @@ from datetime import date
 from functools import partial
 
 from converters import convert_dates, strip_dash, convert_swedish
-from namespaces import SCHEMA_NS, DCT, WARSA_NS
+from namespaces import SCHEMA_POW, DCT, SCHEMA_WARSA
 
 from validators import validate_dates, validate_mother_tongue
 
@@ -16,7 +16,7 @@ from validators import validate_dates, validate_mother_tongue
 PRISONER_MAPPING = {
     'syntymäaika':
         {
-            'uri': SCHEMA_NS.date_of_birth,
+            'uri': SCHEMA_POW.date_of_birth,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1860, 1, 1), before=date(1935, 1, 1)),
             'value_separator': '/',
@@ -26,7 +26,7 @@ PRISONER_MAPPING = {
         },
     'synnyinkunta':
         {
-            'uri': SCHEMA_NS.municipality_of_birth_literal,
+            'uri': SCHEMA_POW.municipality_of_birth_literal,
             'value_separator': '/',
             'name_fi': 'Syntymäkunta',
             'name_en': 'Municipality of birth',
@@ -34,7 +34,7 @@ PRISONER_MAPPING = {
         },
     'kotikunta':
         {
-            'uri': SCHEMA_NS.municipality_of_domicile_literal,
+            'uri': SCHEMA_POW.municipality_of_domicile_literal,
             'value_separator': '/',
             'name_fi': 'Kotikunta',
             'name_en': 'Municipality of domicile',
@@ -42,7 +42,7 @@ PRISONER_MAPPING = {
         },
     'asuinkunta':
         {
-            'uri': SCHEMA_NS.municipality_of_residence_literal,
+            'uri': SCHEMA_POW.municipality_of_residence_literal,
             'name_fi': 'Asuinkunta',
             'name_en': 'Municipality of residence',
             'value_separator': '/',
@@ -54,13 +54,13 @@ PRISONER_MAPPING = {
         },
     'kuolinkunta, palanneet':
         {
-            'uri': SCHEMA_NS.municipality_of_death_literal,
+            'uri': SCHEMA_POW.municipality_of_death_literal,
             'name_en': 'Municipality of death',
             'name_fi': 'Kuolinkunta'
         },
     'ammatti':
         {
-            'uri': SCHEMA_NS.occupation_literal,
+            'uri': SCHEMA_POW.occupation_literal,
             'name_fi': 'Ammatti',
             'name_en': 'Occupation',
             'value_separator': '/',
@@ -72,7 +72,7 @@ PRISONER_MAPPING = {
         },
     'siviilisääty':
         {
-            'uri': SCHEMA_NS.marital_status_literal,
+            'uri': SCHEMA_POW.marital_status_literal,
             'name_fi': 'Siviilisääty',
             'name_en': 'Marital status',
             'value_separator': '/',
@@ -84,7 +84,7 @@ PRISONER_MAPPING = {
         },
     'lasten lkm':
         {
-            'uri': SCHEMA_NS.number_of_children,
+            'uri': SCHEMA_POW.number_of_children,
             'converter': strip_dash,
             'name_fi': 'Lasten lukumäärä',
             'name_en': 'Number of children',
@@ -96,7 +96,7 @@ PRISONER_MAPPING = {
         },
     'sotilasarvo':
         {
-            'uri': SCHEMA_NS.rank_literal,
+            'uri': SCHEMA_POW.rank_literal,
             'name_fi': 'Sotilasarvo',
             'name_en': 'Military rank',
             'value_separator': '/',
@@ -108,14 +108,14 @@ PRISONER_MAPPING = {
         },
     'joukko-osasto':
         {
-            'uri': SCHEMA_NS.unit_literal,
+            'uri': SCHEMA_POW.unit_literal,
             'name_en': 'Military unit',
             'name_fi': 'Joukko-osasto',
             'description_fi': 'Henkilön tiedossa oleva joukko-osasto vangitsemishetkellä',
         },
     'katoamisaika':
         {
-            'uri': SCHEMA_NS.date_of_going_mia,
+            'uri': SCHEMA_POW.date_of_going_mia,
             'converter': convert_dates,
             'validator': validate_dates,
             'value_separator': '/',
@@ -126,7 +126,7 @@ PRISONER_MAPPING = {
         },
     'katoamispaikka':
         {
-            'uri': SCHEMA_NS.place_of_going_mia_literal,
+            'uri': SCHEMA_POW.place_of_going_mia_literal,
             'value_separator': '/',
             'name_en': 'Place of going missing in action',
             'name_fi': 'Katoamispaikka',
@@ -134,7 +134,7 @@ PRISONER_MAPPING = {
         },
     'vangiksi aika':
         {
-            'uri': SCHEMA_NS.date_of_capture,
+            'uri': SCHEMA_POW.date_of_capture,
             'converter': convert_dates,
             'validator': validate_dates,
             'value_separator': '/',
@@ -145,7 +145,7 @@ PRISONER_MAPPING = {
         },
     'vangiksi paikka, kunta':
         {
-            'uri': SCHEMA_NS.municipality_of_capture_literal,
+            'uri': SCHEMA_POW.municipality_of_capture_literal,
             'value_separator': '/',
             'name_en': 'Municipality of capture',
             'name_fi': 'Vangiksi jäämisen kunta',
@@ -156,7 +156,7 @@ PRISONER_MAPPING = {
         },
     'vangiksi paikka, kylä, kaupunginosa':
         {
-            'uri': SCHEMA_NS.place_of_capture_literal,
+            'uri': SCHEMA_POW.place_of_capture_literal,
             'value_separator': '/',
             'name_en': 'Village or district of capture',
             'name_fi': 'Vangiksi jäämisen kylä tai kaupunginosa',
@@ -167,14 +167,14 @@ PRISONER_MAPPING = {
         },
     'vangiksi, taistelupaikka':
         {
-            'uri': SCHEMA_NS.place_of_capture_battle_literal,
+            'uri': SCHEMA_POW.place_of_capture_battle_literal,
             'value_separator': '/',
             'name_en': 'Location of battle in which captured',
             'name_fi': 'Vangiksi jäämisen taistelupaikka'
         },
     'selvitys vangiksi jäämisestä':
         {
-            'uri': SCHEMA_NS.description_of_capture,
+            'uri': SCHEMA_POW.description_of_capture,
             'value_separator': ';',
             'name_en': 'Description of capture',
             'name_fi': 'Selvitys vangiksi jäämisestä',
@@ -185,7 +185,7 @@ PRISONER_MAPPING = {
         },
     'palannut':
         {
-            'uri': SCHEMA_NS.date_of_return,
+            'uri': SCHEMA_POW.date_of_return,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1939, 11, 30), before=date(1980, 1, 1)),
             'value_separator': '/',
@@ -195,7 +195,7 @@ PRISONER_MAPPING = {
         },
     'kuollut':
         {
-            'uri': SCHEMA_NS.date_of_death,
+            'uri': SCHEMA_POW.date_of_death,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'value_separator': '/',
@@ -207,14 +207,14 @@ PRISONER_MAPPING = {
         },
     'kuolinsyy':
         {
-            'uri': SCHEMA_NS.cause_of_death,
+            'uri': SCHEMA_POW.cause_of_death,
             'value_separator': '/',
             'name_en': 'Cause of death',
             'name_fi': 'Kuolinsyy'
         },
     'kuolinpaikka':
         {
-            'uri': SCHEMA_NS.place_of_death,
+            'uri': SCHEMA_POW.place_of_death,
             'value_separator': '/',
             'name_en': 'Place of death',
             'name_fi': 'Kuolinpaikka',
@@ -223,17 +223,17 @@ PRISONER_MAPPING = {
         },
     'hautauspaikka':
         {
-            'uri': SCHEMA_NS.place_of_burial_literal,
+            'uri': SCHEMA_POW.place_of_burial_literal,
             'value_separator': ';',
             'name_en': 'Place of burial',
             'name_fi': 'Hautauspaikka'
         },
     'vankeuspaikat':
         {
-            'uri': SCHEMA_NS.captivity,
+            'uri': SCHEMA_POW.captivity,
             'value_separator': ';',
-            'create_resource': SCHEMA_NS.Captivity,
-            'capture_value': SCHEMA_NS.location_literal,
+            'create_resource': SCHEMA_POW.Captivity,
+            'capture_value': SCHEMA_POW.location_literal,
             'capture_order_number': True,
             'capture_dates': True,
             'name_en': 'Captivity locations',
@@ -247,7 +247,7 @@ PRISONER_MAPPING = {
         },
     'muita tietoja':
         {
-            'uri': SCHEMA_NS.additional_information,
+            'uri': SCHEMA_POW.additional_information,
             'value_separator': ';',
             'name_fi': 'Muita vankeustietoja',
             'name_en': 'Additional information',
@@ -255,14 +255,14 @@ PRISONER_MAPPING = {
         },
     'palanneiden kuolinaika':
         {
-            'uri': SCHEMA_NS.date_of_death,
+            'uri': SCHEMA_POW.date_of_death,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'value_separator': '/'
         },
     'kuolleeksi julistaminen':
         {
-            'uri': SCHEMA_NS.date_of_declaration_of_death,
+            'uri': SCHEMA_POW.date_of_declaration_of_death,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'name_en': 'Date of declaration of death',
@@ -271,28 +271,28 @@ PRISONER_MAPPING = {
     'valokuva KA:n henkilöakteissa, RGVA:n henkilömapeissa, muissa venäläisissä arkistoissa, venäläisessä Sotilaan '
     'Ääni-lehdessä':
         {
-            'uri': SCHEMA_NS.photograph,
+            'uri': SCHEMA_POW.photograph,
             'value_separator': ';',
             'name_fi': 'Valokuva',
             'name_en': 'Photograph'
         },
     'valokuva Sotilaan Äänessä':
         {
-            'uri': SCHEMA_NS.photograph_sotilaan_aani,
+            'uri': SCHEMA_POW.photograph_sotilaan_aani,
             'value_separator': ';',
             'name_fi': 'Valokuva Sotilaan Ääni -lehdessä',
             'name_en': 'Photograph in Sotilaan Ääni magazine'
         },
     'suomalainen paluukuulustelupöytäkirja':
         {
-            'uri': SCHEMA_NS.finnish_return_interrogation_file,
+            'uri': SCHEMA_POW.finnish_return_interrogation_file,
             'value_separator': ';',
             'name_en': 'Finnish return interrogation file',
             'name_fi': 'Suomalainen paluukuulustelupöytäkirja'
         },
     'radiossa, PM:n valvontatoimiston radiokatsaukset':
         {
-            'uri': SCHEMA_NS.radio_report,
+            'uri': SCHEMA_POW.radio_report,
             'value_separator': ';',
             'name_en': 'Radio reports',
             'name_fi': 'PM:n valvontatoimiston radiokatsaukset',
@@ -308,7 +308,7 @@ PRISONER_MAPPING = {
         },
     'vankeudessa takavarikoitu omaisuus markoissa':
         {
-            'uri': SCHEMA_NS.confiscated_possession,
+            'uri': SCHEMA_POW.confiscated_possession,
             'name_en': 'Confiscated possessions',
             'name_fi': 'Vankeudessa takavarikoitu omaisuus markoissa',
             'description_fi': 'Jatkosodan toisen (25.12.1944) ja kolmannen (28.3.1945) palautuserän sotavangeille '
@@ -316,7 +316,7 @@ PRISONER_MAPPING = {
         },
     'suomenruotsalainen':
         {
-            'uri': WARSA_NS.mother_tongue,
+            'uri': SCHEMA_WARSA.mother_tongue,
             'converter': convert_swedish,
             'validator': validate_mother_tongue,
             'name_en': 'Mother tongue',
@@ -324,14 +324,14 @@ PRISONER_MAPPING = {
         },
     'Karagandan kortisto':
         {
-            'uri': SCHEMA_NS.karaganda_card_file,
+            'uri': SCHEMA_POW.karaganda_card_file,
             'value_separator': ';',
             'name_en': 'Karaganda card file',
             'name_fi': 'Karagandan kortisto'
         },
     'Neuvostoliittolaiset sotavankikortistot ja henkilömappikokoelmat':
         {
-            'uri': SCHEMA_NS.soviet_card_files,
+            'uri': SCHEMA_POW.soviet_card_files,
             'value_separator': ';',
             'name_en': 'Soviet prisoner of war card files and person registers',
             'name_fi': 'Neuvostoliittolaiset sotavankikortistot ja henkilömappikokoelmat',
@@ -346,7 +346,7 @@ PRISONER_MAPPING = {
         },
     'Talvisodan kokoelma':
         {
-            'uri': SCHEMA_NS.winter_war_collection,
+            'uri': SCHEMA_POW.winter_war_collection,
             'value_separator': ';',
             'name_en': 'Winter War collection',
             'name_fi': 'Talvisodan kokoelma',
@@ -362,7 +362,7 @@ PRISONER_MAPPING = {
         },
     'lentolehtinen':
         {
-            'uri': SCHEMA_NS.flyer,
+            'uri': SCHEMA_POW.flyer,
             'value_separator': ';',
             'name_en': 'Flyer',
             'name_fi': 'Lentolehtinen',
@@ -370,14 +370,14 @@ PRISONER_MAPPING = {
         },
     'Sotilaan Ääni-lehti':
         {
-            'uri': SCHEMA_NS.sotilaan_aani,
+            'uri': SCHEMA_POW.sotilaan_aani,
             'value_separator': ';',
             'name_en': 'Sotilaan Ääni magazine',
             'name_fi': 'Sotilaan Ääni'
         },
     'Kansan Valta -lehti, Kansan Mies -lehti, Kansan Ääni':
         {
-            'uri': SCHEMA_NS.propaganda_magazine,
+            'uri': SCHEMA_POW.propaganda_magazine,
             'value_separator': ';',
             'name_en': 'Propaganda magazine',
             'name_fi': 'Propagandalehti',
@@ -386,7 +386,7 @@ PRISONER_MAPPING = {
         },
     'muistelmat, lehtijutut, tietokirjat, tutkimukset, Kansa taisteli-lehti, näyttelyt':
         {
-            'uri': SCHEMA_NS.memoir,
+            'uri': SCHEMA_POW.memoir,
             'value_separator': ';',
             'name_en': 'Memoirs',
             'name_fi': 'Muistelmat, lehtiartikkelit ja kirjallisuus',
@@ -394,13 +394,13 @@ PRISONER_MAPPING = {
         },
     'TV-ja radio-ohjelmat, tallenne video/audio':
         {
-            'uri': SCHEMA_NS.recording,
+            'uri': SCHEMA_POW.recording,
             'name_en': 'Recording (video/audio)',
             'name_fi': 'Tallenne (video/audio)'
         },
     'Karjalan tasavallan kansallisarkiston dokumentit':
         {
-            'uri': SCHEMA_NS.karelian_archive_documents,
+            'uri': SCHEMA_POW.karelian_archive_documents,
             'name_en': 'Karelian archive documents',
             'name_fi': 'Karjalan kansallisarkiston dokumentit'
         },
@@ -409,7 +409,7 @@ PRISONER_MAPPING = {
 SOURCE_MAPPING = {
     'Merkintä':
         {
-            'uri': SCHEMA_NS.source_id,
+            'uri': SCHEMA_POW.source_id,
             'name_en': 'Source identifier',
             'name_fi': 'Lähteen tunniste',
         },

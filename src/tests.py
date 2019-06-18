@@ -17,7 +17,7 @@ import converters
 from csv_to_rdf import RDFMapper, get_triple_reifications
 from linker import _generate_prisoners_dict
 from mapping import PRISONER_MAPPING
-from namespaces import DATA_NS, DCT, WARSA_NS, SCHEMA_NS, RANKS_NS, SKOS, MUNICIPALITIES, SCHEMA_ACTORS, BIOC, ACTORS
+from namespaces import DATA_NS, DCT, SCHEMA_WARSA, SCHEMA_POW, RANKS_NS, SKOS, MUNICIPALITIES, SCHEMA_ACTORS, BIOC, ACTORS
 from prune_nonpublic import prune_persons
 
 
@@ -77,7 +77,7 @@ class TestRDFMapper(unittest.TestCase):
         assert len(mapper.table) == 2
 
     def test_mapping_field_contents(self):
-        instance_class = URIRef(WARSA_NS.PrisonerRecord)
+        instance_class = URIRef(SCHEMA_WARSA.PrisonerRecord)
 
         mapper = RDFMapper(PRISONER_MAPPING, instance_class)
         mapper.read_csv('test_data/prisoners.csv')
@@ -103,7 +103,7 @@ class TestRDFMapper(unittest.TestCase):
         g = Graph().parse('test_data/prisoners.ttl', format='turtle')
 
         s = DATA_NS.prisoner_2
-        p = SCHEMA_NS.municipality_of_residence_literal
+        p = SCHEMA_POW.municipality_of_residence_literal
         o = Literal('Hämeenlinna')
 
         ref = get_triple_reifications(g, (s, p, o))
@@ -165,13 +165,13 @@ class TestPersonLinking(unittest.TestCase):
 
         g = Graph()
         p = URIRef('foo')
-        g.add((p, RDF.type, WARSA_NS.PrisonerRecord))
-        g.add((p, SCHEMA_NS.rank, RANKS_NS.Korpraali))
-        g.add((p, WARSA_NS.given_names, Literal("Eino Ilmari")))
-        g.add((p, WARSA_NS.family_name, Literal("Heino")))
-        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k123))
-        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1906, 12, 23))))
-        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1941, 12, 23))))
+        g.add((p, RDF.type, SCHEMA_WARSA.PrisonerRecord))
+        g.add((p, SCHEMA_POW.rank, RANKS_NS.Korpraali))
+        g.add((p, SCHEMA_WARSA.given_names, Literal("Eino Ilmari")))
+        g.add((p, SCHEMA_WARSA.family_name, Literal("Heino")))
+        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
         pd = _generate_prisoners_dict(g, self.ranks)
 
         self.assertEqual(expected, pd, pformat(pd))
@@ -198,20 +198,20 @@ class TestPersonLinking(unittest.TestCase):
 
         g = Graph()
         p = URIRef('foo')
-        g.add((p, RDF.type, WARSA_NS.PrisonerRecord))
-        g.add((p, SCHEMA_NS.rank, RANKS_NS.Korpraali))
-        g.add((p, SCHEMA_NS.rank, RANKS_NS.Kapteeni))
-        g.add((p, WARSA_NS.given_names, Literal("Eino Ilmari")))
-        g.add((p, WARSA_NS.family_name, Literal("Heino (ent. Kalmari)")))
-        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k123))
-        g.add((p, SCHEMA_NS.municipality_of_birth, MUNICIPALITIES.k234))
-        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1906, 12, 23))))
-        g.add((p, SCHEMA_NS.date_of_birth, Literal(datetime.date(1916, 6, 3))))
-        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1941, 12, 23))))
-        g.add((p, SCHEMA_NS.date_of_death, Literal(datetime.date(1943, 2, 3))))
+        g.add((p, RDF.type, SCHEMA_WARSA.PrisonerRecord))
+        g.add((p, SCHEMA_POW.rank, RANKS_NS.Korpraali))
+        g.add((p, SCHEMA_POW.rank, RANKS_NS.Kapteeni))
+        g.add((p, SCHEMA_WARSA.given_names, Literal("Eino Ilmari")))
+        g.add((p, SCHEMA_WARSA.family_name, Literal("Heino (ent. Kalmari)")))
+        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k234))
+        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1916, 6, 3))))
+        g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
+        g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1943, 2, 3))))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/sekatyomies')))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/tyomies')))
-        g.add((p, SCHEMA_NS.unit, ACTORS.actor_12839))
+        g.add((p, SCHEMA_POW.unit, ACTORS.actor_12839))
         pd = _generate_prisoners_dict(g, self.ranks)
 
         self.assertEqual(expected, pd, pformat(pd))

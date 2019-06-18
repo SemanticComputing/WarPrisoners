@@ -17,6 +17,13 @@ libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/hospitals.xlsx --outdir data
 libreoffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":44,34,76,1,1,11,true data/sources.xlsx --outdir data
 
+if [ "$1" ]
+then
+    echo "Using only topmost $1 rows"
+    mv data/prisoners.csv data/prisoners_full.csv
+    head -n $1 data/prisoners_full.csv > data/prisoners.csv
+fi
+
 # Remove dummy rows from beginning and end of CSVs
 # TODO: Remove the end-of-file content in a less error prone way using Python (e.g. pruning the resources)
 tail -n +4 data/camps.csv | head -n -4 > output/camps_cropped.csv
@@ -63,6 +70,10 @@ cat input_rdf/schema_base.ttl output/schema.ttl > output/schema_full.ttl
 rapper -i turtle output/schema_full.ttl -o turtle > output/prisoners_schema.ttl
 rm output/schema_full.ttl
 
+#echo "Converting sources to ttl"
+#python src/csv_to_rdf.py SOURCES output/hospitals_cropped.csv --outdata=output/hospitals_raw.ttl
+#
+
 echo "Linking ranks"
 
 python src/linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
@@ -90,6 +101,8 @@ python src/linker.py municipalities output/prisoners_plain.ttl output/munic_link
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/warsa_actor_units --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
 echo "Linking people"
+
+echo "Adding manual links"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
     output/occupation_links.ttl > output/prisoners_temp.ttl

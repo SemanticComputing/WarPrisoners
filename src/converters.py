@@ -82,13 +82,13 @@ def convert_swedish(swedish: str):
     """
     Convert boolean value for swedish speaking person to mother tongue.
     """
-    mother_tongue = SCHEMA_NS.finnish
+    mother_tongue = SCHEMA_POW.finnish
 
     if not swedish:
         return mother_tongue
 
     if swedish.upper() == 'X':
-        mother_tongue = SCHEMA_NS.swedish
+        mother_tongue = SCHEMA_POW.swedish
     else:
         log.warning('Unclear value for finnish swedish %s' % swedish)
 

@@ -10,7 +10,7 @@ from pprint import pprint
 
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
-from namespaces import bind_namespaces, WARSA_NS, SCHEMA_NS
+from namespaces import bind_namespaces, SCHEMA_WARSA, SCHEMA_POW
 from rdflib import Graph, RDF
 from rdflib.compare import graph_diff, isomorphic
 
@@ -41,20 +41,20 @@ def prune_persons(graph):
     pruned = Graph()
     nonpruned = Graph()
 
-    persons = list(graph.subjects(RDF.type, WARSA_NS.PrisonerRecord))
+    persons = list(graph.subjects(RDF.type, SCHEMA_WARSA.PrisonerRecord))
     print('Found %s persons' % len(list(persons)))
 
     for person in persons:
-        person_death = [cast_date(d) for d in graph.objects(person, SCHEMA_NS.death_date)]
+        person_death = [cast_date(d) for d in graph.objects(person, SCHEMA_POW.death_date)]
 
         if not len(person_death):
-            person_death = [cast_date(d) for d in graph.objects(person, SCHEMA_NS.declared_death)]
+            person_death = [cast_date(d) for d in graph.objects(person, SCHEMA_POW.declared_death)]
 
         person_death = [d for d in person_death if d is not None]
 
         if not person_death:
-            if (not graph.value(subject=person, predicate=SCHEMA_NS.returned_date) and
-                    graph.value(subject=person, predicate=SCHEMA_NS.death_date)):
+            if (not graph.value(subject=person, predicate=SCHEMA_POW.returned_date) and
+                    graph.value(subject=person, predicate=SCHEMA_POW.death_date)):
                 person_death = [date(1900, 1, 1)]  # Do not prune if completely unknown
             else:
                 person_death = [date.today()]
@@ -81,8 +81,8 @@ if __name__ == "__main__":
 
     pruned, nonpruned = prune_persons(g)
 
-    print('Nonpruned persons: %s' % len(list(nonpruned.subjects(RDF.type, WARSA_NS.PrisonerRecord))))
-    print('Pruned persons: %s' % len(list(pruned.subjects(RDF.type, WARSA_NS.PrisonerRecord))))
+    print('Nonpruned persons: %s' % len(list(nonpruned.subjects(RDF.type, SCHEMA_WARSA.PrisonerRecord))))
+    print('Pruned persons: %s' % len(list(pruned.subjects(RDF.type, SCHEMA_WARSA.PrisonerRecord))))
 
     g2 = pruned + nonpruned
 

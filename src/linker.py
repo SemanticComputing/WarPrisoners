@@ -19,15 +19,17 @@ from rdflib.exceptions import UniquenessError
 from rdflib.util import guess_format
 import rdf_dm as r
 
-from namespaces import SCHEMA_NS, BIOC, WARSA_NS, bind_namespaces, SCHEMA_ACTORS, SKOS, RANKS_NS, MUNICIPALITIES
+from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, SKOS, RANKS_NS, MUNICIPALITIES
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
     get_date_value, read_person_links
 from warsa_linkers.ranks import link_ranks
+import warsa_linkers.person_record_linkage
 
 log = logging.getLogger(__name__)
 
+warsa_linkers.person_record_linkage.log = log
 
 # TODO: Write some tests using responses
 
@@ -97,7 +99,7 @@ def link_camps(graph, endpoint):
 
     arpa = ArpaMimic(query, url=endpoint, retries=3, wait_between_tries=3)
 
-    return link(graph, arpa, SCHEMA_NS.location_literal, Graph(), SCHEMA_NS.location, preprocess=preprocess)
+    return link(graph, arpa, SCHEMA_POW.location_literal, Graph(), SCHEMA_POW.location, preprocess=preprocess)
 
 
 def _generate_prisoners_dict(graph: Graph, ranks: Graph):
@@ -108,18 +110,18 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
     # TODO: municipality_of_death
 
     prisoners = {}
-    for person in graph[:RDF.type:WARSA_NS.PrisonerRecord]:
-        rank_uris = list(graph.objects(person, SCHEMA_NS.rank))
+    for person in graph[:RDF.type:SCHEMA_WARSA.PrisonerRecord]:
+        rank_uris = list(graph.objects(person, SCHEMA_POW.rank))
 
-        given = str(graph.value(person, WARSA_NS.given_names, any=False))
-        family = str(graph.value(person, WARSA_NS.family_name, any=False))
+        given = str(graph.value(person, SCHEMA_WARSA.given_names, any=False))
+        family = str(graph.value(person, SCHEMA_WARSA.family_name, any=False))
         rank = [str(r) for r in rank_uris if r] or None
-        birth_places = graph.objects(person, SCHEMA_NS.municipality_of_birth)
-        units = graph.objects(person, SCHEMA_NS.unit)
+        birth_places = graph.objects(person, SCHEMA_POW.municipality_of_birth)
+        units = graph.objects(person, SCHEMA_POW.unit)
         occupations = graph.objects(person, BIOC.has_occupation)
 
-        births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_NS.date_of_birth)]
-        deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_NS.date_of_death)]
+        births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_POW.date_of_birth)]
+        deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_POW.date_of_death)]
         birth_begin = min([d for d in births if d] or [None])
         birth_end = max([d for d in births if d] or [None])
         death_begin = min([d for d in deaths if d] or [None])
@@ -162,6 +164,7 @@ def link_prisoners(input_graph, endpoint):
         {'field': 'birth_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'death_begin', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'death_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
+        # TODO: municipality_of_death
         {'field': 'activity_end', 'type': 'Custom', 'comparator': activity_comparator, 'has missing': True},
         {'field': 'rank', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'rank_level', 'type': 'Price', 'has missing': True},
@@ -176,9 +179,8 @@ def link_prisoners(input_graph, endpoint):
     training_links = read_person_links('data/person_links.json')
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
+                        sample_size=500000,
                         threshold_ratio=0.8
-                        # training_data_file='data/training_data.json',
-                        # training_settings_file='data/training_settings.pkl'
                         )
 
 
@@ -205,13 +207,13 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
     log.info('Using Warsa municipalities with {n} triples'.format(n=len(warsa_munics)))
 
     pnr_arpa = Arpa(arpa_endpoint)
-    pnr_links = link_to_pnr(g, SCHEMA_NS.municipality_of_death,
-                            SCHEMA_NS.municipality_of_death_literal, pnr_arpa)['graph']
+    pnr_links = link_to_pnr(g, SCHEMA_POW.municipality_of_death,
+                            SCHEMA_POW.municipality_of_death_literal, pnr_arpa)['graph']
 
-    war_munics = set(g.objects(None, SCHEMA_NS.municipality_of_birth_literal)) | \
-                 set(g.objects(None, SCHEMA_NS.municipality_of_domicile_literal)) | \
-                 set(g.objects(None, SCHEMA_NS.municipality_of_residence_literal)) | \
-                 set(g.objects(None, SCHEMA_NS.municipality_of_capture_literal))
+    war_munics = set(g.objects(None, SCHEMA_POW.municipality_of_birth_literal)) | \
+                 set(g.objects(None, SCHEMA_POW.municipality_of_domicile_literal)) | \
+                 set(g.objects(None, SCHEMA_POW.municipality_of_residence_literal)) | \
+                 set(g.objects(None, SCHEMA_POW.municipality_of_capture_literal))
 
     war_munic_mapping = {}
     war_munic_links = Graph()
@@ -223,10 +225,10 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
         else:
             log.warning('No warsa link found for municipality {}'.format(munic_literal))
 
-    for source, target in [(SCHEMA_NS.municipality_of_birth_literal, SCHEMA_NS.municipality_of_birth),
-                           (SCHEMA_NS.municipality_of_domicile_literal, SCHEMA_NS.municipality_of_domicile),
-                           (SCHEMA_NS.municipality_of_residence_literal, SCHEMA_NS.municipality_of_residence),
-                           (SCHEMA_NS.municipality_of_capture_literal, SCHEMA_NS.municipality_of_capture)]:
+    for source, target in [(SCHEMA_POW.municipality_of_birth_literal, SCHEMA_POW.municipality_of_birth),
+                           (SCHEMA_POW.municipality_of_domicile_literal, SCHEMA_POW.municipality_of_domicile),
+                           (SCHEMA_POW.municipality_of_residence_literal, SCHEMA_POW.municipality_of_residence),
+                           (SCHEMA_POW.municipality_of_capture_literal, SCHEMA_POW.municipality_of_capture)]:
         war_munic_links += add_link(g, war_munic_mapping, source, target)
 
     return war_munic_links + pnr_links
@@ -265,8 +267,8 @@ if __name__ == '__main__':
 
     elif args.task == 'occupations':
         log.info('Linking occupations')
-        bind_namespaces(link_occupations(input_graph, args.endpoint, SCHEMA_NS.occupation_literal, BIOC.has_occupation,
-                         WARSA_NS.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(link_occupations(input_graph, args.endpoint, SCHEMA_POW.occupation_literal, BIOC.has_occupation,
+                                         SCHEMA_WARSA.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
 
     elif args.task == 'persons':
         log.info('Linking persons')
@@ -274,6 +276,6 @@ if __name__ == '__main__':
 
     elif args.task == 'ranks':
         log.info('Linking ranks')
-        bind_namespaces(link_ranks(input_graph, args.endpoint, SCHEMA_NS.rank_literal, SCHEMA_NS.rank,
-                   WARSA_NS.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(link_ranks(input_graph, args.endpoint, SCHEMA_POW.rank_literal, SCHEMA_POW.rank,
+                                   SCHEMA_WARSA.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
 

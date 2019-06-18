@@ -16,7 +16,7 @@ from slugify import slugify
 from converters import convert_person_name, convert_dates
 from csv2rdf import CSV2RDF
 from mapping import PRISONER_MAPPING, SOURCE_MAPPING
-from namespaces import RDF, XSD, DCT, SKOS, DATA_NS, SCHEMA_NS, WARSA_NS, bind_namespaces
+from namespaces import RDF, XSD, DCT, SKOS, DATA_NS, SCHEMA_POW, SCHEMA_WARSA, bind_namespaces
 from rdflib import URIRef, Graph, Literal, Namespace
 from rdflib.term import Identifier
 
@@ -165,13 +165,13 @@ class RDFMapper:
             row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
 
         if firstnames:
-            row_rdf.add((entity_uri, WARSA_NS.given_names, Literal(firstnames)))
+            row_rdf.add((entity_uri, SCHEMA_WARSA.given_names, Literal(firstnames)))
         if lastname:
-            row_rdf.add((entity_uri, WARSA_NS.family_name, Literal(lastname)))
+            row_rdf.add((entity_uri, SCHEMA_WARSA.family_name, Literal(lastname)))
         if fullname:
             row_rdf.add((entity_uri, URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), Literal(fullname)))
         if original_name:
-            row_rdf.add((entity_uri, SCHEMA_NS.original_name, Literal(original_name)))
+            row_rdf.add((entity_uri, SCHEMA_POW.original_name, Literal(original_name)))
 
         # Loop through the mapping dict and convert data to RDF
         for column_name in row.index[1:]:
@@ -238,11 +238,11 @@ class RDFMapper:
                         row_rdf.add((resource_uri, mapping['capture_value'], rdf_value))
 
                         if mapping.get('capture_order_number'):
-                            row_rdf.add((resource_uri, SCHEMA_NS.order, Literal(index * 10)))
+                            row_rdf.add((resource_uri, SCHEMA_POW.order, Literal(index * 10)))
 
                         if mapping.get('capture_dates') and (date_begin or date_end):
-                            row_rdf.add((resource_uri, SCHEMA_NS.date_begin, Literal(date_begin)))
-                            row_rdf.add((resource_uri, SCHEMA_NS.date_end, Literal(date_end)))
+                            row_rdf.add((resource_uri, SCHEMA_POW.date_begin, Literal(date_begin)))
+                            row_rdf.add((resource_uri, SCHEMA_POW.date_end, Literal(date_end)))
 
                         rdf_value = resource_uri
 
@@ -357,7 +357,7 @@ class RDFMapper:
 def convert_camps(class_uri, prop1, prop2, namespace):
     mapper = CSV2RDF()
     mapper.read_csv(args.input, sep=',')
-    mapper.convert_to_rdf(DATA_NS, SCHEMA_NS, class_uri)
+    mapper.convert_to_rdf(DATA_NS, SCHEMA_POW, class_uri)
 
     for old_uri in list(mapper.data.subjects(RDF.type, class_uri)):
         new_uri = slugify(mapper.data.value(old_uri, prop1, default='') or
@@ -370,6 +370,7 @@ def convert_camps(class_uri, prop1, prop2, namespace):
 
         for (sub, pre, obj) in mapper.data.triples((old_uri, None, None)):
             mapper.data.remove((old_uri, pre, obj))
+
     mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')
 
 
@@ -388,7 +389,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     if args.mode == "PRISONERS":
-        pow_mapper = RDFMapper(PRISONER_MAPPING, WARSA_NS.PrisonerRecord, loglevel=args.loglevel.upper())
+        pow_mapper = RDFMapper(PRISONER_MAPPING, SCHEMA_WARSA.PrisonerRecord, loglevel=args.loglevel.upper())
         pow_mapper.read_csv(args.input)
         pow_mapper.preprocess_prisoners_data()
 
@@ -398,15 +399,15 @@ if __name__ == "__main__":
         pow_mapper.serialize(args.outdata, args.outschema)
 
     elif args.mode == "CAMPS":
-        convert_camps(WARSA_NS.PowCamp,
-                      SCHEMA_NS['vankeuspaikan-numero'],
-                      SCHEMA_NS['vankeuspaikka'],
+        convert_camps(SCHEMA_WARSA.PowCamp,
+                      SCHEMA_POW['vankeuspaikan-numero'],
+                      SCHEMA_POW['vankeuspaikka'],
                       Namespace('http://ldf.fi/warsa/prisoners/camp_'))
 
     elif args.mode == "HOSPITALS":
-        convert_camps(WARSA_NS.PowHospital,
-                      SCHEMA_NS['sairaala'],
-                      SCHEMA_NS['sijainti'],
+        convert_camps(SCHEMA_WARSA.PowHospital,
+                      SCHEMA_POW['sairaala'],
+                      SCHEMA_POW['sijainti'],
                       Namespace('http://ldf.fi/warsa/prisoners/hospital_'))
 
     elif args.mode == "SOURCES":
@@ -414,5 +415,5 @@ if __name__ == "__main__":
         mapper.read_csv(args.input, sep=',')
         mapper.convert_to_rdf(Namespace("http://ldf.fi/warsa/prisoners/"),
                               Namespace("http://ldf.fi/schema/warsa/prisoners/"),
-                              WARSA_NS.OriginalSource)
+                              SCHEMA_WARSA.OriginalSource)
         mapper.write_rdf(args.outdata, args.outschema, fformat='turtle')

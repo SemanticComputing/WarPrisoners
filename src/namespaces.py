@@ -12,8 +12,8 @@ SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 BIOC = Namespace('http://ldf.fi/schema/bioc/')
 
 DATA_NS = Namespace('http://ldf.fi/warsa/prisoners/')
-SCHEMA_NS = Namespace('http://ldf.fi/schema/warsa/prisoners/')
-WARSA_NS = Namespace('http://ldf.fi/schema/warsa/')
+SCHEMA_POW = Namespace('http://ldf.fi/schema/warsa/prisoners/')
+SCHEMA_WARSA = Namespace('http://ldf.fi/schema/warsa/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 RANKS_NS = Namespace('http://ldf.fi/schema/warsa/actors/ranks/')
 
@@ -31,7 +31,7 @@ def bind_namespaces(graph: Graph):
     graph.bind("skos", SKOS)
     graph.bind("foaf", FOAF)
 
-    graph.bind("wsch", WARSA_NS)
+    graph.bind("wsch", SCHEMA_WARSA)
     graph.bind("wac", ACTORS)
     graph.bind("war", RANKS_NS)
     graph.bind("wam", MUNICIPALITIES)
