@@ -3,6 +3,7 @@
 set -eo pipefail
 
 mkdir -p output/logs
+mkdir -p output/persons
 
 command -v s-put >/dev/null 2>&1 || { echo >&2 "s-put is not available, aborting"; exit 1; }
 command -v rapper >/dev/null 2>&1 || { echo >&2 "rapper is not available, aborting"; exit 1; }
@@ -17,11 +18,6 @@ echo "Updating camps and hospitals to Fuseki"
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/camps_combined.ttl
 
 curl -f --data-urlencode "query=$(cat sparql/construct_camps.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/camps.ttl
-
-
-#echo "Converting sources to ttl"
-#python src/csv_to_rdf.py SOURCES output/hospitals_cropped.csv --outdata=output/hospitals_raw.ttl
-#
 
 echo "Linking ranks"
 
@@ -81,20 +77,20 @@ echo "...Updating db with prisoners"
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_.ttl
 
 echo "...Constructing people"
-curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl
+curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/persons/prisoner_people.ttl
 
 echo "...Constructing documents links"
-curl -f --data-urlencode "query=$(cat sparql/construct_documents_links.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_documents_links.ttl
+curl -f --data-urlencode "query=$(cat sparql/construct_documents_links.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/documents_links.ttl
 
 echo "...Updating db with new people"
-cat output/prisoner_people.ttl output/prisoner_documents_links.ttl > prisoners_temp.ttl
-s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people.ttl
-rm prisoners_temp.ttl
+cat output/persons/prisoner_people.ttl output/documents_links.ttl > output/prisoner_people_temp.ttl
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people_temp.ttl
+rm output/prisoner_people_temp.ttl
 
 for construct in births promotions unit_joinings captures disappearances
 do
     echo "...Constructing $construct"
-curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/prisoner_$construct.ttl"
+curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/persons/prisoner_$construct.ttl"
 done
 
 echo "...Deleting temp graph"
@@ -102,8 +98,9 @@ s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons
 
 echo "Finishing prisoners"
 
-cat output/prisoners_.ttl output/prisoner_documents_links.ttl > output/prisoners_full.ttl
+cat output/prisoners_.ttl output/documents_links.ttl > output/prisoners_full.ttl
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl
+rm output/prisoners_.ttl
 rm output/prisoners_full.ttl
 
 echo "...Finished"
