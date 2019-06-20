@@ -237,7 +237,7 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
 
 
 if __name__ == '__main__':
-    argparser = argparse.ArgumentParser(description="War prisoner linking tasks", fromfile_prefix_chars='@')
+    argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
     argparser.add_argument("task", help="Linking task to perform",
                            choices=["camps", "occupations", "municipalities", "persons", "ranks"])
