@@ -26,7 +26,7 @@ class TestConverters(unittest.TestCase):
 
     def test_convert_dates(self):
         self.assertEqual(converters.convert_dates('24.12.2016'), datetime.date(2016, 12, 24))
-        self.assertEqual(converters.convert_dates('12/24/2016'), datetime.date(2016, 12, 24))
+        self.assertEqual(converters.convert_dates('24/12/2016'), datetime.date(2016, 12, 24))
 
         self.assertEqual(converters.convert_dates('xx.xx.xxxx'), 'xx.xx.xxxx')
         self.assertEqual(converters.convert_dates('xx.09.2016'), 'xx.09.2016')

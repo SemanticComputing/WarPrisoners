@@ -205,9 +205,9 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:cause_of_death "aivokooma" ;
     wps:confiscated_possession "Rise rannekello 2.000 mk, rahaa 100 mk, yht. 2.100 mk" ;
     wps:date_of_birth "n.1918" ;
-    wps:date_of_capture "1944-06-07"^^xsd:date ;
-    wps:date_of_death "1942-07-01"^^xsd:date,
-        "1948-05-04"^^xsd:date ;
+    wps:date_of_capture "1944-07-06"^^xsd:date ;
+    wps:date_of_death "1942-01-07"^^xsd:date,
+        "1948-04-05"^^xsd:date ;
     wps:date_of_going_mia "4.7.1944  (KA T 19472/4 [3]" ;
     wps:date_of_return "xx.7.1944" ;
     wps:description_of_capture "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi.",
@@ -254,16 +254,16 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
         wp:prisoner_2_captivity_40 ;
     wps:cause_of_death "sydämen toiminnan lakkaaminen" ;
     wps:confiscated_possession "rahaa 225 mk" ;
-    wps:date_of_birth "15/04/1900" ;
+    wps:date_of_birth "1900-04-15"^^xsd:date ;
     wps:date_of_capture "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     wps:date_of_death "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
-        "1964-07-08"^^xsd:date ;
-    wps:date_of_declaration_of_death "1950-06-03"^^xsd:date ;
-    wps:date_of_going_mia "1942-05-21"^^xsd:date ;
-    wps:date_of_return "22/11/1944" ;
+        "1964-08-07"^^xsd:date ;
+    wps:date_of_declaration_of_death "1950-03-06"^^xsd:date ;
+    wps:date_of_going_mia "05/21/1942" ;
+    wps:date_of_return "1944-11-22"^^xsd:date ;
     wps:description_of_capture "Ajoi 29.8.1941 Munasuolla ambulanssiautolla vihollisen linjojen eteen, ei löydetty mistään",
         "katosi Munasuon taistelussa 28.8.1941. Ajoi ambulanssiautolla vihollisen linjojen eteen. Seuraavana päivänä kun mentiin katsomaan ei löydetty mitään." ;
     wps:finnish_return_interrogation_file "ei kuulusteltu/ kpk kadonnut?" ;

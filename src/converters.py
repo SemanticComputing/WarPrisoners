@@ -23,7 +23,7 @@ def convert_dates(raw_date: str):
     if not raw_date:
         return raw_date
     try:
-        date = datetime.datetime.strptime(str(raw_date).strip(), '%m/%d/%Y').date()
+        date = datetime.datetime.strptime(str(raw_date).strip(), '%d/%m/%Y').date()
     except ValueError:
         try:
             date = datetime.datetime.strptime(str(raw_date).strip(), '%d.%m.%Y').date()
