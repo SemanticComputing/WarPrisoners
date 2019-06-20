@@ -54,7 +54,7 @@ echo "Linking people"
 echo "Adding manual links"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
-    output/occupation_links.ttl output/municipality_links.ttl > output/prisoners_temp.ttl
+    output/occupation_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_temp.ttl
 python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 rm output/prisoners_temp.ttl
@@ -71,14 +71,14 @@ python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --en
 echo "Consolidating prisoners"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
-    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl > output/prisoners_full.ttl
-rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl
+    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_full.ttl
+rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners_.ttl
 rm output/prisoners_full.ttl
 
 echo "Generating people..."
 
 echo "...Updating db with prisoners"
-s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners.ttl
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_.ttl
 
 echo "...Constructing people"
 curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/prisoner_people.ttl
@@ -102,7 +102,7 @@ s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons
 
 echo "Finishing prisoners"
 
-cat output/prisoners.ttl output/prisoner_documents_links.ttl > output/prisoners_full.ttl
+cat output/prisoners_.ttl output/prisoner_documents_links.ttl > output/prisoners_full.ttl
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl
 rm output/prisoners_full.ttl
 
