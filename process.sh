@@ -46,15 +46,15 @@ python src/linker.py occupations output/prisoners_plain.ttl output/occupation_li
 
 echo "Linking municipalities"
 
-python src/linker.py municipalities output/prisoners_plain.ttl output/munic_links.ttl \
-    --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/warsa_actor_units --logfile output/logs/linker.log --loglevel $LOG_LEVEL
+python src/linker.py municipalities output/prisoners_plain.ttl output/municipality_links.ttl \
+    --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/pnr_municipality --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
 echo "Linking people"
 
 echo "Adding manual links"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
-    output/occupation_links.ttl > output/prisoners_temp.ttl
+    output/occupation_links.ttl output/municipality_links.ttl > output/prisoners_temp.ttl
 python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 rm output/prisoners_temp.ttl
@@ -71,7 +71,7 @@ python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --en
 echo "Consolidating prisoners"
 
 cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
-    output/occupation_links.ttl output/camp_links.ttl > output/prisoners_full.ttl
+    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl > output/prisoners_full.ttl
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl
 rm output/prisoners_full.ttl
 

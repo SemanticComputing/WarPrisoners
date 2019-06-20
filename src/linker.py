@@ -205,8 +205,12 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
     log.info('Using Warsa municipalities with {n} triples'.format(n=len(warsa_munics)))
 
     pnr_arpa = Arpa(arpa_endpoint)
-    pnr_links = link_to_pnr(g, SCHEMA_POW.municipality_of_death,
-                            SCHEMA_POW.municipality_of_death_literal, pnr_arpa)['graph']
+    pnr_links = link_to_pnr(g,
+                            SCHEMA_POW.municipality_of_death,
+                            SCHEMA_POW.municipality_of_death_literal,
+                            pnr_arpa,
+                            preprocess=False,
+                            new_graph=True)['graph']
 
     war_munics = set(g.objects(None, SCHEMA_POW.municipality_of_birth_literal)) | \
                  set(g.objects(None, SCHEMA_POW.municipality_of_domicile_literal)) | \
@@ -262,7 +266,7 @@ if __name__ == '__main__':
 
     elif args.task == 'municipalities':
         log.info('Linking municipalities')
-        link_municipalities(input_graph, args.endpoint, args.arpa)
+        bind_namespaces(link_municipalities(input_graph, args.endpoint, args.arpa)).serialize(args.output, format=guess_format(args.output))
 
     elif args.task == 'occupations':
         log.info('Linking occupations')
