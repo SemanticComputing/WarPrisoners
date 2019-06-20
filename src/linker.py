@@ -29,8 +29,6 @@ import warsa_linkers.person_record_linkage
 
 log = logging.getLogger(__name__)
 
-warsa_linkers.person_record_linkage.log = log
-
 # TODO: Write some tests using responses
 
 
@@ -249,6 +247,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
+    log = logging.getLogger()  # Get root logger
     log_handler = logging.FileHandler(args.logfile)
     log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     log.addHandler(log_handler)

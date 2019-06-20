@@ -14,10 +14,10 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-wp:prisoner_1_additional_information_0_reification_source a rdf:Statement ;
-    dct:source "KA Suomen sodissa 1939-1945 menehtyneet" ;
-    rdf:object "kadonnut, julistettu virallisesti kuolleeksi." ;
-    rdf:predicate wps:additional_information ;
+wp:prisoner_1_date_of_birth_0_reification_source a rdf:Statement ;
+    dct:source "Laine Aarne" ;
+    rdf:object "n.1918" ;
+    rdf:predicate wps:date_of_birth ;
     rdf:subject wp:prisoner_1 .
 
 wp:prisoner_1_description_of_capture_0_reification_source a rdf:Statement ;
@@ -40,19 +40,19 @@ wp:prisoner_1_description_of_capture_2_reification_source a rdf:Statement ;
 
 wp:prisoner_1_flyer_0_reification_source a rdf:Statement ;
     dct:source "KA T-26073/48" ;
-    rdf:object "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
+    rdf:object "Vihollisen lentolehtisessä mainittu sotavankina. Allekirjoitus lentolehtisessä \"Aunuksen kannaksen rintamamiehille!\" [sukunimi kirjoitettu muodossa Lackström eli ehkä joku muu kuin Laxström on kirjoittanut nimen]." ;
     rdf:predicate wps:flyer ;
     rdf:subject wp:prisoner_1 .
 
-wp:prisoner_1_soviet_card_files_0_reification_source a rdf:Statement ;
+wp:prisoner_1_soviet_card_files_1_reification_source a rdf:Statement ;
     dct:source "Kuolleiden henkilömapit" ;
-    rdf:object "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
+    rdf:object "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, kuolinpäiväksi merkitty 24.9.1942" ;
     rdf:predicate wps:soviet_card_files ;
     rdf:subject wp:prisoner_1 .
 
 wp:prisoner_2_cause_of_death_0_reification_source a rdf:Statement ;
-    dct:source "Keränen Unto" ;
-    rdf:object "vatsatauti" ;
+    dct:source "Kuolleiden henkilömapit" ;
+    rdf:object "sydämen toiminnan lakkaaminen" ;
     rdf:predicate wps:cause_of_death ;
     rdf:subject wp:prisoner_2 .
 
@@ -63,10 +63,8 @@ wp:prisoner_2_date_of_capture_1_reification_source a rdf:Statement ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_date_of_death_0_reification_source a rdf:Statement ;
-    dct:source "KansA, Sotavangit ry./80",
-        "Karaganda" ;
-    rdf:object "1943-02-02"^^xsd:date,
-        "xx.xx.2001" ;
+    dct:source "Karaganda" ;
+    rdf:object "1943-02-02"^^xsd:date ;
     rdf:predicate wps:date_of_death ;
     rdf:subject wp:prisoner_2 .
 
@@ -77,39 +75,21 @@ wp:prisoner_2_date_of_death_1_reification_source a rdf:Statement ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_description_of_capture_0_reification_source a rdf:Statement ;
-    dct:source "T 26073/33 Laitinen Lauri henkilöakti" ;
-    rdf:object "katosi lähettitehtävissä Räisälän Unnunkoskella" ;
+    dct:source "KA T-26073/48" ;
+    rdf:object "Ajoi 29.8.1941 Munasuolla ambulanssiautolla vihollisen linjojen eteen, ei löydetty mistään" ;
     rdf:predicate wps:description_of_capture ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_description_of_capture_1_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/48" ;
-    rdf:object "14.8.1941 lähettitehtävissä Unnunkoskella Räisälässä kadonnut" ;
+    dct:source "KA kantakortti" ;
+    rdf:object "katosi Munasuon taistelussa 28.8.1941. Ajoi ambulanssiautolla vihollisen linjojen eteen. Seuraavana päivänä kun mentiin katsomaan ei löydetty mitään." ;
     rdf:predicate wps:description_of_capture ;
-    rdf:subject wp:prisoner_2 .
-
-wp:prisoner_2_finnish_return_interrogation_file_0_reification_source a rdf:Statement ;
-    dct:source "KA T-26073/5 Ikävalko Arvo henkilöakti" ;
-    rdf:object "kuulustelu Lauritsalan poliisivartiokonttorissa 6.4.1945" ;
-    rdf:predicate wps:finnish_return_interrogation_file ;
-    rdf:subject wp:prisoner_2 .
-
-wp:prisoner_2_karaganda_card_file_0_reification_source a rdf:Statement ;
-    dct:source "Karaganda 92" ;
-    rdf:object "kortissa ilmoitettu saapumispäiväksi leirille virheellisesti 16.6.1941." ;
-    rdf:predicate wps:karaganda_card_file ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_marital_status_literal_1_reification_source a rdf:Statement ;
     dct:source "mikrofilmi" ;
     rdf:object "naimisissa" ;
     rdf:predicate wps:marital_status_literal ;
-    rdf:subject wp:prisoner_2 .
-
-wp:prisoner_2_memoir_0_reification_source a rdf:Statement ;
-    dct:source "Pravda 18.2.1942" ;
-    rdf:object "autonkuljettaja Helsingistä, puhui suomalaisten sotavankien 1. konferenssissa Karagandassa tammikuussa 1942" ;
-    rdf:predicate wps:memoir ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_municipality_of_capture_literal_1_reification_source a rdf:Statement ;
@@ -136,21 +116,15 @@ wp:prisoner_2_occupation_literal_1_reification_source a rdf:Statement ;
     rdf:predicate wps:occupation_literal ;
     rdf:subject wp:prisoner_2 .
 
-wp:prisoner_2_place_of_burial_literal_1_reification_source a rdf:Statement ;
-    dct:source "Seppälä Alpo" ;
-    rdf:object "haudattu Shumihaan." ;
-    rdf:predicate wps:place_of_burial_literal ;
-    rdf:subject wp:prisoner_2 .
-
 wp:prisoner_2_place_of_death_0_reification_source a rdf:Statement ;
-    dct:source "Budko" ;
-    rdf:object "1770" ;
+    dct:source "jatkosodan kortisto" ;
+    rdf:object "74" ;
     rdf:predicate wps:place_of_death ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_place_of_death_1_reification_source a rdf:Statement ;
-    dct:source "Kyzminyh 1" ;
-    rdf:object "1170" ;
+    dct:source "kuolleiden henkilömapit" ;
+    rdf:object "75" ;
     rdf:predicate wps:place_of_death ;
     rdf:subject wp:prisoner_2 .
 
@@ -162,7 +136,7 @@ wp:prisoner_2_place_of_going_mia_literal_0_reification_source a rdf:Statement ;
 
 wp:prisoner_2_radio_report_0_reification_source a rdf:Statement ;
     dct:source "KA T-26073/48" ;
-    rdf:object "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
+    rdf:object "Vihollisen radiolähetyksessä mainittu joutuneen Kannaksella vangiksi. RK 144/28.6.1944, Leningradin radiossa 27.6.1944 klo 15.30 Suomessa kuultuna nimellä Minkkinen Heikki, Lammi." ;
     rdf:predicate wps:radio_report ;
     rdf:subject wp:prisoner_2 .
 
@@ -172,71 +146,78 @@ wp:prisoner_2_rank_literal_1_reification_source a rdf:Statement ;
     rdf:predicate wps:rank_literal ;
     rdf:subject wp:prisoner_2 .
 
-wp:prisoner_2_soviet_card_files_0_reification_source a rdf:Statement ;
-    dct:source "Kuolleiden henkilömapit" ;
-    rdf:object "2 mappia, joista toisessa kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja. Toisessa mapissa kuulustelulomake ja lisälehti 2 kpl" ;
-    rdf:predicate wps:soviet_card_files ;
-    rdf:subject wp:prisoner_2 .
-
 wp:prisoner_2_soviet_card_files_1_reification_source a rdf:Statement ;
-    dct:source "Jatkosodan kortisto" ;
-    rdf:object "3 korttia" ;
+    dct:source "Kuolleiden henkilömapit" ;
+    rdf:object "kuulustelulomake 2 kpl ja lisälehti, karakteristiikkoja, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
     rdf:predicate wps:soviet_card_files ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_1_captivity_0 a wps:Captivity ;
-    wps:date_begin "1944-07-14"^^xsd:date ;
-    wps:date_end "xx.xx.1944" ;
+    wps:date_begin "xx.xx.1944" ;
+    wps:date_end "1944-10-13"^^xsd:date ;
     wps:location_literal "135" ;
     wps:order 0 .
 
+wp:prisoner_1_captivity_10 a wps:Captivity ;
+    wps:date_begin "1944-10-15"^^xsd:date ;
+    wps:date_end "1944-11-05"^^xsd:date ;
+    wps:location_literal "158" ;
+    wps:order 10 .
+
+wp:prisoner_1_captivity_20 a wps:Captivity ;
+    wps:date_begin "1944-11-05"^^xsd:date ;
+    wps:date_end "1944-11-16"^^xsd:date ;
+    wps:location_literal "1825" ;
+    wps:order 20 .
+
 wp:prisoner_2_captivity_0 a wps:Captivity ;
-    wps:location_literal "Perkjärvi" ;
+    wps:location_literal "Vienan Kemi" ;
     wps:order 0 .
 
 wp:prisoner_2_captivity_10 a wps:Captivity ;
-    wps:location_literal "SPV 1" ;
+    wps:location_literal "Vienan Kemi sotavankisairaala" ;
     wps:order 10 .
 
 wp:prisoner_2_captivity_20 a wps:Captivity ;
-    wps:date_begin "1944-07-10"^^xsd:date ;
-    wps:date_end "xx.xx.1944" ;
-    wps:location_literal "135" ;
+    wps:location_literal "Arkangel sotavankisairaala" ;
     wps:order 20 .
 
 wp:prisoner_2_captivity_30 a wps:Captivity ;
-    wps:location_literal "270" ;
+    wps:date_begin "1942-05-10"^^xsd:date ;
+    wps:date_end "xx.xx.1942" ;
+    wps:location_literal "74" ;
     wps:order 30 .
 
 wp:prisoner_2_captivity_40 a wps:Captivity ;
-    wps:date_begin "1944-10-17"^^xsd:date ;
-    wps:date_end "1944-11-20"^^xsd:date ;
-    wps:location_literal "158" ;
+    wps:date_begin "xx.xx.1942" ;
+    wps:date_end "1942-09-18"^^xsd:date ;
+    wps:location_literal "75" ;
     wps:order 40 .
 
 wp:prisoner_1 a wsch:PrisonerRecord ;
     wsch:family_name "Sukunimi" ;
     wsch:given_names "Etunimi Toinennimi" ;
-    wsch:mother_tongue wps:finnish ;
-    wps:additional_information "kadonnut, julistettu virallisesti kuolleeksi." ;
-    wps:captivity wp:prisoner_1_captivity_0 ;
+    wsch:mother_tongue wps:swedish ;
+    wps:additional_information "Ei ole KA Suomen sodissa 1939-1945 menehtyneet-tietokannassa" ;
+    wps:captivity wp:prisoner_1_captivity_0,
+        wp:prisoner_1_captivity_10,
+        wp:prisoner_1_captivity_20 ;
     wps:cause_of_death "aivokooma" ;
-    wps:confiscated_possession "rahaa 90 mk, lompakko nahkainen 175 mk, puukko tupen kanssa 130 mk, yht. 395 mk" ;
-    wps:date_of_birth "1908-12-24"^^xsd:date ;
-    wps:date_of_capture "1944-07-06"^^xsd:date ;
-    wps:date_of_death "1979-02-27"^^xsd:date,
-        "xx.xx.xxxx" ;
-    wps:date_of_declaration_of_death "2003-05-19"^^xsd:date ;
+    wps:confiscated_possession "Rise rannekello 2.000 mk, rahaa 100 mk, yht. 2.100 mk" ;
+    wps:date_of_birth "n.1918" ;
+    wps:date_of_capture "1944-06-07"^^xsd:date ;
+    wps:date_of_death "1942-07-01"^^xsd:date,
+        "1948-05-04"^^xsd:date ;
     wps:date_of_going_mia "4.7.1944  (KA T 19472/4 [3]" ;
-    wps:date_of_return "1944-11-22"^^xsd:date ;
+    wps:date_of_return "xx.7.1944" ;
     wps:description_of_capture "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi.",
         "Joutui 13.3.1942 Kiestingin Vihtavaarassa vangiksi kaukopartiomatkalla haavoittuneena. Samalla kertaa vangeiksi joutuivat korpr. Rajalampi Edvin, stm. Paadar Matti, stm. Räsänen Reino, stm. Luukinen Lauri, stm. Vihtaniemi Väinö, korpr. Pelli Antti, stm. Aikio Johan, stm. Kaleton Reino, stm. Rautio Hannu ja 2 muuta",
         "Kuulusteltavan pataljoona oli suorittamassa tuhoamistehtävää venäläisten puolella. Tehtävän epäonnistuttua haavoittui taistelun aikana vaikeasti olkapäähän ja lonkkaan ja tuli liikuntakyvyttömäksi joutuen vangiksi. Samalla kertaa vangeiksi joutuivat stm. Tervo Olavi, korpr. Rajalampi Edvin, stm. Aikio Johan Paulus, korpr. Pöllä [Pelli] Antti, stm. Vihtaniemi Väinö, stm. Rautio Erkki, stm. Räsänen Reino, stm. Luukinen Lauri ja stm. Kaleton Reino" ;
-    wps:finnish_return_interrogation_file "ei kuulusteltu" ;
-    wps:flyer "Vihollisen lentolehtisessä mainittu joutuneen sotavangiksi." ;
-    wps:karaganda_card_file "Karaganda 216" ;
-    wps:karelian_archive_documents "f. 8, op. 1, d. 1129, l. 34" ;
+    wps:finnish_return_interrogation_file "KA T-26073/2 Asumaniemi Esko henkilöakti" ;
+    wps:flyer "Vihollisen lentolehtisessä mainittu sotavankina. Allekirjoitus lentolehtisessä \"Aunuksen kannaksen rintamamiehille!\" [sukunimi kirjoitettu muodossa Lackström eli ehkä joku muu kuin Laxström on kirjoittanut nimen]." ;
+    wps:karaganda_card_file "Karaganda 12" ;
     wps:marital_status_literal "naimaton" ;
+    wps:memoir "Martikainen V.Olavi. Muistelmia sotavankeudestani Neuvostoliitossa" ;
     wps:municipality_of_birth_literal "Karkkila" ;
     wps:municipality_of_capture_literal "Ylämaa" ;
     wps:municipality_of_death_literal "Lohjan kunta" ;
@@ -245,56 +226,53 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:number_of_children "0" ;
     wps:occupation_literal "kaavaaja" ;
     wps:original_name "Sukunimi Etunimi Toinennimi" ;
-    wps:photograph "Hanko" ;
-    wps:photograph_sotilaan_aani "nro 69/1944 25.7. s. 4, Kuka on sotavankina?, nimilista" ;
-    wps:place_of_burial_literal "leirin 375 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) / haudattiin leiri № 75:n hautausmaahan Volgalla (Keränen Unto)" ;
-    wps:place_of_capture_battle_literal "Tuherrusjärvi" ;
+    wps:photograph_sotilaan_aani "nro 40/1944 28.4. s. 1, valokuva ja kuvateksti",
+        "nro 40/1944 28.4. s. 3, Sotavankien kirjeitä omaisilleen Suomeen, kirje" ;
+    wps:place_of_burial_literal "leirin 75 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) /" ;
     wps:place_of_capture_literal "Leino" ;
     wps:place_of_death "99" ;
     wps:place_of_going_mia_literal "Kuuterselkä" ;
-    wps:propaganda_magazine "lähetti Suomen Kansan Ääni-lehdessä 7/1940 terveisiä Venäjältä Rönnynniemen reserviläisille." ;
-    wps:radio_report "RK 137/18.6.1943, Leningradin radiossa 17.6.1943 luettu kirje Vilja Kalmukoskelle." ;
+    wps:propaganda_magazine "Kansan Mies-lehti nro 17/09.9.1941 haastattelu otsikolla \"Valehtelevat, että siirtoväki sotaa tahtoo\"" ;
+    wps:radio_report "NL:n radiossa ilmoitettu 07.8.1944 olevan sotavankina" ;
     wps:rank_literal "korpr" ;
-    wps:recording "haastattelunauha 70-luvun alusta saatu lahjaksi Mietoisten kunnalta vuonna 2017, digitoitu." ;
-    wps:sotilaan_aani "nro 76/1944 16.8. s. 4, Kuka on sotavankina?, nimilista" ;
+    wps:recording "Oli yksi päähenkilöistä dokumenttielokuvassa Suomalaiset sotavankileirien saaristossa, ohj. Reijo Nikkilä. Dokumenttitoimitus/TV1/Yleisradio. 2000; henkilöhaastattelu vuonna 2000." ;
     wps:soviet_card_files "Jatkosodan kortisto",
-        "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
+        "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, kuolinpäiväksi merkitty 24.9.1942" ;
     wps:unit_literal "1./Er.P 25" ;
-    wps:winter_war_collection "Digitaaliarkisto 7:78, 5 kuulustelupöytäkirja, jonka mukaan ei ole antanut mitään tietoja, suomennettu. 63 käsinkirjoitettuja tietoja perheestä. 65 osittain täytetty kuulustelulomake. 68 käsinkirjoitettuja vastauksia kysymyksiin" ;
+    wps:winter_war_collection "Digitaaliarkisto 6:346 44 kuulustelupöytäkirja, suomennettu" ;
     skos:prefLabel "Sukunimi, Etunimi Toinennimi" .
 
 wp:prisoner_2 a wsch:PrisonerRecord ;
     wsch:family_name "Hankala" ;
     wsch:given_names "Harri" ;
-    wsch:mother_tongue wps:swedish ;
+    wsch:mother_tongue wps:finnish ;
     wps:additional_information "Kuusisen armeijassa - 6 v. kuritushuonetta Suomessa 19.6.1940." ;
     wps:captivity wp:prisoner_2_captivity_0,
         wp:prisoner_2_captivity_10,
         wp:prisoner_2_captivity_20,
         wp:prisoner_2_captivity_30,
         wp:prisoner_2_captivity_40 ;
-    wps:cause_of_death "vatsatauti" ;
-    wps:confiscated_possession "Leijona-kello 4.000 mk, lompakko 350 mk, sormus kultaa 1.500 mk, rahaa 100 mk, yht. 5.950 mk" ;
-    wps:date_of_birth "1907-12-12"^^xsd:date,
-        "1907-12-13"^^xsd:date ;
+    wps:cause_of_death "sydämen toiminnan lakkaaminen" ;
+    wps:confiscated_possession "rahaa 225 mk" ;
+    wps:date_of_birth "15/04/1900" ;
     wps:date_of_capture "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     wps:date_of_death "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
         "1943-03-13"^^xsd:date,
-        "xx.xx.2001" ;
+        "1964-07-08"^^xsd:date ;
+    wps:date_of_declaration_of_death "1950-06-03"^^xsd:date ;
     wps:date_of_going_mia "1942-05-21"^^xsd:date ;
-    wps:date_of_return "1944-10-09"^^xsd:date,
-        "1944-10-10"^^xsd:date ;
-    wps:description_of_capture "14.8.1941 lähettitehtävissä Unnunkoskella Räisälässä kadonnut",
-        "katosi lähettitehtävissä Räisälän Unnunkoskella" ;
-    wps:finnish_return_interrogation_file "kuulustelu Lauritsalan poliisivartiokonttorissa 6.4.1945" ;
-    wps:flyer "ns. pärmiläisten lentolehtisessä syksyllä 1941." ;
-    wps:karaganda_card_file "kortissa ilmoitettu saapumispäiväksi leirille virheellisesti 16.6.1941." ;
-    wps:karelian_archive_documents "useita dokumentteja" ;
+    wps:date_of_return "22/11/1944" ;
+    wps:description_of_capture "Ajoi 29.8.1941 Munasuolla ambulanssiautolla vihollisen linjojen eteen, ei löydetty mistään",
+        "katosi Munasuon taistelussa 28.8.1941. Ajoi ambulanssiautolla vihollisen linjojen eteen. Seuraavana päivänä kun mentiin katsomaan ei löydetty mitään." ;
+    wps:finnish_return_interrogation_file "ei kuulusteltu/ kpk kadonnut?" ;
+    wps:flyer "allekirjoitus lentolehtisessä \"Aunuksen kannaksen rintamamiehille!\"." ;
+    wps:karaganda_card_file "Karaganda 3" ;
+    wps:karelian_archive_documents "Karjalan tasavallan kansallisarkisto f. 213, op. 1, d. 178, l. 1,2, venäjänkielinen, Kansallisarkiston lukusaleissa" ;
     wps:marital_status_literal "naimaton",
         "naimisissa" ;
-    wps:memoir "autonkuljettaja Helsingistä, puhui suomalaisten sotavankien 1. konferenssissa Karagandassa tammikuussa 1942" ;
+    wps:memoir "Lindstedt, s. 442 ja 630" ;
     wps:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
     wps:municipality_of_capture_literal "Kannas",
         "Leipäsuo" ;
@@ -306,31 +284,25 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
     wps:occupation_literal "posteljooni",
         "sekatyömies" ;
     wps:original_name "Hankala Harri" ;
-    wps:photograph "SÄ nro 112/1942 10.11. s. 4",
-        "SÄ nro 24/1943 19.3. s. 3" ;
-    wps:photograph_sotilaan_aani ", Sotavangit kirjoittavat ruotukavereilleen ja kotiin, kirje",
-        "Kukaan ei ehtinyt edes aseita hapuilla, haastattelu",
-        "nro 109/1943 19.12. s. 3, Karjalaisten evakkojen kohtalo, suomalaiset sotamiehet kumoavat herra Rydin valheen, propagandistinen lausunto",
-        "nro 26/1943, 25.3. s. 3, Sotavankien terveisiä omaisilleen, tuttavilleen ja ruotukavereilleen",
-        "nro 9/1943 25.1. s. 3, Mitä suomalaiset sotavangit kertovat, ”Sodassa on mennyt jo satoja tuhansia Suomen miehiä”, propagandistinen vetoomus" ;
-    wps:place_of_burial_literal "?? sotavankihautausmaa, hauta № 184",
-        "haudattu Shumihaan." ;
-    wps:place_of_capture_battle_literal "Mäkräjärvi><Kotkatjärvi" ;
+    wps:photograph_sotilaan_aani "nro 40/1942 23.2. s.3, Miten punainen armeija kohtelee vankejaan, kirje",
+        """nro 49/1942, 24.4. s. 2, Mitä sotavangit sanovat armeijan mieshukasta,
+propagandistinen julkilausuma""",
+        "nro 54/1942, 13.5. s. 3, Metsäkaartin kuulumisia – otteita sotavankien lausunnoista sekä sotilaiden sekä heidän omaistensa kirjeistä, propagandistinen julkilausuma",
+        "nro 85/1942 16.8. s. 4, Joka ase kädessä auttaa Mannerheimin klikkiä, ansaitsee vihollisen nimen, propagandistinen julkilausuma" ;
+    wps:place_of_burial_literal "sotavankileiri № 99/1:n hautausmaa, Spasskin kylä." ;
     wps:place_of_capture_literal "Huumola",
         "Näykki" ;
-    wps:place_of_death "1170",
-        "1770" ;
+    wps:place_of_death "74",
+        "75" ;
     wps:place_of_going_mia_literal "Uusikirkko, Peippola" ;
-    wps:propaganda_magazine "Kansan Mies-lehdessä № 2/3.7.1941 kuva, jossa \"Erkki Nuutinen ja Unto Seppälä kirjoittavat vetoomusta Suomen armeijan sotilaille\". Kuvan alla kirje kokonaisuudessaan käsinkirjoitettuna" ;
-    wps:radio_report "Vihollisen radiolähetyksessä mainittu joutuneen Mäkräjärvellä vangiksi. RK 172/31.7.1944 Leningradin radiossa 29.7.1944 Suomessa kuultuna nimellä Björk Alfred, korpr., 1./JR 45" ;
+    wps:propaganda_magazine "Kansan Valta 26(45)/8.3.1940 s. 1, allekirjoittajana antautumiskehotuksessa \"Heittäkää hullu sodankäynti! Antautukaa Punaiselle armeijalle!\"" ;
+    wps:radio_report "Vihollisen radiolähetyksessä mainittu joutuneen Kannaksella vangiksi. RK 144/28.6.1944, Leningradin radiossa 27.6.1944 klo 15.30 Suomessa kuultuna nimellä Minkkinen Heikki, Lammi." ;
     wps:rank_literal "hevosmies",
         "siv" ;
-    wps:recording "http://heikkikoskela.blogspot.fi/2012/10/kolme-sotavankia.html" ;
-    wps:sotilaan_aani "nro 54/1944 10.6. s. 3, Sotavangit kirjoittavat omaisilleen ja tuttavilleen, kirje" ;
-    wps:soviet_card_files "2 mappia, joista toisessa kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja. Toisessa mapissa kuulustelulomake ja lisälehti 2 kpl",
-        "3 korttia" ;
+    wps:recording "Isien sota, jakso 4, dokumenttielokuva. ohjaja Maija Kaipainen. YLE/TV1 2011. 30 minuuttia https://areena.yle.fi/1-1354487" ;
+    wps:soviet_card_files "Jatkosodan kortisto",
+        "kuulustelulomake 2 kpl ja lisälehti, karakteristiikkoja, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
     wps:unit_literal "3./I/KTR15" ;
-    wps:winter_war_collection "6:38, 21-22 vanki kirjoittanut useita neuvostomyönteisiä kirjeitä tovereilleen",
-        "Digitaaliarkisto 6:54 14-15 propagandan taustamateriaalissa Monthanin kertomus siitä, etteivät upseerit anna lukea lentolehtisiä, sotilaat ottavat ne talteen ja lukevat yöaikaan. 16 lainattu vangin kertomusta, miten oli kuullut Kuusisen hallituksesta kovaäänisen kautta" ;
+    wps:winter_war_collection "Digitaaliarkisto 7:78, 6 kuulustelupöytäkirja, suomennettu, vanki ei suostu antamaan mitään tietoja. 68 käsinkirjoitettuja vastauksia kysymyksiin, ei suostu antamaan mitään tietoja" ;
     skos:prefLabel "Hankala, Harri" .
 

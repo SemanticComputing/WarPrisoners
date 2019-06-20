@@ -162,7 +162,7 @@ class RDFMapper:
 
         original_name = row[0].strip()
         if error:
-            row_errors.append([prisoner_number, fullname, 'suku- ja etunimet', error, row[0]])
+            row_errors.append([prisoner_number, fullname, 'sukunimi ja etunimet', error, row[0]])
 
         if firstnames:
             row_rdf.add((entity_uri, SCHEMA_WARSA.given_names, Literal(firstnames)))
@@ -304,7 +304,7 @@ class RDFMapper:
 
         logging.info(f'Table contains {len(list(self.table))} columns')
 
-        for missing in missing_ids['suku- ja etunimet']:
+        for missing in missing_ids['sukunimi ja etunimet']:
             logging.warning('Person with name %s missing id number' % missing)
 
         logging.info('After pruning rows without proper index, {num} rows remaining'.format(num=len(self.table)))
