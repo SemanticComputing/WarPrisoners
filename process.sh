@@ -80,17 +80,17 @@ echo "...Updating db with prisoners"
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_.ttl
 
 echo "...Constructing people"
-curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/persons/prisoner_people.ttl
+curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/persons/prisoner_persons.ttl
 
 echo "...Constructing documents links"
 curl -f --data-urlencode "query=$(cat sparql/construct_documents_links.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/documents_links.ttl
 
 echo "...Updating db with new people"
-cat output/persons/prisoner_people.ttl output/documents_links.ttl > output/prisoner_people_temp.ttl
+cat output/persons/prisoner_persons.ttl output/documents_links.ttl > output/prisoner_people_temp.ttl
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons output/prisoner_people_temp.ttl
 rm output/prisoner_people_temp.ttl
 
-for construct in births promotions unit_joinings captures disappearances
+for construct in births promotions unit_joinings captures disappearances deaths
 do
     echo "...Constructing $construct"
 curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/persons/prisoner_$construct.ttl"
