@@ -58,7 +58,7 @@ python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 rm output/prisoners_temp.ttl
 
-sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/person_backlinks.ttl
+sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/persons_backlinks.ttl
 
 echo "Linking camps and hospitals"
 cat output/prisoners_plain.ttl output/camps.ttl > output/prisoners_temp_2.ttl
