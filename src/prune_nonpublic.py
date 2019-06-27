@@ -5,6 +5,8 @@ Hide parts of personal information.
 """
 import argparse
 import logging
+
+import requests
 from datetime import date
 from pprint import pprint
 
@@ -55,7 +57,7 @@ def hide_health_information(graph: Graph, person: URIRef):
     return graph
 
 
-def hide_personal_information(graph: Graph, person: URIRef):
+def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     """
     Hide personal information of a person record
     """
@@ -64,10 +66,42 @@ def hide_personal_information(graph: Graph, person: URIRef):
     return graph
 
 
+def fetch_common_names(prisoner_familynames: list, endpoint: str):
+    """
+    Retrieve common names from endpoint, combine them with persons list and return them as a list
+    """
+    NAME_QUERY = '''PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        SELECT ?fam ?count WHERE {
+        { SELECT ?fam (count(*) as ?count) {
+                ?sub foaf:familyName ?fam .
+                } GROUP BY ?fam
+            }
+            FILTER(?count >= 2)
+        } ORDER BY ?fam
+    '''
+
+    good_names = []
+    results = requests.post(endpoint, {'query': NAME_QUERY}).json()
+
+    for result in results['results']['bindings']:
+        family_name = result['fam']['value']
+        count = int(result['count']['value'])
+
+        if count + prisoner_familynames.count(family_name) >= 4:
+            good_names.append(family_name)
+            log.debug('Declared %s as a common family name (hits %s + %s)' %
+                      (family_name, count, prisoner_familynames.count(family_name)))
+
+    return good_names
+
+
 def prune_persons(graph: Graph, endpoint: str):
     """
     Hide information of people in graph if needed
     """
+    familynames = [str(name) for name in graph.objects(None, SCHEMA_WARSA.family_name)]
+    common_names = fetch_common_names(familynames, endpoint)
+
     persons = list(graph.subjects(RDF.type, SCHEMA_WARSA.PrisonerRecord))
 
     log.info('Got %s person records for pruning' % len(persons))
@@ -108,7 +142,7 @@ def prune_persons(graph: Graph, endpoint: str):
     # Personal information is hidden
     for person in possibly_alive:
         log.debug('Hiding personal information of %s' % person)
-        graph = hide_personal_information(graph, person)
+        graph = hide_personal_information(graph, person, common_names)
 
     log.info('Person that have died more than 50 years ago: %s' % n_public)
     log.info('Persons suspected to have died less than 50 years ago: %s' % len(died_recently))
