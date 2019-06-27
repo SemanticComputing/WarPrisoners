@@ -38,13 +38,10 @@ def cast_date(orig_date: str):
     return cast
 
 
-def hide_health_information(graph: Graph, person: URIRef):
+def remove_triples_and_reifications(graph: Graph, triples: list):
     """
-    Hide health information of a person record
+    Remove triples and related reifications from graph
     """
-    triples = list(graph.triples((person, SCHEMA_POW.cause_of_death, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.additional_information, None)))
-
     for triple in triples:
         log.debug('Removing triple and its reifications:  {spo}'.format(spo=str(triple)))
         reifications = get_triple_reifications(graph, triple)
@@ -57,11 +54,48 @@ def hide_health_information(graph: Graph, person: URIRef):
     return graph
 
 
+def hide_health_information(graph: Graph, person: URIRef):
+    """
+    Hide health information of a person record
+    """
+    triples = list(graph.triples((person, SCHEMA_POW.cause_of_death, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.additional_information, None)))
+
+    graph = remove_triples_and_reifications(graph, triples)
+
+    return graph
+
+
 def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     """
     Hide personal information of a person record
     """
-    # TODO
+    triples = list(graph.triples((person, SCHEMA_WARSA.given_names, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_birth, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_capture, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_return, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.municipality_of_birth_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.municipality_of_domicile_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.municipality_of_residence_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.municipality_of_death_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.photograph, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.radio_report, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.finnish_return_interrogation_file, None)))
+
+    family_name = str(graph.value(person, SCHEMA_WARSA.family_name))
+
+    if family_name not in common_names:
+        triples += list(graph.triples((person, SCHEMA_WARSA.family_name, None)))
+
+    graph = remove_triples_and_reifications(graph, triples)
+
+    if family_name not in common_names:
+        graph.add((person, SCHEMA_WARSA.family_name, Literal("Tuntematon")))
+        graph.add((person, SCHEMA_WARSA.given_names, Literal("Sotilas")))
+
+    graph.add((person, SCHEMA_POW.personal_information_removed, Literal(True)))
 
     return graph
 
@@ -127,7 +161,7 @@ def prune_persons(graph: Graph, endpoint: str):
         else:
             if not (death_date or death_without_date):
                 dob = graph.value(person, SCHEMA_POW.date_of_birth)
-                if dob and cast_date(dob) < date(1911, 1, 1):
+                if dob and cast_date(dob) >= date(1911, 1, 1):
                     possibly_alive.append(person)
             else:
                 log.debug('Person record with death date %s declared public')
@@ -144,7 +178,7 @@ def prune_persons(graph: Graph, endpoint: str):
         log.debug('Hiding personal information of %s' % person)
         graph = hide_personal_information(graph, person, common_names)
 
-    log.info('Person that have died more than 50 years ago: %s' % n_public)
+    log.info('Persons that have died more than 50 years ago: %s' % n_public)
     log.info('Persons suspected to have died less than 50 years ago: %s' % len(died_recently))
     log.info('Persons that might be alive: %s' % len(possibly_alive))
 

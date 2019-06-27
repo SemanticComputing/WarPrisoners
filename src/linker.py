@@ -109,6 +109,10 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
 
     prisoners = {}
     for person in graph[:RDF.type:SCHEMA_WARSA.PrisonerRecord]:
+        if graph.value(person, SCHEMA_POW.personal_information_removed):
+            log.info('Skipping pruned person: {}'.format(str(person)))
+            continue  # Personal information has been removed, do not try to link
+
         rank_uris = list(graph.objects(person, SCHEMA_POW.rank))
 
         given = str(graph.value(person, SCHEMA_WARSA.given_names, any=False))

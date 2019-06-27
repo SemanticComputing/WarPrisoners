@@ -35,6 +35,11 @@ curl -f --data-urlencode "query=$(cat sparql/period.sparql)" $WARSA_ENDPOINT_URL
 
 ./link_units.sh
 
+echo "Pseudonymizing people and hiding personal information"
+
+python src/prune_nonpublic.py output/prisoners_plain.ttl output/prisoners_plain.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"  \
+    --logfile output/logs/person_pruning.log --loglevel $LOG_LEVEL
+
 echo "Linking occupations"
 
 python src/linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl \
@@ -45,10 +50,6 @@ echo "Linking municipalities"
 python src/linker.py municipalities output/prisoners_plain.ttl output/municipality_links.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/pnr_municipality --logfile output/logs/municipalities.log --loglevel $LOG_LEVEL
 
-echo "Pseudonymizing people and hiding personal information"
-
-python src/prune_nonpublic.py output/prisoners_plain.ttl output/prisoners_plain.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"  \
-    --logfile output/logs/person_pruning.log --loglevel $LOG_LEVEL
 
 echo "Linking people"
 
