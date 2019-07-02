@@ -71,6 +71,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     Hide personal information of a person record
     """
     triples = list(graph.triples((person, SCHEMA_WARSA.given_names, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.original_name, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_birth, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
     triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
@@ -92,6 +93,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     graph = remove_triples_and_reifications(graph, triples)
 
     if family_name not in common_names:
+        log.info('Hiding family name %s of record %s' % (family_name, person))
         graph.add((person, SCHEMA_WARSA.family_name, Literal("Tuntematon")))
         graph.add((person, SCHEMA_WARSA.given_names, Literal("Sotilas")))
 

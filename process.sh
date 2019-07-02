@@ -19,14 +19,19 @@ s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/camps_combin
 
 curl -f --data-urlencode "query=$(cat sparql/construct_camps.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/camps.ttl
 
+echo "Pseudonymizing people and hiding personal information"
+
+python src/prune_nonpublic.py output/prisoners_plain.ttl output/prisoners_pseudonymized.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"  \
+    --logfile output/logs/person_pruning.log --loglevel $LOG_LEVEL
+
 echo "Linking ranks"
 
-python src/linker.py ranks output/prisoners_plain.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
+python src/linker.py ranks output/prisoners_pseudonymized.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
     --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
 echo "Linking units"
 
-cat output/prisoners_plain.ttl output/rank_links.ttl > output/prisoners_temp.ttl
+cat output/prisoners_pseudonymized.ttl output/rank_links.ttl > output/prisoners_temp.ttl
 
 # Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl
@@ -35,25 +40,19 @@ curl -f --data-urlencode "query=$(cat sparql/period.sparql)" $WARSA_ENDPOINT_URL
 
 ./link_units.sh
 
-echo "Pseudonymizing people and hiding personal information"
-
-python src/prune_nonpublic.py output/prisoners_plain.ttl output/prisoners_plain.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql"  \
-    --logfile output/logs/person_pruning.log --loglevel $LOG_LEVEL
-
 echo "Linking occupations"
 
-python src/linker.py occupations output/prisoners_plain.ttl output/occupation_links.ttl \
+python src/linker.py occupations output/prisoners_pseudonymized.ttl output/occupation_links.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/occupations.log --loglevel $LOG_LEVEL
 
 echo "Linking municipalities"
 
-python src/linker.py municipalities output/prisoners_plain.ttl output/municipality_links.ttl \
+python src/linker.py municipalities output/prisoners_pseudonymized.ttl output/municipality_links.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/pnr_municipality --logfile output/logs/municipalities.log --loglevel $LOG_LEVEL
-
 
 echo "Linking people"
 
-cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
+cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
     output/occupation_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_temp.ttl
 python src/linker.py persons output/prisoners_temp.ttl output/persons_linked.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --logfile output/logs/linker.log --loglevel $LOG_LEVEL
@@ -62,18 +61,17 @@ rm output/prisoners_temp.ttl
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/persons_backlinks.ttl
 
 echo "Linking camps and hospitals"
-cat output/prisoners_plain.ttl output/camps.ttl > output/prisoners_temp_2.ttl
-s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp_2.ttl
+cat output/prisoners_pseudonymized.ttl output/camps.ttl > output/prisoners_temp.ttl
+s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl
+rm output/prisoners_temp.ttl
 
-python src/linker.py camps output/prisoners_plain.ttl output/camp_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
+python src/linker.py camps output/prisoners_pseudonymized.ttl output/camp_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
     --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
 echo "Consolidating prisoners"
 
-cat output/prisoners_plain.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
-    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_full.ttl
-rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners_.ttl
-rm output/prisoners_full.ttl
+cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
+    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_.ttl
 
 echo "Generating people..."
 
