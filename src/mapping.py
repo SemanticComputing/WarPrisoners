@@ -16,7 +16,7 @@ from validators import validate_dates, validate_mother_tongue
 PRISONER_MAPPING = {
     'syntymäaika':
         {
-            'uri': SCHEMA_POW.date_of_birth,
+            'uri': SCHEMA_WARSA.date_of_birth,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1860, 1, 1), before=date(1935, 1, 1)),
             'value_separator': '/',
@@ -26,7 +26,7 @@ PRISONER_MAPPING = {
         },
     'synnyinkunta':
         {
-            'uri': SCHEMA_POW.municipality_of_birth_literal,
+            'uri': SCHEMA_WARSA.municipality_of_birth_literal,
             'value_separator': '/',
             'name_fi': 'Syntymäkunta',
             'name_en': 'Municipality of birth',
