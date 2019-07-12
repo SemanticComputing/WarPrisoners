@@ -83,6 +83,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_death_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.photograph, None)))
     triples += list(graph.triples((person, SCHEMA_POW.radio_report, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.recording, None)))
     triples += list(graph.triples((person, SCHEMA_POW.finnish_return_interrogation_file, None)))
 
     family_name = str(graph.value(person, SCHEMA_WARSA.family_name))
