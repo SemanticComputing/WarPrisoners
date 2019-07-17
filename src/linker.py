@@ -118,11 +118,11 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
         given = str(graph.value(person, SCHEMA_WARSA.given_names, any=False))
         family = str(graph.value(person, SCHEMA_WARSA.family_name, any=False))
         rank = [str(r) for r in rank_uris if r] or None
-        birth_places = graph.objects(person, SCHEMA_POW.municipality_of_birth)
+        birth_places = graph.objects(person, SCHEMA_WARSA.municipality_of_birth)
         units = graph.objects(person, SCHEMA_POW.unit)
         occupations = graph.objects(person, BIOC.has_occupation)
 
-        births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_POW.date_of_birth)]
+        births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_WARSA.date_of_birth)]
         deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_POW.date_of_death)]
         birth_begin = min([d for d in births if d] or [None])
         birth_end = max([d for d in births if d] or [None])
@@ -216,7 +216,7 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
                             preprocess=False,
                             new_graph=True)['graph']
 
-    war_munics = set(g.objects(None, SCHEMA_POW.municipality_of_birth_literal)) | \
+    war_munics = set(g.objects(None, SCHEMA_WARSA.municipality_of_birth_literal)) | \
                  set(g.objects(None, SCHEMA_POW.municipality_of_domicile_literal)) | \
                  set(g.objects(None, SCHEMA_POW.municipality_of_residence_literal)) | \
                  set(g.objects(None, SCHEMA_POW.municipality_of_capture_literal))
@@ -231,7 +231,7 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
         else:
             log.warning('No warsa link found for municipality {}'.format(munic_literal))
 
-    for source, target in [(SCHEMA_POW.municipality_of_birth_literal, SCHEMA_POW.municipality_of_birth),
+    for source, target in [(SCHEMA_WARSA.municipality_of_birth_literal, SCHEMA_WARSA.municipality_of_birth),
                            (SCHEMA_POW.municipality_of_domicile_literal, SCHEMA_POW.municipality_of_domicile),
                            (SCHEMA_POW.municipality_of_residence_literal, SCHEMA_POW.municipality_of_residence),
                            (SCHEMA_POW.municipality_of_capture_literal, SCHEMA_POW.municipality_of_capture)]:

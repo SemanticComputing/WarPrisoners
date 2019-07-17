@@ -116,11 +116,7 @@ class TestRDFMapper(unittest.TestCase):
 
     def test_prune_persons(self):
         g = Graph().parse('test_data/prisoners.ttl', format='turtle')
-        public, hidden = prune_persons(g)
-        print(len(public))
-        print(len(hidden))
-
-        g2 = public + hidden
+        g2 = prune_persons(g, "http://ldf.fi/warsa/sparql")
 
         diffs = graph_diff(g, g2)
 
@@ -130,7 +126,7 @@ class TestRDFMapper(unittest.TestCase):
         print('In old:')
         pprint([d for d in diffs[2]])
 
-        assert isomorphic(g, g2)
+        self.assertEqual(sorted(g.subjects()), sorted(g2.subjects()))
 
     def test_get_mapping(self):
         mapper = RDFMapper({'column1': {}}, '')
@@ -169,8 +165,8 @@ class TestPersonLinking(unittest.TestCase):
         g.add((p, SCHEMA_POW.rank, RANKS_NS.Korpraali))
         g.add((p, SCHEMA_WARSA.given_names, Literal("Eino Ilmari")))
         g.add((p, SCHEMA_WARSA.family_name, Literal("Heino")))
-        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k123))
-        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_WARSA.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_WARSA.date_of_birth, Literal(datetime.date(1906, 12, 23))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
         pd = _generate_prisoners_dict(g, self.ranks)
 
@@ -203,10 +199,10 @@ class TestPersonLinking(unittest.TestCase):
         g.add((p, SCHEMA_POW.rank, RANKS_NS.Kapteeni))
         g.add((p, SCHEMA_WARSA.given_names, Literal("Eino Ilmari")))
         g.add((p, SCHEMA_WARSA.family_name, Literal("Heino (ent. Kalmari)")))
-        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k123))
-        g.add((p, SCHEMA_POW.municipality_of_birth, MUNICIPALITIES.k234))
-        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1906, 12, 23))))
-        g.add((p, SCHEMA_POW.date_of_birth, Literal(datetime.date(1916, 6, 3))))
+        g.add((p, SCHEMA_WARSA.municipality_of_birth, MUNICIPALITIES.k123))
+        g.add((p, SCHEMA_WARSA.municipality_of_birth, MUNICIPALITIES.k234))
+        g.add((p, SCHEMA_WARSA.date_of_birth, Literal(datetime.date(1906, 12, 23))))
+        g.add((p, SCHEMA_WARSA.date_of_birth, Literal(datetime.date(1916, 6, 3))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1943, 2, 3))))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/sekatyomies')))

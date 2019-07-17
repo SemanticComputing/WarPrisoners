@@ -17,7 +17,7 @@
 wp:prisoner_1_date_of_birth_0_reification_source a rdf:Statement ;
     dct:source "Laine Aarne" ;
     rdf:object "n.1918" ;
-    rdf:predicate wps:date_of_birth ;
+    rdf:predicate wsch:date_of_birth ;
     rdf:subject wp:prisoner_1 .
 
 wp:prisoner_1_description_of_capture_0_reification_source a rdf:Statement ;
@@ -204,7 +204,7 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
         wp:prisoner_1_captivity_20 ;
     wps:cause_of_death "aivokooma" ;
     wps:confiscated_possession "Rise rannekello 2.000 mk, rahaa 100 mk, yht. 2.100 mk" ;
-    wps:date_of_birth "n.1918" ;
+    wsch:date_of_birth "n.1918" ;
     wps:date_of_capture "1944-07-06"^^xsd:date ;
     wps:date_of_death "1942-01-07"^^xsd:date,
         "1948-04-05"^^xsd:date ;
@@ -218,7 +218,7 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:karaganda_card_file "Karaganda 12" ;
     wps:marital_status_literal "naimaton" ;
     wps:memoir "Martikainen V.Olavi. Muistelmia sotavankeudestani Neuvostoliitossa" ;
-    wps:municipality_of_birth_literal "Karkkila" ;
+    wsch:municipality_of_birth_literal "Karkkila" ;
     wps:municipality_of_capture_literal "Ylämaa" ;
     wps:municipality_of_death_literal "Lohjan kunta" ;
     wps:municipality_of_domicile_literal "Karkkila" ;
@@ -254,7 +254,7 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
         wp:prisoner_2_captivity_40 ;
     wps:cause_of_death "sydämen toiminnan lakkaaminen" ;
     wps:confiscated_possession "rahaa 225 mk" ;
-    wps:date_of_birth "1900-04-15"^^xsd:date ;
+    wsch:date_of_birth "1900-04-15"^^xsd:date ;
     wps:date_of_capture "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     wps:date_of_death "1943-02-02"^^xsd:date,
@@ -273,7 +273,7 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
     wps:marital_status_literal "naimaton",
         "naimisissa" ;
     wps:memoir "Lindstedt, s. 442 ja 630" ;
-    wps:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
+    wsch:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
     wps:municipality_of_capture_literal "Kannas",
         "Leipäsuo" ;
     wps:municipality_of_domicile_literal "Lavia",

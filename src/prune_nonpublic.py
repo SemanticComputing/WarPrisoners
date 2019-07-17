@@ -72,12 +72,12 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     """
     triples = list(graph.triples((person, SCHEMA_WARSA.given_names, None)))
     triples += list(graph.triples((person, SCHEMA_POW.original_name, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.date_of_birth, None)))
+    triples += list(graph.triples((person, SCHEMA_WARSA.date_of_birth, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
     triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_capture, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_return, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.municipality_of_birth_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_WARSA.municipality_of_birth_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_domicile_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_residence_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_death_literal, None)))
@@ -146,6 +146,8 @@ def prune_persons(graph: Graph, endpoint: str):
     possibly_alive = []
     n_public = 0
 
+    # Identify people who might have died less than 50 years age, and who might still be alive
+
     for person in persons:
         death_dates = list(graph.objects(person, SCHEMA_POW.date_of_death))
         death_dates = [cast_date(d) for d in death_dates]
@@ -159,11 +161,10 @@ def prune_persons(graph: Graph, endpoint: str):
         death_date = sorted(death_dates)[-1] if death_dates else None
 
         if (death_date and (death_date >= date.today() - relativedelta(years=50))) or death_without_date:
-            # All information is public
             died_recently.append(person)
         else:
             if not (death_date or death_without_date):
-                dob = graph.value(person, SCHEMA_POW.date_of_birth)
+                dob = graph.value(person, SCHEMA_WARSA.date_of_birth)
                 if dob and cast_date(dob) >= date(1911, 1, 1):
                     possibly_alive.append(person)
             else:
@@ -171,12 +172,14 @@ def prune_persons(graph: Graph, endpoint: str):
                 n_public += 1
 
     # Health information is hidden
+
     for person in died_recently + possibly_alive:
         log.debug('Hiding health information of %s' % person)
         graph = hide_health_information(graph, person)
         graph.add((person, SCHEMA_POW.hide_documents, Literal(True)))
 
     # Personal information is hidden
+
     for person in possibly_alive:
         log.debug('Hiding personal information of %s' % person)
         graph = hide_personal_information(graph, person, common_names)
