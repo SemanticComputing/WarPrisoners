@@ -1,7 +1,7 @@
 version: '3.5'
 services:
     fuseki:
-        image: warsa-mod
+        image: warsa-fuseki:pow
     las:
         image: jiemakel/las-ws:1.1
     arpa:
