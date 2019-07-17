@@ -10,4 +10,4 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-p:prisoner_1804 ps:warsa_unit <http://ldf.fi/warsa/actors/actor_459> .
+p:prisoner_1804 ps:unit <http://ldf.fi/warsa/actors/actor_459> .
