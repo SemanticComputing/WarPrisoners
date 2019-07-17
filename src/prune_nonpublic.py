@@ -14,7 +14,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from rdflib.util import guess_format
 
-from namespaces import bind_namespaces, SCHEMA_WARSA, SCHEMA_POW
+from namespaces import bind_namespaces, SCHEMA_WARSA, SCHEMA_POW, SKOS
 from rdflib import Graph, RDF, URIRef, Literal
 from rdflib.compare import graph_diff, isomorphic
 
@@ -72,6 +72,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     """
     triples = list(graph.triples((person, SCHEMA_WARSA.given_names, None)))
     triples += list(graph.triples((person, SCHEMA_POW.original_name, None)))
+    triples += list(graph.triples((person, SKOS.prefLabel, None)))
     triples += list(graph.triples((person, SCHEMA_WARSA.date_of_birth, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
     triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
@@ -89,14 +90,15 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     family_name = str(graph.value(person, SCHEMA_WARSA.family_name))
 
     if family_name not in common_names:
+        log.info('Hiding family name %s of record %s' % (family_name, person))
+
         triples += list(graph.triples((person, SCHEMA_WARSA.family_name, None)))
 
-    graph = remove_triples_and_reifications(graph, triples)
-
-    if family_name not in common_names:
-        log.info('Hiding family name %s of record %s' % (family_name, person))
         graph.add((person, SCHEMA_WARSA.family_name, Literal("Tuntematon")))
         graph.add((person, SCHEMA_WARSA.given_names, Literal("Sotilas")))
+        graph.add((person, SKOS.prefLabel, Literal("Tuntematon, Sotilas")))
+
+    graph = remove_triples_and_reifications(graph, triples)
 
     graph.add((person, SCHEMA_POW.personal_information_removed, Literal(True)))
 
