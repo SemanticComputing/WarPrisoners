@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """
-Mapping of CSV columns to RDF properties
+CSV column mapping to RDF properties. Person name and person index number are taken separately.
 """
 from datetime import date
 from functools import partial
 
-from converters import convert_dates, strip_dash, convert_swedish
-from namespaces import SCHEMA_POW, DCT, SCHEMA_WARSA
+from converters import convert_dates, strip_dash, convert_swedish, convert_from_dict
+from namespaces import SCHEMA_POW, DCT, SCHEMA_WARSA, MARITAL_STATUSES
 
 from validators import validate_dates, validate_mother_tongue
 
-# CSV column mapping. Person name and person index number are taken separately.
+MARITAL_STATUS_MAP = {
+    'asumuserossa': MARITAL_STATUSES.Naimisissa,
+    'naimisissa': MARITAL_STATUSES.Naimisissa,
+    'naimaton': MARITAL_STATUSES.Naimaton,
+    'naimato': MARITAL_STATUSES.Naimaton,
+    'eronnut': MARITAL_STATUSES.Eronnut,
+    'leski': MARITAL_STATUSES.Leski,
+    None: MARITAL_STATUSES.Tuntematon,
+}
+
 
 PRISONER_MAPPING = {
     'syntymäaika':
@@ -72,7 +81,7 @@ PRISONER_MAPPING = {
         },
     'siviilisääty':
         {
-            'uri': SCHEMA_POW.marital_status_literal,
+            'uri': SCHEMA_POW.marital_status,
             'name_fi': 'Siviilisääty',
             'name_en': 'Marital status',
             'value_separator': '/',
@@ -81,6 +90,7 @@ PRISONER_MAPPING = {
                               'Suomen sodissa 1939–1945 menehtyneiden tietokanta, KA T-26073/1, KA T-26073/2–KA '
                               'T-26073/22, KA T-26073/23, KA T-26073/24-KA T-26073/47, KA T-26073/48, KA-T 26073/49, '
                               'Kansallisarkisto kantakortit',
+            'converter': partial(convert_from_dict, MARITAL_STATUS_MAP)
         },
     'lasten lkm':
         {

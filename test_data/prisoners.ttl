@@ -86,10 +86,10 @@ wp:prisoner_2_description_of_capture_1_reification_source a rdf:Statement ;
     rdf:predicate wps:description_of_capture ;
     rdf:subject wp:prisoner_2 .
 
-wp:prisoner_2_marital_status_literal_1_reification_source a rdf:Statement ;
+wp:prisoner_2_marital_status_1_reification_source a rdf:Statement ;
     dct:source "mikrofilmi" ;
-    rdf:object "naimisissa" ;
-    rdf:predicate wps:marital_status_literal ;
+    rdf:object <http://ldf.fi/warsa/marital_statuses/Naimisissa> ;
+    rdf:predicate wps:marital_status ;
     rdf:subject wp:prisoner_2 .
 
 wp:prisoner_2_municipality_of_capture_literal_1_reification_source a rdf:Statement ;
@@ -197,7 +197,7 @@ wp:prisoner_2_captivity_40 a wps:Captivity ;
 wp:prisoner_1 a wsch:PrisonerRecord ;
     wsch:family_name "Sukunimi" ;
     wsch:given_names "Etunimi Toinennimi" ;
-    wsch:mother_tongue wps:swedish ;
+    wsch:mother_tongue <http://ldf.fi/warsa/mother_tongues/Ruotsi> ;
     wps:additional_information "Ei ole KA Suomen sodissa 1939-1945 menehtyneet-tietokannassa" ;
     wps:captivity wp:prisoner_1_captivity_0,
         wp:prisoner_1_captivity_10,
@@ -216,7 +216,7 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:finnish_return_interrogation_file "KA T-26073/2 Asumaniemi Esko henkilöakti" ;
     wps:flyer "Vihollisen lentolehtisessä mainittu sotavankina. Allekirjoitus lentolehtisessä \"Aunuksen kannaksen rintamamiehille!\" [sukunimi kirjoitettu muodossa Lackström eli ehkä joku muu kuin Laxström on kirjoittanut nimen]." ;
     wps:karaganda_card_file "Karaganda 12" ;
-    wps:marital_status_literal "naimaton" ;
+    wps:marital_status <http://ldf.fi/warsa/marital_statuses/Naimaton> ;
     wps:memoir "Martikainen V.Olavi. Muistelmia sotavankeudestani Neuvostoliitossa" ;
     wsch:municipality_of_birth_literal "Karkkila" ;
     wps:municipality_of_capture_literal "Ylämaa" ;
@@ -245,7 +245,7 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
 wp:prisoner_2 a wsch:PrisonerRecord ;
     wsch:family_name "Hankala" ;
     wsch:given_names "Harri" ;
-    wsch:mother_tongue wps:finnish ;
+    wsch:mother_tongue <http://ldf.fi/warsa/mother_tongues/Suomi> ;
     wps:additional_information "Kuusisen armeijassa - 6 v. kuritushuonetta Suomessa 19.6.1940." ;
     wps:captivity wp:prisoner_2_captivity_0,
         wp:prisoner_2_captivity_10,
@@ -270,8 +270,8 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
     wps:flyer "allekirjoitus lentolehtisessä \"Aunuksen kannaksen rintamamiehille!\"." ;
     wps:karaganda_card_file "Karaganda 3" ;
     wps:karelian_archive_documents "Karjalan tasavallan kansallisarkisto f. 213, op. 1, d. 178, l. 1,2, venäjänkielinen, Kansallisarkiston lukusaleissa" ;
-    wps:marital_status_literal "naimaton",
-        "naimisissa" ;
+    wps:marital_status <http://ldf.fi/warsa/marital_statuses/Naimaton>,
+        <http://ldf.fi/warsa/marital_statuses/Naimisissa> ;
     wps:memoir "Lindstedt, s. 442 ja 630" ;
     wsch:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
     wps:municipality_of_capture_literal "Kannas",

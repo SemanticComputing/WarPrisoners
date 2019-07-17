@@ -82,14 +82,18 @@ def convert_swedish(swedish: str):
     """
     Convert boolean value for swedish speaking person to mother tongue.
     """
-    mother_tongue = SCHEMA_POW.finnish
+    mother_tongue = MOTHER_TONGUES.Suomi
 
     if not swedish:
         return mother_tongue
 
     if swedish.upper() == 'X':
-        mother_tongue = SCHEMA_POW.swedish
+        mother_tongue = MOTHER_TONGUES.Ruotsi
     else:
         log.warning('Unclear value for finnish swedish %s' % swedish)
 
     return mother_tongue
+
+
+def convert_from_dict(dict, language: str):
+    return dict.get(language, dict[None])

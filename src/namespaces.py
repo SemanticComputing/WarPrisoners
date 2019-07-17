@@ -17,6 +17,9 @@ SCHEMA_WARSA = Namespace('http://ldf.fi/schema/warsa/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 RANKS_NS = Namespace('http://ldf.fi/schema/warsa/actors/ranks/')
 
+MARITAL_STATUSES = Namespace('http://ldf.fi/warsa/marital_statuses/')
+MOTHER_TONGUES = Namespace('http://ldf.fi/warsa/mother_tongues/')
+
 ACTORS = Namespace('http://ldf.fi/warsa/actors/')
 SCHEMA_ACTORS = Namespace('http://ldf.fi/schema/warsa/actors/')
 MUNICIPALITIES = Namespace('http://ldf.fi/warsa/places/municipalities/')
