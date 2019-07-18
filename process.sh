@@ -12,6 +12,10 @@ export WARSA_ENDPOINT_URL=${WARSA_ENDPOINT_URL:-http://localhost:3030/warsa}
 export ARPA_URL=${ARPA_URL:-http://demo.seco.tkk.fi/arpa}
 export LOG_LEVEL="DEBUG"
 
+rm -f output/*.ttl
+rm -f output/*.csv
+rm -f output/persons/*
+
 ./convert.sh $1
 
 echo "Updating camps and hospitals to Fuseki"
