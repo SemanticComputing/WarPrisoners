@@ -20,9 +20,9 @@ CONSTRUCT {
 }
 {
   ?sub wpsc:rank ?wr ;
-     wsch:given_names ?fn ;
-     wsch:family_name ?sn ;
      crm:P70_documents ?id .
+  OPTIONAL { ?sub wsch:given_names ?fn }
+  OPTIONAL { ?sub wsch:family_name ?sn }
   FILTER NOT EXISTS { ?id ^crm:P11_had_participant/wacs:hasRank ?wr . }
   ?wr skos:prefLabel ?wrl .
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)

@@ -78,6 +78,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_capture, None)))
     triples += list(graph.triples((person, SCHEMA_POW.date_of_return, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_death, None)))
     triples += list(graph.triples((person, SCHEMA_WARSA.municipality_of_birth_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_domicile_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_residence_literal, None)))
@@ -86,6 +87,7 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     triples += list(graph.triples((person, SCHEMA_POW.radio_report, None)))
     triples += list(graph.triples((person, SCHEMA_POW.recording, None)))
     triples += list(graph.triples((person, SCHEMA_POW.finnish_return_interrogation_file, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.description_of_capture, None)))
 
     family_name = str(graph.value(person, SCHEMA_WARSA.family_name))
 
