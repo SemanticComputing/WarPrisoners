@@ -18,6 +18,12 @@ CONSTRUCT {
     crm:P7_took_place_at ?vp ;
     dct:source wsou:source22 ;
     skos:prefLabel ?vl_fi, ?vl_en .
+
+  ?vts a crm:E52_Time-Span ;
+    skos:prefLabel ?date_label_en, ?date_label_fi ;
+    crm:P82a_begin_of_the_begin ?md ;
+    crm:P82b_end_of_the_end ?md ;
+    .
 }
 {
   ?sub wpsc:date_of_going_mia ?md_ ;
@@ -33,4 +39,7 @@ CONSTRUCT {
   BIND(CONCAT(?fn, " ", ?sn) AS ?label)
   BIND(STRLANG(CONCAT(?label, " katosi"), "fi") AS ?vl_fi)
   BIND(STRLANG(CONCAT(?label, " went missing"), "en") AS ?vl_en)
+
+  BIND(STRLANG(?md_, "en") AS ?date_label_en)
+  BIND(STRLANG(?md_, "fi") AS ?date_label_fi)
 }

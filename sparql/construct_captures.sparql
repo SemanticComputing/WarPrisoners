@@ -18,6 +18,12 @@ CONSTRUCT {
     crm:P7_took_place_at ?cp ;
     dct:source wsou:source22 ;
     skos:prefLabel ?cl_fi, ?cl_en .
+
+  ?cts a crm:E52_Time-Span ;
+    skos:prefLabel ?date_label_en, ?date_label_fi ;
+    crm:P82a_begin_of_the_begin ?cd ;
+    crm:P82b_end_of_the_end ?cd ;
+    .
 }
 {
   ?sub a wsch:PrisonerRecord ;
@@ -35,4 +41,6 @@ CONSTRUCT {
     FILTER(BOUND(?cd))
     BIND(URI(CONCAT("http://ldf.fi/warsa/events/times/time_", STR(?cd), "-", STR(?cd))) AS ?cts)
   }
+  BIND(STRLANG(?cd_, "en") AS ?date_label_en)
+  BIND(STRLANG(?cd_, "fi") AS ?date_label_fi)
 }

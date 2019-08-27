@@ -18,6 +18,12 @@ CONSTRUCT {
     crm:P7_took_place_at ?bp ;
     dct:source wsou:source22 ;
     skos:prefLabel ?bl_fi, ?bl_en .
+
+  ?bts a crm:E52_Time-Span ;
+    skos:prefLabel ?date_label_en, ?date_label_fi ;
+    crm:P82a_begin_of_the_begin ?bd ;
+    crm:P82b_end_of_the_end ?bd ;
+    .
 }
 {
   ?sub a wsch:PrisonerRecord ;
@@ -34,5 +40,7 @@ CONSTRUCT {
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/birth_", ?no)) AS ?birth)
   BIND(STRLANG(CONCAT(?label, " syntyi"), "fi") AS ?bl_fi)
   BIND(STRLANG(CONCAT(?label, " was born"), "en") AS ?bl_en)
+  BIND(STRLANG(?bd_, "en") AS ?date_label_en)
+  BIND(STRLANG(?bd_, "fi") AS ?date_label_fi)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/times/time_", STR(?bd), "-", STR(?bd))) AS ?bts)
 }

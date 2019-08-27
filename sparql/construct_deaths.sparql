@@ -18,6 +18,13 @@ CONSTRUCT {
     crm:P7_took_place_at ?dp ;
     dct:source wsou:source22 ;
     skos:prefLabel ?dl_fi, ?dl_en .
+
+  ?dts a crm:E52_Time-Span ;
+    skos:prefLabel ?date_label_en, ?date_label_fi ;
+    crm:P82a_begin_of_the_begin ?dd ;
+    crm:P82b_end_of_the_end ?dd ;
+    .
+
 }
 {
   ?sub wpsc:date_of_death ?dd_ ;
@@ -33,5 +40,7 @@ CONSTRUCT {
   BIND(CONCAT(?fn, " ", ?sn) AS ?label)
   BIND(STRLANG(CONCAT(?label, " kuoli"), "fi") AS ?dl_fi)
   BIND(STRLANG(CONCAT(?label, " died"), "en") AS ?dl_en)
+  BIND(STRLANG(?dd_, "en") AS ?date_label_en)
+  BIND(STRLANG(?dd_, "fi") AS ?date_label_fi)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/times/time_", STR(?dd), "-", STR(?dd))) AS ?dts)
 }
