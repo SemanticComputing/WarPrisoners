@@ -175,7 +175,7 @@ PRISONER_MAPPING = {
                               'KA T-26073/2–KA T-26073/22, KA T-26073/23, KA T-26073/24-KA T-26073/47, KA T-26073/48, '
                               'KA T-26073/49, Kansallisarkisto kantakortit',
         },
-    'vangiksi, taistelupaikka':
+    'vangiksi taistelupaikka':
         {
             'uri': SCHEMA_POW.place_of_capture_battle_literal,
             'value_separator': '/',
