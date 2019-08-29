@@ -154,6 +154,7 @@ class RDFMapper:
         resource_template = '{entity}_{prop}_{id}'
         row_rdf = Graph()
         row_errors = []
+        unmapped_columns = set()
 
         # Handle first and last names
 
@@ -178,6 +179,7 @@ class RDFMapper:
 
             mapping = self.get_mapping(column_name)
             if not mapping:
+                unmapped_columns.add(column_name)
                 continue
 
             value = row[column_name]
@@ -270,14 +272,18 @@ class RDFMapper:
         for error in row_errors:
             self.errors.append(error)
 
+        logging.warning('Unmapped columns: %s' % '\n'.join(sorted(unmapped_columns)))
+
         return row_rdf
 
     def get_mapping(self, column_name: str):
         """
         Get mapping for column name
         """
-        column_name = column_name.split('(')[0].strip()
         mapping = self.mapping.get(column_name)
+        if not mapping:
+            column_name = column_name.split('(')[0].strip()
+            mapping = self.mapping.get(column_name)
         return mapping
 
     def read_csv(self, csv_input):
