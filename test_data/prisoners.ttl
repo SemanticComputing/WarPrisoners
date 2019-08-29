@@ -207,8 +207,8 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:cause_of_death "aivokooma" ;
     wps:confiscated_possession "Rise rannekello 2.000 mk, rahaa 100 mk, yht. 2.100 mk" ;
     wps:date_of_capture "1944-07-06"^^xsd:date ;
-    wps:date_of_death "1942-01-07"^^xsd:date,
-        "1948-04-05"^^xsd:date ;
+    wps:date_of_death "1942-01-07"^^xsd:date ;
+    wps:date_of_death_after_return "1948-04-05"^^xsd:date ;
     wps:date_of_going_mia "4.7.1944  (KA T 19472/4 [3]" ;
     wps:date_of_return "xx.7.1944" ;
     wps:description_of_capture "13.3.1942 Kiestingin Pirttijärvellä vihollisen tekemän hyökkäyksen aikana joutui vangiksi.",
@@ -269,8 +269,8 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
         "1939-12-28"^^xsd:date ;
     wps:date_of_death "1943-02-02"^^xsd:date,
         "1943-03-02"^^xsd:date,
-        "1943-03-13"^^xsd:date,
-        "1964-08-07"^^xsd:date ;
+        "1943-03-13"^^xsd:date ;
+    wps:date_of_death_after_return "1964-08-07"^^xsd:date ;
     wps:date_of_declaration_of_death "1950-03-06"^^xsd:date ;
     wps:date_of_going_mia "05/21/1942" ;
     wps:date_of_return "1944-11-22"^^xsd:date ;

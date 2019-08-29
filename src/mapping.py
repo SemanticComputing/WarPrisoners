@@ -265,7 +265,7 @@ PRISONER_MAPPING = {
         },
     'palanneiden kuolinaika':
         {
-            'uri': SCHEMA_POW.date_of_death,
+            'uri': SCHEMA_POW.date_of_death_after_return,
             'converter': convert_dates,
             'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
             'value_separator': '/'
