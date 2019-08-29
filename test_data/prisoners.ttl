@@ -195,16 +195,17 @@ wp:prisoner_2_captivity_40 a wps:Captivity ;
     wps:order 40 .
 
 wp:prisoner_1 a wsch:PrisonerRecord ;
+    wsch:date_of_birth "n.1918" ;
     wsch:family_name "Sukunimi" ;
     wsch:given_names "Etunimi Toinennimi" ;
     wsch:mother_tongue <http://ldf.fi/warsa/mother_tongues/Ruotsi> ;
+    wsch:municipality_of_birth_literal "Karkkila" ;
     wps:additional_information "Ei ole KA Suomen sodissa 1939-1945 menehtyneet-tietokannassa" ;
     wps:captivity wp:prisoner_1_captivity_0,
         wp:prisoner_1_captivity_10,
         wp:prisoner_1_captivity_20 ;
     wps:cause_of_death "aivokooma" ;
     wps:confiscated_possession "Rise rannekello 2.000 mk, rahaa 100 mk, yht. 2.100 mk" ;
-    wsch:date_of_birth "n.1918" ;
     wps:date_of_capture "1944-07-06"^^xsd:date ;
     wps:date_of_death "1942-01-07"^^xsd:date,
         "1948-04-05"^^xsd:date ;
@@ -218,7 +219,6 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:karaganda_card_file "Karaganda 12" ;
     wps:marital_status <http://ldf.fi/warsa/marital_statuses/Naimaton> ;
     wps:memoir "Martikainen V.Olavi. Muistelmia sotavankeudestani Neuvostoliitossa" ;
-    wsch:municipality_of_birth_literal "Karkkila" ;
     wps:municipality_of_capture_literal "Ylämaa" ;
     wps:municipality_of_death_literal "Lohjan kunta" ;
     wps:municipality_of_domicile_literal "Karkkila" ;
@@ -226,9 +226,11 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:number_of_children "0" ;
     wps:occupation_literal "kaavaaja" ;
     wps:original_name "Sukunimi Etunimi Toinennimi" ;
+    wps:photograph "ryhmäkuvassa  2.9.1941, Rukiver-kirjan kuvaliite" ;
     wps:photograph_sotilaan_aani "nro 40/1944 28.4. s. 1, valokuva ja kuvateksti",
         "nro 40/1944 28.4. s. 3, Sotavankien kirjeitä omaisilleen Suomeen, kirje" ;
     wps:place_of_burial_literal "leirin 75 hautausmaa (kuolleiden henkilömapit) / sotavankileiri № 75:n hautausmaa, paalu 11 (VM) /" ;
+    wps:place_of_capture_battle_literal "Äänisjärvi, Klimetskinsaari" ;
     wps:place_of_capture_literal "Leino" ;
     wps:place_of_death "99" ;
     wps:place_of_going_mia_literal "Kuuterselkä" ;
@@ -236,6 +238,13 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:radio_report "NL:n radiossa ilmoitettu 07.8.1944 olevan sotavankina" ;
     wps:rank_literal "korpr" ;
     wps:recording "Oli yksi päähenkilöistä dokumenttielokuvassa Suomalaiset sotavankileirien saaristossa, ohj. Reijo Nikkilä. Dokumenttitoimitus/TV1/Yleisradio. 2000; henkilöhaastattelu vuonna 2000." ;
+    wps:sotilaan_aani "nro 111/1943 25.12. s. 3, Sotavankien joulutervehdyksiä",
+        "nro 76/1943 4.9. s. 2 ja 4, Kuka korjaa ja pui elot? Propagandistinen lausunto",
+        """nro 77/1943 7.9. s. 2, ”Eiköhän lähdetä valloittamaan Suomea” sanovat 12. Pioneeripataljoonan pojat, propagandistinen
+lausunto""",
+        "nro 78/1943 10.9. s. 3, 5. Rajajääkäripataljoonan ja 12. Pioneeripataljoonan pojille, propagandistinen vetoomus",
+        "nro 83/1943 25.9. s. 3, \"Meille tulee äkkilähtö\", sanovat suomalaiset sotamiehet, propagandistinen lausunto",
+        "nro 96/1943 7.11. s. 3, Mitä sotavangit sanovat, valokuva ja kuvateksti" ;
     wps:soviet_card_files "Jatkosodan kortisto",
         "kuulustelulomake, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja, kuolinpäiväksi merkitty 24.9.1942" ;
     wps:unit_literal "1./Er.P 25" ;
@@ -243,9 +252,11 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     skos:prefLabel "Sukunimi, Etunimi Toinennimi" .
 
 wp:prisoner_2 a wsch:PrisonerRecord ;
+    wsch:date_of_birth "1900-04-15"^^xsd:date ;
     wsch:family_name "Hankala" ;
     wsch:given_names "Harri" ;
     wsch:mother_tongue <http://ldf.fi/warsa/mother_tongues/Suomi> ;
+    wsch:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
     wps:additional_information "Kuusisen armeijassa - 6 v. kuritushuonetta Suomessa 19.6.1940." ;
     wps:captivity wp:prisoner_2_captivity_0,
         wp:prisoner_2_captivity_10,
@@ -254,7 +265,6 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
         wp:prisoner_2_captivity_40 ;
     wps:cause_of_death "sydämen toiminnan lakkaaminen" ;
     wps:confiscated_possession "rahaa 225 mk" ;
-    wsch:date_of_birth "1900-04-15"^^xsd:date ;
     wps:date_of_capture "1939-12-03"^^xsd:date,
         "1939-12-28"^^xsd:date ;
     wps:date_of_death "1943-02-02"^^xsd:date,
@@ -273,7 +283,6 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
     wps:marital_status <http://ldf.fi/warsa/marital_statuses/Naimaton>,
         <http://ldf.fi/warsa/marital_statuses/Naimisissa> ;
     wps:memoir "Lindstedt, s. 442 ja 630" ;
-    wsch:municipality_of_birth_literal "Juuka/Kiihtelysvaara" ;
     wps:municipality_of_capture_literal "Kannas",
         "Leipäsuo" ;
     wps:municipality_of_domicile_literal "Lavia",
@@ -284,12 +293,14 @@ wp:prisoner_2 a wsch:PrisonerRecord ;
     wps:occupation_literal "posteljooni",
         "sekatyömies" ;
     wps:original_name "Hankala Harri" ;
+    wps:photograph "VEN 205" ;
     wps:photograph_sotilaan_aani "nro 40/1942 23.2. s.3, Miten punainen armeija kohtelee vankejaan, kirje",
         """nro 49/1942, 24.4. s. 2, Mitä sotavangit sanovat armeijan mieshukasta,
 propagandistinen julkilausuma""",
         "nro 54/1942, 13.5. s. 3, Metsäkaartin kuulumisia – otteita sotavankien lausunnoista sekä sotilaiden sekä heidän omaistensa kirjeistä, propagandistinen julkilausuma",
         "nro 85/1942 16.8. s. 4, Joka ase kädessä auttaa Mannerheimin klikkiä, ansaitsee vihollisen nimen, propagandistinen julkilausuma" ;
     wps:place_of_burial_literal "sotavankileiri № 99/1:n hautausmaa, Spasskin kylä." ;
+    wps:place_of_capture_battle_literal "Mäkräjärvi><Kotkatjärvi" ;
     wps:place_of_capture_literal "Huumola",
         "Näykki" ;
     wps:place_of_death "74",
@@ -300,6 +311,7 @@ propagandistinen julkilausuma""",
     wps:rank_literal "hevosmies",
         "siv" ;
     wps:recording "Isien sota, jakso 4, dokumenttielokuva. ohjaja Maija Kaipainen. YLE/TV1 2011. 30 minuuttia https://areena.yle.fi/1-1354487" ;
+    wps:sotilaan_aani "nro 71/1944 1.8. s. 4, Kuka on sotavankina?, nimilista" ;
     wps:soviet_card_files "Jatkosodan kortisto",
         "kuulustelulomake 2 kpl ja lisälehti, karakteristiikkoja, sairauteen, kuolemaan ja hautaukseen liittyviä asiakirjoja" ;
     wps:unit_literal "3./I/KTR15" ;

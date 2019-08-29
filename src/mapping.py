@@ -278,8 +278,7 @@ PRISONER_MAPPING = {
             'name_en': 'Date of declaration of death',
             'name_fi': 'Kuolleeksi julistamisen päivämäärä'
         },
-    'valokuva KA:n henkilöakteissa, RGVA:n henkilömapeissa, muissa venäläisissä arkistoissa, venäläisessä Sotilaan '
-    'Ääni-lehdessä':
+    'valokuva KA:n henkilöakteissa, RGVA:n henkilömapeissa, muissa venäläisissä arkistoissa ja suomalaisissa julkaisuissa':
         {
             'uri': SCHEMA_POW.photograph,
             'value_separator': ';',
@@ -378,7 +377,7 @@ PRISONER_MAPPING = {
             'name_fi': 'Lentolehtinen',
             'description_fi': 'Neuvostoliittolaiset propagandalentolehtiset, joissa henkilö on mainittu',
         },
-    'Sotilaan Ääni-lehti':
+    'Sotilaan Ääni-lehti, digitoitu ja indeksoitu':
         {
             'uri': SCHEMA_POW.sotilaan_aani,
             'value_separator': ';',
