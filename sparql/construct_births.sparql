@@ -3,7 +3,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX wsch: <http://ldf.fi/schema/warsa/>
 PREFIX wpsc: <http://ldf.fi/schema/warsa/prisoners/>
 PREFIX wpri: <http://ldf.fi/warsa/prisoners/>
-PREFIX wsou: <http://ldf.fi/schema/warsa/sources/>
+PREFIX wsou: <http://ldf.fi/warsa/sources/>
 PREFIX wacs: <http://ldf.fi/schema/warsa/actors/>
 PREFIX wact: <http://ldf.fi/warsa/actors/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
