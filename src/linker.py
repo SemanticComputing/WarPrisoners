@@ -1,31 +1,25 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
-import json
-
 import numpy
-from datetime import date
-from itertools import chain
 
 import argparse
 import logging
 import random
 import re
-import time
 
 from arpa_linker.arpa import ArpaMimic, Arpa
-from rdflib import Graph, URIRef, RDF, Literal
+from rdflib import Graph, URIRef, RDF
 from rdflib.exceptions import UniquenessError
 from rdflib.util import guess_format
 import rdf_dm as r
 
-from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, SKOS, RANKS_NS, MUNICIPALITIES
+from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
     get_date_value, read_person_links
 from warsa_linkers.ranks import link_ranks
-import warsa_linkers.person_record_linkage
 
 log = logging.getLogger(__name__)
 
@@ -105,8 +99,6 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
     Generate a persons dict from POW records.
     """
 
-    # TODO: municipality_of_death
-
     prisoners = {}
     for person in graph[:RDF.type:SCHEMA_WARSA.PrisonerRecord]:
         if graph.value(person, SCHEMA_POW.personal_information_removed):
@@ -119,6 +111,7 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
         family = str(graph.value(person, SCHEMA_WARSA.family_name, any=False))
         rank = [str(r) for r in rank_uris if r] or None
         birth_places = graph.objects(person, SCHEMA_WARSA.municipality_of_birth)
+        death_places = graph.objects(person, SCHEMA_WARSA.municipality_of_death)
         units = graph.objects(person, SCHEMA_POW.unit)
         occupations = graph.objects(person, BIOC.has_occupation)
 
@@ -146,13 +139,14 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
                     'birth_end': birth_end,
                     'death_begin': death_begin,
                     'death_end': death_end,
+                    'death_place': sorted(death_places) if death_places else None,
                     'activity_end': death_end,
                     'unit': sorted(units) or None,
                     'occupation': sorted(occupations) or None
                     }
         prisoners[str(person)] = prisoner
 
-        log.debug('Prisoner: {}'.format(prisoner))
+        log.debug('Prisoner {uri}: {data}'.format(uri=person, data=prisoner))
 
     return prisoners
 
@@ -166,7 +160,7 @@ def link_prisoners(input_graph, endpoint):
         {'field': 'birth_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'death_begin', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
         {'field': 'death_end', 'type': 'DateTime', 'has missing': True, 'fuzzy': False},
-        # TODO: municipality_of_death
+        {'field': 'death_place', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'activity_end', 'type': 'Custom', 'comparator': activity_comparator, 'has missing': True},
         {'field': 'rank', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'rank_level', 'type': 'Price', 'has missing': True},
@@ -179,6 +173,9 @@ def link_prisoners(input_graph, endpoint):
     numpy.random.seed(42)
 
     training_links = read_person_links('data/person_links.json')
+    for (prisoner, person) in training_links:
+        if not input_graph.triples((URIRef(prisoner), None, None)):
+            log.warning('Prisoner %s found in training links but not present in data.' % prisoner)
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
                         sample_size=500000,
@@ -217,9 +214,9 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
                             new_graph=True)['graph']
 
     war_munics = set(g.objects(None, SCHEMA_WARSA.municipality_of_birth_literal)) | \
-                 set(g.objects(None, SCHEMA_POW.municipality_of_domicile_literal)) | \
-                 set(g.objects(None, SCHEMA_POW.municipality_of_residence_literal)) | \
-                 set(g.objects(None, SCHEMA_POW.municipality_of_capture_literal))
+        set(g.objects(None, SCHEMA_POW.municipality_of_domicile_literal)) | \
+        set(g.objects(None, SCHEMA_POW.municipality_of_residence_literal)) | \
+        set(g.objects(None, SCHEMA_POW.municipality_of_capture_literal))
 
     war_munic_mapping = {}
     war_munic_links = Graph()
@@ -285,4 +282,3 @@ if __name__ == '__main__':
         log.info('Linking ranks')
         bind_namespaces(link_ranks(input_graph, args.endpoint, SCHEMA_POW.rank_literal, SCHEMA_POW.rank,
                                    SCHEMA_WARSA.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
-
