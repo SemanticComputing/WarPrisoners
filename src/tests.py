@@ -147,7 +147,7 @@ class TestPersonLinking(unittest.TestCase):
             'foo': {'activity_end': '1941-12-23',
                     'birth_begin': '1906-12-23',
                     'birth_end': '1906-12-23',
-                    'birth_place': [URIRef('http://ldf.fi/warsa/places/municipalities/k123')],
+                    'birth_place': ['http://ldf.fi/warsa/places/municipalities/k123'],
                     'death_begin': '1941-12-23',
                     'death_end': '1941-12-23',
                     'family': 'Heino',
@@ -178,20 +178,20 @@ class TestPersonLinking(unittest.TestCase):
             'foo': {'activity_end': '1943-02-03',
                     'birth_begin': '1906-12-23',
                     'birth_end': '1916-06-03',
-                    'birth_place': [URIRef('http://ldf.fi/warsa/places/municipalities/k123'),
-                                    URIRef('http://ldf.fi/warsa/places/municipalities/k234')],
+                    'birth_place': ['http://ldf.fi/warsa/places/municipalities/k123',
+                                    'http://ldf.fi/warsa/places/municipalities/k234'],
                     'death_begin': '1941-12-23',
                     'death_end': '1943-02-03',
-                    'death_place': [URIRef('http://ldf.fi/warsa/places/municipalities/k234')],
+                    'death_place': ['http://ldf.fi/warsa/places/municipalities/k234'],
                     'family': 'Heino Kalmari',
                     'given': 'Eino Ilmari',
-                    'occupation': [URIRef('http://ldf.fi/warsa/occupations/sekatyomies'),
-                                   URIRef('http://ldf.fi/warsa/occupations/tyomies')],
+                    'occupation': ['http://ldf.fi/warsa/occupations/sekatyomies',
+                                   'http://ldf.fi/warsa/occupations/tyomies'],
                     'person': None,
                     'rank': ['http://ldf.fi/schema/warsa/actors/ranks/Kapteeni',
                              'http://ldf.fi/schema/warsa/actors/ranks/Korpraali'],
                     'rank_level': 11,
-                    'unit': [ACTORS.actor_12839]}
+                    'unit': [str(ACTORS.actor_12839)]}
         }
 
         g = Graph()
@@ -207,7 +207,7 @@ class TestPersonLinking(unittest.TestCase):
         g.add((p, SCHEMA_WARSA.date_of_birth, Literal(datetime.date(1916, 6, 3))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1943, 2, 3))))
-        g.add((p, SCHEMA_WARSA.municipality_of_death, MUNICIPALITIES.k234))
+        g.add((p, SCHEMA_POW.municipality_of_death, MUNICIPALITIES.k234))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/sekatyomies')))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/tyomies')))
         g.add((p, SCHEMA_POW.unit, ACTORS.actor_12839))

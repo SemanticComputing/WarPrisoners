@@ -109,11 +109,11 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
 
         given = str(graph.value(person, SCHEMA_WARSA.given_names, any=False))
         family = str(graph.value(person, SCHEMA_WARSA.family_name, any=False))
-        rank = [str(r) for r in rank_uris if r] or None
-        birth_places = sorted(graph.objects(person, SCHEMA_WARSA.municipality_of_birth))
-        death_places = sorted(graph.objects(person, SCHEMA_WARSA.municipality_of_death))
-        units = sorted(graph.objects(person, SCHEMA_POW.unit))
-        occupations = sorted(graph.objects(person, BIOC.has_occupation))
+        rank = sorted(str(r) for r in rank_uris if r) or None
+        birth_places = sorted(str(place) for place in graph.objects(person, SCHEMA_WARSA.municipality_of_birth)) or None
+        death_places = sorted(str(place) for place in graph.objects(person, SCHEMA_POW.municipality_of_death)) or None
+        units = sorted(str(unit) for unit in graph.objects(person, SCHEMA_POW.unit)) or None
+        occupations = sorted(str(occ) for occ in graph.objects(person, BIOC.has_occupation)) or None
 
         births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_WARSA.date_of_birth)]
         deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_POW.date_of_death)]
@@ -130,19 +130,19 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
             pass
 
         prisoner = {'person': None,
-                    'rank': sorted(rank) if rank else None,
+                    'rank': rank,
                     'rank_level': max(rank_levels or [None]),
                     'given': given,
                     'family': re.sub(r'\(ent\.\s*(.+)\)', r'\1', family),
-                    'birth_place': birth_places if birth_places else None,
+                    'birth_place': birth_places,
                     'birth_begin': birth_begin,
                     'birth_end': birth_end,
                     'death_begin': death_begin,
                     'death_end': death_end,
-                    'death_place': death_places if death_places else None,
+                    'death_place': death_places,
                     'activity_end': death_end,
-                    'unit': units or None,
-                    'occupation': occupations or None
+                    'unit': units,
+                    'occupation': occupations
                     }
         prisoners[str(person)] = prisoner
 
@@ -178,7 +178,7 @@ def link_prisoners(input_graph, endpoint):
             log.warning('Prisoner %s found in training links but not present in data.' % prisoner)
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
-                        sample_size=500000,
+                        sample_size=50000,
                         threshold_ratio=0.8
                         )
 
