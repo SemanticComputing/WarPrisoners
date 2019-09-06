@@ -154,7 +154,6 @@ def prune_persons(graph: Graph, endpoint: str):
 
     for person in persons:
         death_dates = list(graph.objects(person, SCHEMA_POW.date_of_death))
-        death_dates += list(graph.objects(person, SCHEMA_POW.date_of_death_after_return))
         death_dates = [cast_date(d) for d in death_dates]
 
         death_without_date = any(True for d in death_dates if d is None)
@@ -193,10 +192,6 @@ def prune_persons(graph: Graph, endpoint: str):
     log.info('Persons suspected to have died less than 50 years ago: %s' % len(died_recently))
     log.info('Persons that might be alive: %s' % len(possibly_alive))
 
-    for person in persons:
-        log.debug('Removing death dates after return')
-        triples = list(graph.triples((person, SCHEMA_POW.date_of_death_after_return, None)))
-        graph = remove_triples_and_reifications(graph, triples)
     return graph
 
 
