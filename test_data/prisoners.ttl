@@ -156,43 +156,59 @@ wp:prisoner_1_captivity_0 a wps:Captivity ;
     wps:date_begin "xx.xx.1944" ;
     wps:date_end "1944-10-13"^^xsd:date ;
     wps:location_literal "135" ;
-    wps:order 0 .
+    wps:order 0 ;
+    skos:prefLabel "Person Sukunimi Etunimi Toinennimi captivity"@en,
+        "Henkilön Sukunimi Etunimi Toinennimi sotavankeus"@fi .
 
 wp:prisoner_1_captivity_10 a wps:Captivity ;
     wps:date_begin "1944-10-15"^^xsd:date ;
     wps:date_end "1944-11-05"^^xsd:date ;
     wps:location_literal "158" ;
-    wps:order 10 .
+    wps:order 10 ;
+    skos:prefLabel "Person Sukunimi Etunimi Toinennimi captivity"@en,
+        "Henkilön Sukunimi Etunimi Toinennimi sotavankeus"@fi .
 
 wp:prisoner_1_captivity_20 a wps:Captivity ;
     wps:date_begin "1944-11-05"^^xsd:date ;
     wps:date_end "1944-11-16"^^xsd:date ;
     wps:location_literal "1825" ;
-    wps:order 20 .
+    wps:order 20 ;
+    skos:prefLabel "Person Sukunimi Etunimi Toinennimi captivity"@en,
+        "Henkilön Sukunimi Etunimi Toinennimi sotavankeus"@fi .
 
 wp:prisoner_2_captivity_0 a wps:Captivity ;
     wps:location_literal "Vienan Kemi" ;
-    wps:order 0 .
+    wps:order 0 ;
+    skos:prefLabel "Person Hankala Harri captivity"@en,
+        "Henkilön Hankala Harri sotavankeus"@fi .
 
 wp:prisoner_2_captivity_10 a wps:Captivity ;
     wps:location_literal "Vienan Kemi sotavankisairaala" ;
-    wps:order 10 .
+    wps:order 10 ;
+    skos:prefLabel "Person Hankala Harri captivity"@en,
+        "Henkilön Hankala Harri sotavankeus"@fi .
 
 wp:prisoner_2_captivity_20 a wps:Captivity ;
     wps:location_literal "Arkangel sotavankisairaala" ;
-    wps:order 20 .
+    wps:order 20 ;
+    skos:prefLabel "Person Hankala Harri captivity"@en,
+        "Henkilön Hankala Harri sotavankeus"@fi .
 
 wp:prisoner_2_captivity_30 a wps:Captivity ;
     wps:date_begin "1942-05-10"^^xsd:date ;
     wps:date_end "xx.xx.1942" ;
     wps:location_literal "74" ;
-    wps:order 30 .
+    wps:order 30 ;
+    skos:prefLabel "Person Hankala Harri captivity"@en,
+        "Henkilön Hankala Harri sotavankeus"@fi .
 
 wp:prisoner_2_captivity_40 a wps:Captivity ;
     wps:date_begin "xx.xx.1942" ;
     wps:date_end "1942-09-18"^^xsd:date ;
     wps:location_literal "75" ;
-    wps:order 40 .
+    wps:order 40 ;
+    skos:prefLabel "Person Hankala Harri captivity"@en,
+        "Henkilön Hankala Harri sotavankeus"@fi .
 
 wp:prisoner_1 a wsch:PrisonerRecord ;
     wsch:date_of_birth "n.1918" ;

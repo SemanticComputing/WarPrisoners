@@ -110,10 +110,10 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
         given = str(graph.value(person, SCHEMA_WARSA.given_names, any=False))
         family = str(graph.value(person, SCHEMA_WARSA.family_name, any=False))
         rank = [str(r) for r in rank_uris if r] or None
-        birth_places = graph.objects(person, SCHEMA_WARSA.municipality_of_birth)
-        death_places = graph.objects(person, SCHEMA_WARSA.municipality_of_death)
-        units = graph.objects(person, SCHEMA_POW.unit)
-        occupations = graph.objects(person, BIOC.has_occupation)
+        birth_places = sorted(graph.objects(person, SCHEMA_WARSA.municipality_of_birth))
+        death_places = sorted(graph.objects(person, SCHEMA_WARSA.municipality_of_death))
+        units = sorted(graph.objects(person, SCHEMA_POW.unit))
+        occupations = sorted(graph.objects(person, BIOC.has_occupation))
 
         births = [get_date_value(bd) for bd in graph.objects(person, SCHEMA_WARSA.date_of_birth)]
         deaths = [get_date_value(dd) for dd in graph.objects(person, SCHEMA_POW.date_of_death)]
@@ -134,15 +134,15 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
                     'rank_level': max(rank_levels or [None]),
                     'given': given,
                     'family': re.sub(r'\(ent\.\s*(.+)\)', r'\1', family),
-                    'birth_place': sorted(birth_places) if birth_places else None,
+                    'birth_place': birth_places if birth_places else None,
                     'birth_begin': birth_begin,
                     'birth_end': birth_end,
                     'death_begin': death_begin,
                     'death_end': death_end,
-                    'death_place': sorted(death_places) if death_places else None,
+                    'death_place': death_places if death_places else None,
                     'activity_end': death_end,
-                    'unit': sorted(units) or None,
-                    'occupation': sorted(occupations) or None
+                    'unit': units or None,
+                    'occupation': occupations or None
                     }
         prisoners[str(person)] = prisoner
 

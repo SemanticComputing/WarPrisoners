@@ -154,6 +154,7 @@ class TestPersonLinking(unittest.TestCase):
                     'given': 'Eino Ilmari',
                     'occupation': None,
                     'person': None,
+                    'death_place': None,
                     'rank': ['http://ldf.fi/schema/warsa/actors/ranks/Korpraali'],
                     'rank_level': 3,
                     'unit': None}
@@ -181,6 +182,7 @@ class TestPersonLinking(unittest.TestCase):
                                     URIRef('http://ldf.fi/warsa/places/municipalities/k234')],
                     'death_begin': '1941-12-23',
                     'death_end': '1943-02-03',
+                    'death_place': [URIRef('http://ldf.fi/warsa/places/municipalities/k234')],
                     'family': 'Heino Kalmari',
                     'given': 'Eino Ilmari',
                     'occupation': [URIRef('http://ldf.fi/warsa/occupations/sekatyomies'),
@@ -205,6 +207,7 @@ class TestPersonLinking(unittest.TestCase):
         g.add((p, SCHEMA_WARSA.date_of_birth, Literal(datetime.date(1916, 6, 3))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1941, 12, 23))))
         g.add((p, SCHEMA_POW.date_of_death, Literal(datetime.date(1943, 2, 3))))
+        g.add((p, SCHEMA_WARSA.municipality_of_death, MUNICIPALITIES.k234))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/sekatyomies')))
         g.add((p, BIOC.has_occupation, URIRef('http://ldf.fi/warsa/occupations/tyomies')))
         g.add((p, SCHEMA_POW.unit, ACTORS.actor_12839))

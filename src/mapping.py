@@ -246,6 +246,8 @@ PRISONER_MAPPING = {
             'capture_value': SCHEMA_POW.location_literal,
             'capture_order_number': True,
             'capture_dates': True,
+            'create_resource_label_fi': 'Henkilön {person} sotavankeus',
+            'create_resource_label_en': 'Person {person} captivity',
             'name_en': 'Captivity locations',
             'name_fi': 'Vankeuspaikat',
             'description_fi': 'Ne kuulustelupaikat, vankileirit, vankilat ja sairaalat, joissa vanki on eri lähteistä '

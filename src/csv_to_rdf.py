@@ -28,8 +28,7 @@ def get_triple_reifications(graph, triple):
     s, p, o = triple
     reifications = list(graph.subjects(RDF.subject, s))
     for reification in reifications:
-        if not (graph[reification:RDF.predicate:p] and
-                    graph[reification:RDF.object:o]):
+        if not (graph[reification:RDF.predicate:p] and graph[reification:RDF.object:o]):
             continue
         for (rs, rp, ro) in graph.triples((reification, None, None)):
             found_reifications.add((rs, rp, ro))
@@ -141,6 +140,28 @@ class RDFMapper:
 
         return value, sources or [], date_begin, date_end, errors
 
+    def create_resource(self, resource_uri, rdf_class, rdf_value, value_property, label_fi: str, label_en: str, capture_order,
+                        capture_dates, order, date_begin, date_end, resource_name):
+        """
+        Create a resource based on a CSV column
+        """
+        resource_rdf = Graph()
+
+        resource_rdf.add((resource_uri, RDF.type, rdf_class))
+        resource_rdf.add((resource_uri, value_property, rdf_value))
+
+        resource_rdf.add((resource_uri, SKOS.prefLabel, Literal(label_fi.format(person=resource_name), lang='fi')))
+        resource_rdf.add((resource_uri, SKOS.prefLabel, Literal(label_en.format(person=resource_name), lang='en')))
+
+        if capture_order:
+            resource_rdf.add((resource_uri, SCHEMA_POW.order, order))
+
+        if capture_dates and (date_begin or date_end):
+            resource_rdf.add((resource_uri, SCHEMA_POW.date_begin, Literal(date_begin)))
+            resource_rdf.add((resource_uri, SCHEMA_POW.date_end, Literal(date_end)))
+
+        return resource_rdf
+
     def map_row_to_rdf(self, entity_uri, row, prisoner_number=None):
         """
         Map a single row to RDF.
@@ -150,8 +171,8 @@ class RDFMapper:
         :param prisoner_number:
         :return:
         """
-        reification_template = '{entity}_{prop}_{id}_reification_{reason}'
         resource_template = '{entity}_{prop}_{id}'
+        reification_template = '{entity}_{prop}_{id}_reification_{reason}'
         row_rdf = Graph()
         row_errors = []
         unmapped_columns = set()
@@ -236,15 +257,13 @@ class RDFMapper:
                         resource_uri = DATA_NS[resource_template.format(entity=entity_uri.split('/')[-1],
                                                                         prop=mapping['uri'].split('/')[-1],
                                                                         id=index * 10)]
-                        row_rdf.add((resource_uri, RDF.type, mapping['create_resource']))
-                        row_rdf.add((resource_uri, mapping['capture_value'], rdf_value))
 
-                        if mapping.get('capture_order_number'):
-                            row_rdf.add((resource_uri, SCHEMA_POW.order, Literal(index * 10)))
-
-                        if mapping.get('capture_dates') and (date_begin or date_end):
-                            row_rdf.add((resource_uri, SCHEMA_POW.date_begin, Literal(date_begin)))
-                            row_rdf.add((resource_uri, SCHEMA_POW.date_end, Literal(date_end)))
+                        row_rdf += self.create_resource(resource_uri, mapping['create_resource'], rdf_value,
+                                                        mapping['capture_value'], mapping['create_resource_label_fi'],
+                                                        mapping['create_resource_label_en'],
+                                                        mapping.get('capture_order_number'),
+                                                        mapping.get('capture_dates'), Literal(index * 10),
+                                                        date_begin, date_end, original_name)
 
                         rdf_value = resource_uri
 
@@ -272,7 +291,7 @@ class RDFMapper:
         for error in row_errors:
             self.errors.append(error)
 
-        logging.warning('Unmapped columns: %s' % '\n'.join(sorted(unmapped_columns)))
+        logging.debug('Unmapped columns: %s' % '\n'.join(sorted(unmapped_columns)))
 
         return row_rdf
 
@@ -366,9 +385,8 @@ def convert_camps(class_uri, prop1, prop2, namespace):
     mapper.convert_to_rdf(DATA_NS, SCHEMA_POW, class_uri)
 
     for old_uri in list(mapper.data.subjects(RDF.type, class_uri)):
-        new_uri = slugify(mapper.data.value(old_uri, prop1, default='') or
-                          mapper.data.value(old_uri, prop2, default='') or
-                          'unknown')
+        new_uri = slugify(mapper.data.value(old_uri, prop1, default='')
+                          or mapper.data.value(old_uri, prop2, default='') or 'unknown')
         new_uri = namespace[new_uri]
         logging.debug(f'Minted new URI for POW camp/hospital: {old_uri}  -->  {new_uri}')
         for (sub, pre, obj) in mapper.data.triples((old_uri, None, None)):
