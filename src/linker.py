@@ -165,6 +165,7 @@ def link_prisoners(input_graph, endpoint):
         {'field': 'rank', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
         {'field': 'rank_level', 'type': 'Price', 'has missing': True},
         {'field': 'unit', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
+        {'field': 'occupation', 'type': 'Custom', 'comparator': intersection_comparator, 'has missing': True},
     ]
 
     ranks = r.read_graph_from_sparql(endpoint, "http://ldf.fi/warsa/ranks")
@@ -179,6 +180,7 @@ def link_prisoners(input_graph, endpoint):
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
                         sample_size=50000,
+                        training_size=250000,  # 500000 provides good results but takes ages
                         threshold_ratio=0.8
                         )
 
