@@ -179,8 +179,8 @@ def link_prisoners(input_graph, endpoint):
             log.warning('Prisoner %s found in training links but not present in data.' % prisoner)
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
-                        sample_size=50000,
-                        training_size=250000,  # 500000 provides good results but takes ages
+                        sample_size=100000,
+                        training_size=500000,  # 500000 provides good results but takes ages
                         threshold_ratio=0.8
                         )
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     elif args.task == 'occupations':
         log.info('Linking occupations')
         bind_namespaces(link_occupations(input_graph, args.endpoint, SCHEMA_POW.occupation_literal, BIOC.has_occupation,
-                                         SCHEMA_WARSA.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
+                                         SCHEMA_WARSA.PrisonerRecord, score_threshold=0.84)).serialize(args.output, format=guess_format(args.output))
 
     elif args.task == 'persons':
         log.info('Linking persons')
