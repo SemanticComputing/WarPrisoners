@@ -27,14 +27,26 @@ def cast_date(orig_date: str):
     """
     Cast date string into date object.
 
+    >>> cast_date('xx.xx.1942').year
+    1942
+    >>> cast_date('xx.8.1944').year
+    1944
     >>> cast_date('2002').year
     2002
-    >>> str(cast_date('18/11/1918'))
-    '1918-11-18'
-    >>> str(cast_date('11/18/1918'))
-    '1918-11-18'
-    >>> str(cast_date('31.12.2002'))
-    '2002-12-31'
+    >>> cast_date('18/11/1918')
+    datetime.date(1918, 11, 18)
+    >>> cast_date('11/18/1918')
+    datetime.date(1918, 11, 18)
+    >>> cast_date('31.12.2002')
+    datetime.date(2002, 12, 31)
+    >>> cast_date('2003?')
+    >>> cast_date('8.4.1942 (jatkosodan kortisto) [väärä tieto]')
+    >>> cast_date('noin 2002').year
+    2002
+    >>> cast_date('6-7.11.1947')
+    datetime.date(1947, 10, 7)
+    >>> cast_date('3.2.1942 (VM); 2.11.1942').year
+    1942
     """
     datestr = orig_date.strip('Xx-')
     cast = None
