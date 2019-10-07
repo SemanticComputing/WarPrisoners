@@ -24,6 +24,18 @@ log = logging.getLogger(__name__)
 
 
 def cast_date(orig_date: str):
+    """
+    Cast date string into date object.
+
+    >>> cast_date('2002').year
+    2002
+    >>> str(cast_date('18/11/1918'))
+    '1918-11-18'
+    >>> str(cast_date('11/18/1918'))
+    '1918-11-18'
+    >>> str(cast_date('31.12.2002'))
+    '2002-12-31'
+    """
     datestr = orig_date.strip('Xx-')
     cast = None
 
@@ -74,20 +86,20 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     triples += list(graph.triples((person, SCHEMA_POW.original_name, None)))
     triples += list(graph.triples((person, SKOS.prefLabel, None)))
     triples += list(graph.triples((person, SCHEMA_WARSA.date_of_birth, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.date_of_capture, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.date_of_return, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.date_of_death, None)))
     triples += list(graph.triples((person, SCHEMA_WARSA.municipality_of_birth_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_domicile_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_residence_literal, None)))
     triples += list(graph.triples((person, SCHEMA_POW.municipality_of_death_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_going_mia, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.place_of_going_mia_literal, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_capture, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.description_of_capture, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_return, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.date_of_death, None)))
     triples += list(graph.triples((person, SCHEMA_POW.photograph, None)))
     triples += list(graph.triples((person, SCHEMA_POW.radio_report, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.recording, None)))
     triples += list(graph.triples((person, SCHEMA_POW.finnish_return_interrogation_file, None)))
-    triples += list(graph.triples((person, SCHEMA_POW.description_of_capture, None)))
+    triples += list(graph.triples((person, SCHEMA_POW.recording, None)))
 
     family_name = str(graph.value(person, SCHEMA_WARSA.family_name))
 
@@ -96,9 +108,10 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
 
         triples += list(graph.triples((person, SCHEMA_WARSA.family_name, None)))
 
-        graph.add((person, SCHEMA_WARSA.family_name, Literal("Tuntematon")))
-        graph.add((person, SCHEMA_WARSA.given_names, Literal("Sotilas")))
-        graph.add((person, SKOS.prefLabel, Literal("Tuntematon, Sotilas")))
+        graph.add((person, SCHEMA_WARSA.family_name, Literal("Nimi rajoitettu")))
+        graph.add((person, SKOS.prefLabel, Literal("Nimi rajoitettu")))
+    else:
+        graph.add((person, SKOS.prefLabel, graph.value(person, SCHEMA_WARSA.family_name)))
 
     graph = remove_triples_and_reifications(graph, triples)
 

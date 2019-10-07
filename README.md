@@ -25,4 +25,5 @@ The output files will be written to `./output/`, and logs to `./output/logs/`.
 
 ## Tests
 
-To run all tests: `nosetests --doctest-tests`
+To run all tests: `nosetests --with-doctest`
+
