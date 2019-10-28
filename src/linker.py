@@ -151,6 +151,18 @@ def _generate_prisoners_dict(graph: Graph, ranks: Graph):
     return prisoners
 
 
+def _prune_person_links(graph, links):
+    pruned_links = []
+    for link in links:
+        doc = link[0]
+        if not graph.value(URIRef(doc), SCHEMA_POW.personal_information_removed):
+            pruned_links += link
+        else:
+            log.info('Pruning prisoner %s from training data' % doc)
+
+    return pruned_links
+
+
 def link_prisoners(input_graph, endpoint):
     data_fields = [
         {'field': 'given', 'type': 'String'},
@@ -174,9 +186,12 @@ def link_prisoners(input_graph, endpoint):
     numpy.random.seed(42)
 
     training_links = read_person_links('data/person_links.json')
+
     for (prisoner, person) in training_links:
         if not input_graph.triples((URIRef(prisoner), None, None)):
             log.warning('Prisoner %s found in training links but not present in data.' % prisoner)
+
+    training_links = _prune_person_links(input_graph, training_links)
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
                         sample_size=100000,

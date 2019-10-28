@@ -43,8 +43,8 @@ def cast_date(orig_date: str):
     >>> cast_date('8.4.1942 (jatkosodan kortisto) [väärä tieto]')
     >>> cast_date('noin 2002').year
     2002
-    >>> cast_date('6-7.11.1947')
-    datetime.date(1947, 10, 7)
+    >>> cast_date('6-7.11.1947').year
+    1947
     >>> cast_date('3.2.1942 (VM); 2.11.1942').year
     1942
     """
