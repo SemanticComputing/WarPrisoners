@@ -194,7 +194,7 @@ def prune_persons(graph: Graph, endpoint: str):
         else:
             if not (death_date or death_without_date):
                 dob = graph.value(person, SCHEMA_WARSA.date_of_birth)
-                if dob and cast_date(dob) >= date(1911, 1, 1):
+                if dob and cast_date(dob) >= date(1910, 9, 30):
                     possibly_alive.append(person)
             else:
                 log.debug('Person record with death date %s declared public')

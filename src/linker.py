@@ -156,7 +156,8 @@ def _prune_person_links(graph, links):
     for link in links:
         doc = link[0]
         if not graph.value(URIRef(doc), SCHEMA_POW.personal_information_removed):
-            pruned_links += link
+            log.debug('Using link %s in training data' % str(link))
+            pruned_links.append(link)
         else:
             log.info('Pruning prisoner %s from training data' % doc)
 
@@ -192,6 +193,8 @@ def link_prisoners(input_graph, endpoint):
             log.warning('Prisoner %s found in training links but not present in data.' % prisoner)
 
     training_links = _prune_person_links(input_graph, training_links)
+
+    log.info('Using %s person links as training data' % len(training_links))
 
     return link_persons(endpoint, _generate_prisoners_dict(input_graph, ranks), data_fields, training_links,
                         sample_size=100000,

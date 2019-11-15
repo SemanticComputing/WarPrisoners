@@ -92,7 +92,7 @@ PRISONER_MAPPING = {
                               'Kansallisarkisto kantakortit',
             'converter': partial(convert_from_dict, MARITAL_STATUS_MAP)
         },
-    'lasten lkm':
+    'lapset':
         {
             'uri': SCHEMA_POW.number_of_children,
             'converter': strip_dash,
@@ -182,7 +182,7 @@ PRISONER_MAPPING = {
             'name_en': 'Location of battle in which captured',
             'name_fi': 'Vangiksi jäämisen taistelupaikka'
         },
-    'selvitys vangiksi jäämisestä':
+    'vangiksi jääminen, oma tai muiden selostus kuulusteluissa, arkistotietoja':
         {
             'uri': SCHEMA_POW.description_of_capture,
             'value_separator': ';',
@@ -231,7 +231,7 @@ PRISONER_MAPPING = {
             'description_fi': 'Sotavankeuden jälkeen kuolleen henkilön kuolinpaikka. Jollei lähdettä ole erikseen '
                               'mainittu, on lähde Väestörekisterikeskuksen Väestötietojärjestelmä (VTJ)',
         },
-    'hautauspaikka':
+    'hautauspaikka ja -aika':
         {
             'uri': SCHEMA_POW.place_of_burial_literal,
             'value_separator': ';',
@@ -386,7 +386,7 @@ PRISONER_MAPPING = {
             'name_en': 'Sotilaan Ääni magazine',
             'name_fi': 'Sotilaan Ääni'
         },
-    'Kansan Valta -lehti, Kansan Mies -lehti, Kansan Ääni':
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni':
         {
             'uri': SCHEMA_POW.propaganda_magazine,
             'value_separator': ';',
