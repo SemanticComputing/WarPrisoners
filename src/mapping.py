@@ -6,6 +6,8 @@ CSV column mapping to RDF properties. Person name and person index number are ta
 from datetime import date
 from functools import partial
 
+from rdflib import URIRef
+
 from converters import convert_dates, strip_dash, convert_swedish, convert_from_dict
 from namespaces import SCHEMA_POW, DCT, SCHEMA_WARSA, MARITAL_STATUSES
 
@@ -394,6 +396,38 @@ PRISONER_MAPPING = {
             'name_fi': 'Propagandalehti',
             'description_fi': 'Neuvostoliittolaiset suomen- ja venäjänkieliset propagandalehdet (pl. Sotilaan Ääni), '
                               'joissa henkilö on mainittu.',
+        },
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni. Linkit':
+        {
+            'uri': SCHEMA_POW.propaganda_magazine_link,
+            'converter': URIRef,
+            'value_separator': ';',
+            'name_en': 'Propaganda magazine link',
+            'name_fi': 'Linkki propagandalehteen',
+        },
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni. Toiset linkit':
+        {
+            'uri': SCHEMA_POW.propaganda_magazine_link,
+            'converter': URIRef,
+            'value_separator': ';',
+            'name_en': 'Propaganda magazine link',
+            'name_fi': 'Linkki propagandalehteen',
+        },
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni. Kolmannet linkit':
+        {
+            'uri': SCHEMA_POW.propaganda_magazine_link,
+            'converter': URIRef,
+            'value_separator': ';',
+            'name_en': 'Propaganda magazine link',
+            'name_fi': 'Linkki propagandalehteen',
+        },
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni. Neljännet linkit':
+        {
+            'uri': SCHEMA_POW.propaganda_magazine_link,
+            'converter': URIRef,
+            'value_separator': ';',
+            'name_en': 'Propaganda magazine link',
+            'name_fi': 'Linkki propagandalehteen',
         },
     'muistelmat, lehtijutut, tietokirjat, tutkimukset, Kansa taisteli-lehti, näyttelyt':
         {

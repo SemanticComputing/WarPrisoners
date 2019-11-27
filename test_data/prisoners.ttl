@@ -251,6 +251,9 @@ wp:prisoner_1 a wsch:PrisonerRecord ;
     wps:place_of_death "99" ;
     wps:place_of_going_mia_literal "Kuuterselkä" ;
     wps:propaganda_magazine "Kansan Mies-lehti nro 17/09.9.1941 haastattelu otsikolla \"Valehtelevat, että siirtoväki sotaa tahtoo\"" ;
+    wps:propaganda_magazine_link <http://www.histdoc.fi/ven_rintamalehdet1939-1944/Kansan_mies_1941/KM%201941-07-29_7_2.JPG>,
+        <http://www.histdoc.fi/ven_rintamalehdet1939-1944/Kansan_sana_1940/KS%201940_44_2.JPG>,
+        <http://www.histdoc.fi/ven_rintamalehdet1939-1944/Kansan_valta_1940/KV%201940-03-08_26_1.JPG> ;
     wps:radio_report "NL:n radiossa ilmoitettu 07.8.1944 olevan sotavankina" ;
     wps:rank_literal "korpr" ;
     wps:recording "Oli yksi päähenkilöistä dokumenttielokuvassa Suomalaiset sotavankileirien saaristossa, ohj. Reijo Nikkilä. Dokumenttitoimitus/TV1/Yleisradio. 2000; henkilöhaastattelu vuonna 2000." ;
@@ -323,6 +326,7 @@ propagandistinen julkilausuma""",
         "75" ;
     wps:place_of_going_mia_literal "Uusikirkko, Peippola" ;
     wps:propaganda_magazine "Kansan Valta 26(45)/8.3.1940 s. 1, allekirjoittajana antautumiskehotuksessa \"Heittäkää hullu sodankäynti! Antautukaa Punaiselle armeijalle!\"" ;
+    wps:propaganda_magazine_link <http://www.histdoc.fi/ven_rintamalehdet1939-1944/Kansan_sana_1940/KS%201940_43_1.JPG> ;
     wps:radio_report "Vihollisen radiolähetyksessä mainittu joutuneen Kannaksella vangiksi. RK 144/28.6.1944, Leningradin radiossa 27.6.1944 klo 15.30 Suomessa kuultuna nimellä Minkkinen Heikki, Lammi." ;
     wps:rank_literal "hevosmies",
         "siv" ;
