@@ -386,7 +386,7 @@ PRISONER_MAPPING = {
             'name_en': 'Sotilaan Ääni magazine',
             'name_fi': 'Sotilaan Ääni'
         },
-    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni':
+    'Kansan Valta, Kansan Mies, Kansan Ääni, Suomen Kansan Ääni, Kansan Sana':
         {
             'uri': SCHEMA_POW.propaganda_magazine,
             'value_separator': ';',

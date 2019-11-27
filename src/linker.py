@@ -350,7 +350,7 @@ def link_person_documents(g: Graph):
 
             log.debug('Found document for prisoner %s: %s' % (prisoner_uri, document_uri))
 
-            label = '{prefix} {id}'.format(prefix=label_map.get(directory, 'Dokumentti'), id=prisoner_id)
+            label = label_map.get(directory, 'Dokumentti')
 
             documents.add((document_uri, SKOS.prefLabel, Literal(label)))
             documents.add((document_uri, RDF.type, SCHEMA_WARSA.PersonDocument))
