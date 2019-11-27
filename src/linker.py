@@ -270,11 +270,12 @@ def link_sotilaan_aani(g: Graph, input_file: str):
 
     mapping = DefaultDict(list)
     sa_links = Graph()
+    documents = Graph()
 
     for index, row in magazine_index.iterrows():
         key = str(row['VIITE']).strip()
 
-        uri = URIRef('http://ldf.fi/warsa/prisoners/sotilaan_aani/{dir}/{filenumber}'.format(
+        uri = URIRef('http://ldf.fi/warsa/media/sotilaan_aani_{dir}_{filenumber}'.format(
             dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
 
         file_url = URIRef('{ns}{dir}/Thumbs/{filenumber}.jpg'.format(
@@ -284,9 +285,9 @@ def link_sotilaan_aani(g: Graph, input_file: str):
 
         # Create document resource
         label = 'Sotilaan Ääni {year}/{num}'.format(year=row['HAKEMISTO'], num=row['TIEDOSTONIMI'])
-        sa_links.add((uri, SKOS.prefLabel, Literal(label)))
-        sa_links.add((uri, RDF.type, SCHEMA_WARSA.SotilaanAani))
-        sa_links.add((uri, URIRef('http://schema.org/contentUrl'), file_url))
+        documents.add((uri, SKOS.prefLabel, Literal(label)))
+        documents.add((uri, RDF.type, SCHEMA_WARSA.SotilaanAani))
+        documents.add((uri, URIRef('http://schema.org/contentUrl'), file_url))
 
     triples = list(g.triples((None, SCHEMA_POW.sotilaan_aani, None))) + \
               list(g.triples((None, SCHEMA_POW.photograph_sotilaan_aani, None)))
@@ -311,7 +312,7 @@ def link_sotilaan_aani(g: Graph, input_file: str):
 
     log.info('Found %s Sotilaan Ääni links, with %s unidentified references' % (found, missing))
 
-    return sa_links
+    return sa_links, documents
 
 
 if __name__ == '__main__':
@@ -326,6 +327,7 @@ if __name__ == '__main__':
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--endpoint", default='http://localhost:3030/warsa/sparql', help="SPARQL Endpoint")
     argparser.add_argument("--arpa", type=str, help="ARPA instance URL for linking")
+    argparser.add_argument("--output2", type=str, help="Additional output file (document metadata)")
 
     args = argparser.parse_args()
 
@@ -362,4 +364,6 @@ if __name__ == '__main__':
 
     elif args.task == 'sotilaan_aani':
         log.info('Linking Sotilaan Ääni magazines')
-        bind_namespaces(link_sotilaan_aani(input_graph, 'data/SÄ-indeksi.csv')).serialize(args.output, format=guess_format(args.output))
+        document_links, documents = link_sotilaan_aani(input_graph, 'data/SÄ-indeksi.csv')
+        bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))

@@ -20,6 +20,7 @@ CONSTRUCT {
     foaf:firstName ?fn ;
     dct:source wsou:source22 ;
     bioc:has_occupation ?occupation ;
+    wsch:sotilaan_aani_magazine ?sotilaan_aani;
     foaf:familyName ?sn .
 }
 {
@@ -27,6 +28,7 @@ CONSTRUCT {
   OPTIONAL { ?sub bioc:has_occupation ?occupation }
   OPTIONAL { ?sub wsch:given_names ?fn }
   OPTIONAL { ?sub wsch:family_name ?sn }
+  OPTIONAL { ?sub wsch:sotilaan_aani_magazine ?sotilaan_aani }
 
   FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
   BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)

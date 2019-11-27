@@ -32,14 +32,9 @@ echo "Linking ranks"
 python src/linker.py ranks output/prisoners_pseudonymized.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
     --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
-echo "Linking Sotilaan Ääni magazines"
-
-python src/linker.py sotilaan_aani output/prisoners_pseudonymized.ttl output/sotilaan_aani_links.ttl \
-    --logfile output/logs/linker.log --loglevel $LOG_LEVEL
-
 echo "Linking units"
 
-cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/sotilaan_aani_links.ttl > output/prisoners_temp.ttl
+cat output/prisoners_pseudonymized.ttl output/rank_links.ttl > output/prisoners_temp.ttl
 
 # Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl
@@ -57,6 +52,11 @@ echo "Linking municipalities"
 
 python src/linker.py municipalities output/prisoners_pseudonymized.ttl output/municipality_links.ttl \
     --endpoint "$WARSA_ENDPOINT_URL/sparql" --arpa $ARPA_URL/pnr_municipality --logfile output/logs/municipalities.log --loglevel $LOG_LEVEL
+
+echo "Linking Sotilaan Ääni magazines"
+
+python src/linker.py sotilaan_aani output/prisoners_pseudonymized.ttl output/sotilaan_aani_links.ttl \
+    --output2 output/_media_sotilaan_aani.ttl --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
 echo "Linking people"
 
@@ -79,7 +79,7 @@ python src/linker.py camps output/prisoners_pseudonymized.ttl output/camp_links.
 echo "Consolidating prisoners"
 
 cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
-    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl input_rdf/additional_links.ttl > output/prisoners_.ttl
+    output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl output/sotilaan_aani_links.ttl input_rdf/additional_links.ttl > output/prisoners_.ttl
 
 echo "Generating people..."
 
@@ -107,6 +107,9 @@ echo "...Deleting temp graph"
 s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons
 
 echo "Finishing prisoners"
+
+cat output/_media_sotilaan_aani.ttl > output/_media_full.ttl
+rapper -i turtle output/_media_full.ttl -o turtle > output/prisoners_media.ttl
 
 cat output/prisoners_.ttl output/documents_links.ttl > output/prisoners_full.ttl
 rapper -i turtle output/prisoners_full.ttl -o turtle > output/prisoners.ttl

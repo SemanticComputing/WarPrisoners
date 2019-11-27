@@ -23,6 +23,11 @@ Run the conversion process:
 
 The output files will be written to `./output/`, and logs to `./output/logs/`.
 
+Output consists of:
+ - `output/prisoners.ttl` (part of prisoners graph)
+ - `output/persons/*` (part of actors graph)
+ - `output/prisoners_media.ttl` (part of media graph)
+
 ## Tests
 
 To run all tests: `nosetests --with-doctest`
