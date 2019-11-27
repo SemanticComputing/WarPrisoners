@@ -32,9 +32,14 @@ echo "Linking ranks"
 python src/linker.py ranks output/prisoners_pseudonymized.ttl output/rank_links.ttl --endpoint "$WARSA_ENDPOINT_URL/sparql" \
     --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
+echo "Linking Sotilaan Ääni magazines"
+
+python src/linker.py sotilaan_aani output/prisoners_pseudonymized.ttl output/sotilaan_aani_links.ttl \
+    --logfile output/logs/linker.log --loglevel $LOG_LEVEL
+
 echo "Linking units"
 
-cat output/prisoners_pseudonymized.ttl output/rank_links.ttl > output/prisoners_temp.ttl
+cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/sotilaan_aani_links.ttl > output/prisoners_temp.ttl
 
 # Updated data needed for unit linking
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
 """War prisoner linking tasks"""
+from typing import DefaultDict
+
 import numpy
 
 import argparse
@@ -8,13 +10,15 @@ import logging
 import random
 import re
 
+import pandas as pd
 from arpa_linker.arpa import ArpaMimic, Arpa
-from rdflib import Graph, URIRef, RDF
+from rdflib import Graph, URIRef, RDF, Literal
 from rdflib.exceptions import UniquenessError
+from rdflib.namespace import SKOS
 from rdflib.util import guess_format
 import rdf_dm as r
 
-from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS
+from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
@@ -257,11 +261,64 @@ def link_municipalities(g: Graph, warsa_endpoint: str, arpa_endpoint: str):
     return war_munic_links + pnr_links
 
 
+def link_sotilaan_aani(g: Graph, input_file: str):
+    """
+    Link textual Sotilaan Ääni references to the magazine files. Also create magazine resources.
+    """
+    magazine_index = pd.read_csv(input_file, encoding='UTF-8', index_col=False, sep=',', quotechar='"', dtype=str)
+    magazine_index = magazine_index.dropna()  # Drop rows with empty values
+
+    mapping = DefaultDict(list)
+    sa_links = Graph()
+
+    for index, row in magazine_index.iterrows():
+        key = str(row['VIITE']).strip()
+
+        uri = URIRef('http://ldf.fi/warsa/prisoners/sotilaan_aani/{dir}/{filenumber}'.format(
+            dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
+
+        file_url = URIRef('{ns}{dir}/Thumbs/{filenumber}.jpg'.format(
+            ns='https://static.sotasampo.fi/sotilaan_aani/', dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
+
+        mapping[key].append(uri)
+
+        # Create document resource
+        label = 'Sotilaan Ääni {year}/{num}'.format(year=row['HAKEMISTO'], num=row['TIEDOSTONIMI'])
+        sa_links.add((uri, SKOS.prefLabel, Literal(label)))
+        sa_links.add((uri, RDF.type, SCHEMA_WARSA.SotilaanAani))
+        sa_links.add((uri, URIRef('http://schema.org/contentUrl'), file_url))
+
+    triples = list(g.triples((None, SCHEMA_POW.sotilaan_aani, None))) + \
+              list(g.triples((None, SCHEMA_POW.photograph_sotilaan_aani, None)))
+
+    log.info(mapping)
+    found = 0
+    missing = 0
+
+    for (sub, _, obj) in triples:
+
+        textual_reference = str(obj).strip()
+        uris = mapping.get(textual_reference)
+
+        if uris:
+            for uri in uris:
+                sa_links.add((sub, SCHEMA_WARSA.sotilaan_aani_magazine, uri))
+                found += 1
+                log.debug('Found Sotilaan Ääni reference %s for %s' % (uri, textual_reference))
+        else:
+            log.warning('No Sotilaan Ääni reference found for %s' % textual_reference)
+            missing += 1
+
+    log.info('Found %s Sotilaan Ääni links, with %s unidentified references' % (found, missing))
+
+    return sa_links
+
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
     argparser.add_argument("task", help="Linking task to perform",
-                           choices=["camps", "occupations", "municipalities", "persons", "ranks"])
+                           choices=["camps", "occupations", "municipalities", "persons", "ranks", "sotilaan_aani"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
@@ -302,3 +359,7 @@ if __name__ == '__main__':
         log.info('Linking ranks')
         bind_namespaces(link_ranks(input_graph, args.endpoint, SCHEMA_POW.rank_literal, SCHEMA_POW.rank,
                                    SCHEMA_WARSA.PrisonerRecord)).serialize(args.output, format=guess_format(args.output))
+
+    elif args.task == 'sotilaan_aani':
+        log.info('Linking Sotilaan Ääni magazines')
+        bind_namespaces(link_sotilaan_aani(input_graph, 'data/SÄ-indeksi.csv')).serialize(args.output, format=guess_format(args.output))
