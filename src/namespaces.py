@@ -16,6 +16,7 @@ SCHEMA_POW = Namespace('http://ldf.fi/schema/warsa/prisoners/')
 SCHEMA_WARSA = Namespace('http://ldf.fi/schema/warsa/')
 EVENTS_NS = Namespace('http://ldf.fi/warsa/events/')
 RANKS_NS = Namespace('http://ldf.fi/schema/warsa/actors/ranks/')
+MEDIA_NS = Namespace('http://ldf.fi/warsa/media/')
 
 MARITAL_STATUSES = Namespace('http://ldf.fi/warsa/marital_statuses/')
 MOTHER_TONGUES = Namespace('http://ldf.fi/warsa/mother_tongues/')

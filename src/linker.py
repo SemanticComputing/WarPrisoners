@@ -9,6 +9,7 @@ import argparse
 import logging
 import random
 import re
+from glob import glob
 
 import pandas as pd
 from arpa_linker.arpa import ArpaMimic, Arpa
@@ -18,7 +19,7 @@ from rdflib.namespace import SKOS
 from rdflib.util import guess_format
 import rdf_dm as r
 
-from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM
+from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM, DATA_NS, MEDIA_NS
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
@@ -275,11 +276,10 @@ def link_sotilaan_aani(g: Graph, input_file: str):
     for index, row in magazine_index.iterrows():
         key = str(row['VIITE']).strip()
 
-        uri = URIRef('http://ldf.fi/warsa/media/sotilaan_aani_{dir}_{filenumber}'.format(
-            dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
+        uri = MEDIA_NS['sotilaan_aani_{dir}_{filenumber}'.format(dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI'])]
 
-        file_url = URIRef('{ns}{dir}/Thumbs/{filenumber}.jpg'.format(
-            ns='https://static.sotasampo.fi/sotilaan_aani/', dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
+        file_url = URIRef('https://static.sotasampo.fi/sotilaan_aani/{dir}/Thumbs/{filenumber}.jpg'.format(
+            dir=row['HAKEMISTO'], filenumber=row['TIEDOSTONIMI']))
 
         mapping[key].append(uri)
 
@@ -289,12 +289,9 @@ def link_sotilaan_aani(g: Graph, input_file: str):
         documents.add((uri, RDF.type, SCHEMA_WARSA.SotilaanAani))
         documents.add((uri, URIRef('http://schema.org/contentUrl'), file_url))
 
+    missing = 0
     triples = list(g.triples((None, SCHEMA_POW.sotilaan_aani, None))) + \
               list(g.triples((None, SCHEMA_POW.photograph_sotilaan_aani, None)))
-
-    log.info(mapping)
-    found = 0
-    missing = 0
 
     for (sub, _, obj) in triples:
 
@@ -304,22 +301,72 @@ def link_sotilaan_aani(g: Graph, input_file: str):
         if uris:
             for uri in uris:
                 sa_links.add((sub, SCHEMA_WARSA.sotilaan_aani_magazine, uri))
-                found += 1
                 log.debug('Found Sotilaan Ääni reference %s for %s' % (uri, textual_reference))
         else:
             log.warning('No Sotilaan Ääni reference found for %s' % textual_reference)
             missing += 1
 
-    log.info('Found %s Sotilaan Ääni links, with %s unidentified references' % (found, missing))
+    log.info('Found %s Sotilaan Ääni links, with %s unidentified references' % (len(sa_links), missing))
 
     return sa_links, documents
+
+
+def link_person_documents(g: Graph):
+    """
+    Link references from document files to prisoner records. Also create document media resources.
+    """
+    links = Graph()
+    documents = Graph()
+
+    paths = ['data/person_documents/returned/*.pdf',
+             'data/person_documents/winterwar_interrogation/*.pdf',
+             'data/person_documents/winterwar_registration/*.pdf']
+
+    label_map = {'returned': 'Neuvostoliittolainen palautettujen henkilömappi',
+                 'winterwar_registration': 'Neuvostoliittolainen vangittujen ja internoitujen henkilömappi',
+                 'winterwar_interrogation': 'Neuvostoliittolainen kuulustelulomake'}
+
+    unidentified_references = 0
+
+    for path in paths:
+        log.info('Finding documents for path %s' % path)
+        for f in glob(path):
+            id_groups = re.match(r'data/person_documents/([a-z_]+)/(\d{1,4})(_.+\.pdf)', str(f))
+            directory = id_groups.groups()[0] if id_groups else None
+            prisoner_id = id_groups.groups()[1] if id_groups else None
+            suffix = id_groups.groups()[2] if id_groups else None
+
+            if not (directory and prisoner_id and suffix):
+                log.warning('Prisoner ID not identified from file %s' % f)
+                unidentified_references += 1
+                continue
+
+            prisoner_uri = DATA_NS['prisoner_{id}'.format(id=prisoner_id)]
+            document_uri = MEDIA_NS['{dir}_{prisoner_id}'.format(dir=directory, prisoner_id=prisoner_id)]
+            file_url = URIRef('https://static.sotasampo.fi/person_documents/{dir}/{id}{suffix}'.format(
+                dir=directory, id=prisoner_id, suffix=suffix))
+
+            links.add((prisoner_uri, SCHEMA_WARSA.person_document, document_uri))
+
+            log.debug('Found document for prisoner %s: %s' % (prisoner_uri, document_uri))
+
+            label = '{prefix} {id}'.format(prefix=label_map.get(directory, 'Dokumentti'), id=prisoner_id)
+
+            documents.add((document_uri, SKOS.prefLabel, Literal(label)))
+            documents.add((document_uri, RDF.type, SCHEMA_WARSA.PersonDocument))
+            documents.add((document_uri, URIRef('http://schema.org/contentUrl'), file_url))
+
+    log.info('Found %s document links, with %s unidentified references' % (len(links), unidentified_references))
+
+    return links, documents
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
     argparser.add_argument("task", help="Linking task to perform",
-                           choices=["camps", "occupations", "municipalities", "persons", "ranks", "sotilaan_aani"])
+                           choices=["camps", "occupations", "municipalities", "persons", "ranks", "sotilaan_aani",
+                                    "person_documents"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
@@ -327,7 +374,7 @@ if __name__ == '__main__':
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--endpoint", default='http://localhost:3030/warsa/sparql', help="SPARQL Endpoint")
     argparser.add_argument("--arpa", type=str, help="ARPA instance URL for linking")
-    argparser.add_argument("--output2", type=str, help="Additional output file (document metadata)")
+    argparser.add_argument("--output2", type=str, help="Additional output file (media document metadata)")
 
     args = argparser.parse_args()
 
@@ -365,5 +412,11 @@ if __name__ == '__main__':
     elif args.task == 'sotilaan_aani':
         log.info('Linking Sotilaan Ääni magazines')
         document_links, documents = link_sotilaan_aani(input_graph, 'data/SÄ-indeksi.csv')
+        bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))
+
+    elif args.task == 'person_documents':
+        log.info('Linking person documents')
+        document_links, documents = link_person_documents(input_graph)
         bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
         bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))
