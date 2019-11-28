@@ -38,5 +38,5 @@ CONSTRUCT {
   BIND(REPLACE(STR(?sub), ".*_(\\d+(?:_duplicate)*)$", "wp$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id_)
   BIND(COALESCE(?old_uri, ?id_) as ?id)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
 }
