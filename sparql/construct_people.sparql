@@ -35,7 +35,7 @@ CONSTRUCT {
   OPTIONAL { ?sub wsch:person_document ?person_document }
   OPTIONAL { ?sub wsch:documented_in_video ?video }
 
-  BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
+  BIND(REPLACE(STR(?sub), ".*_(\\d+(?:_duplicate)*)$", "wp$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id_)
   BIND(COALESCE(?old_uri, ?id_) as ?id)
   BIND(CONCAT(?fn, " ", ?sn) AS ?label)
