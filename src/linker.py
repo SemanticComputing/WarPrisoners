@@ -85,7 +85,7 @@ def link_camps(graph, endpoint):
     def preprocess(literal, prisoner, subgraph):
         literal = str(literal).strip().replace('"', '\\"')
 
-        log.debug(f'Preprocessing camp for linking, {literal} : {value_mapping.get(literal, literal)}')
+        log.debug(f'Preprocessing camp for linking, {literal} : {value_mapping.get(literal, literal)} ({prisoner})')
         return value_mapping.get(literal, literal)
 
     query = "PREFIX ps:<http://ldf.fi/schema/warsa/prisoners/>" + \

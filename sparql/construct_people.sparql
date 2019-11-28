@@ -27,15 +27,16 @@ CONSTRUCT {
 }
 {
   ?sub a wsch:PrisonerRecord .
+  OPTIONAL { ?sub crm:P70_documents ?old_uri }
   OPTIONAL { ?sub bioc:has_occupation ?occupation }
-  OPTIONAL { ?sub wsch:given_names ?fn }
-  OPTIONAL { ?sub wsch:family_name ?sn }
+  OPTIONAL { FILTER NOT EXISTS { ?sub crm:P70_documents ?old_uri } . ?sub wsch:given_names ?fn }
+  OPTIONAL { FILTER NOT EXISTS { ?sub crm:P70_documents ?old_uri } . ?sub wsch:family_name ?sn }
   OPTIONAL { ?sub wsch:sotilaan_aani_magazine ?sotilaan_aani }
   OPTIONAL { ?sub wsch:person_document ?person_document }
   OPTIONAL { ?sub wsch:documented_in_video ?video }
 
-  FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
   BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
-  BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id)
+  BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id_)
+  BIND(COALESCE(?old_uri, ?id_) as ?id)
   BIND(CONCAT(?fn, " ", ?sn) AS ?label)
 }
