@@ -63,6 +63,11 @@ echo "Linking Person documents"
 python src/linker.py person_documents output/prisoners_pseudonymized.ttl output/person_document_links.ttl \
     --output2 output/_media_person_documents.ttl --logfile output/logs/linker.log --loglevel $LOG_LEVEL
 
+echo "Linking videos"
+
+python src/linker.py videos output/prisoners_pseudonymized.ttl output/person_video_links.ttl \
+    --output2 output/_media_videos.ttl --logfile output/logs/linker.log --loglevel $LOG_LEVEL
+
 echo "Linking people"
 
 cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/unit_linked_validated.ttl \
@@ -85,7 +90,7 @@ echo "Consolidating prisoners"
 
 cat output/prisoners_pseudonymized.ttl output/rank_links.ttl output/unit_linked_validated.ttl output/persons_linked.ttl \
     output/occupation_links.ttl output/camp_links.ttl output/municipality_links.ttl output/sotilaan_aani_links.ttl \
-    output/person_document_links.ttl input_rdf/additional_links.ttl > output/prisoners_.ttl
+    output/person_document_links.ttl output/person_video_links.ttl input_rdf/additional_links.ttl > output/prisoners_.ttl
 
 echo "Generating people..."
 
@@ -114,7 +119,7 @@ s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons
 
 echo "Finishing prisoners"
 
-cat output/_media_sotilaan_aani.ttl output/_media_person_documents.ttl > output/_media_full.ttl
+cat output/_media_sotilaan_aani.ttl output/_media_person_documents.ttl output/_media_videos.ttl > output/_media_full.ttl
 rapper -i turtle output/_media_full.ttl -o turtle > output/prisoners_media.ttl
 
 cat output/prisoners_.ttl output/documents_links.ttl > output/prisoners_full.ttl

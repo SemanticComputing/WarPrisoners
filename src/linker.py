@@ -17,6 +17,8 @@ from rdflib import Graph, URIRef, RDF, Literal
 from rdflib.exceptions import UniquenessError
 from rdflib.namespace import SKOS
 from rdflib.util import guess_format
+from slugify import slugify
+
 import rdf_dm as r
 
 from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM, DATA_NS, MEDIA_NS
@@ -361,12 +363,99 @@ def link_person_documents(g: Graph):
     return links, documents
 
 
+def link_videos(g: Graph, input_file: str):
+    """
+    Link videos
+    """
+    video_labels = {
+        'Arvi_Nyman-BroadbandHigh.mp4': 'Sotamies Arvid Nyman 1920 - 2011',
+        'Borodavkin-BroadbandHigh.mp4': 'Alikersantti Aleksander Borodavkin 1920 - 2004',
+        'Ennakkotutkimusmatka_Tsherepovetsiin-BroadbandHigh.mp4': 'Tutkimusmatka Tšerepovetsiin v. 2000',
+        'Esko_Luostarinen-BroadbandHigh.mp4': 'Korpraali Esko Luostarinen 1924 - 2003',
+        'karaganda-BroadbandHigh.mp4': 'Karagandan vankileirillä menehtyneiden suomalaisten sotavankien muistomerkin '
+                                       'paljastustilaisuus 26.11.1994',
+        'Kauko_Ijas-BroadbandHigh.mp4': 'Sotamies Kauko Ijäs s. 1925',
+        'lauri_salo-BroadbandHigh.mp4': 'Luutnantti Lauri Salo 1916 - 2010',
+        'Msta_joki_2-BroadbandHigh.mp4': 'Borovitshin leirillä ja sairaaloissa kuolleiden suomalaisten sotavankien '
+                                         'muistokiven paljastus 19.10.2017',
+        'Olavi_Martikainen_export-BroadbandHigh.mp4': 'Vänrikki Olavi Martikainen 1918 - 2006',
+        'Olavi_Tervo_kokonaan-BroadbandHigh.mp4': 'Sotamies Olavi Tervo 1921 - 2006',
+        'Olli_Nortia-BroadbandHigh.mp4': 'Sotamies Olli Nortia 1925 - 2012',
+        'Oranki-BroadbandHigh.mp4': 'Gorkin alueen Orankin sotavankileirillä nro 74 menehtyi noin 30 suomalaista '
+                                    'sotilasta',
+        'Reino_Hiltunen-BroadbandHigh.mp4': 'Lääkintöneuvos Reino Hiltunen 1924 - 2010',
+        'Risto_Kiiskila-BroadbandHigh.mp4': 'Korpraali Risto Kiiskilä s. 1924',
+        'Shibotovo-BroadbandHigh.mp4': 'Borovitshin sotavankileirillä nro 270 menehtyneiden kuuden suomalaisen '
+                                       'sotavangin muistolaatan paljastus',
+        'Sotavangit_Ry_n_kokous_Santahaminassa-BroadbandHigh.mp4': 'Sotavangit Ry:n hallituksen kokous Santahaminassa '
+                                                                   '11.9.2000',
+        'sotavangit_ryn_edustajat_halosen_luona-BroadbandHigh.mp4': 'Sotavangit Ry:n jäsenet vierailulla presidentti '
+                                                                    'Tarja Halosen luona 6.9.2001',
+        'Suhobezvodnoje-BroadbandHigh.mp4': 'Suhobezvodnojessa paljastettin 9.8.2016 Unžhlag-nimellä tunnetussa '
+                                            'leirissä menehtyneiden suomalaisten sotavankien muistomerkki',
+        'Teuvo_Alava-BroadbandHigh.mp4': 'Sotamies Teuvo Alava s. 1924',
+        'Toivo_Jarvela-BroadbandHigh.mp4': 'Matruusi Toivo Järvelä 1918 - 2004',
+        'Toivo_Lahtinen-BroadbandHigh.mp4': 'Sotamies Toivo Lahtinen 1924 - 2017',
+        'Toivo_Lahtinen_ja_Usko_Makinen-BroadbandHigh.mp4': 'Sotamiehet Toivo Lahtinen ja Usko Mäkinen',
+        'Tserepovets-BroadbandHigh.mp4': 'Tšerepovetsissa paljastettiin 17.8.1992 sotavankileirillä nro 158 ja sen '
+                                         'sairaaloissa menehtyneiden suomalaisten sotavankien muistomerkki',
+        'enenstam-BroadbandHigh.mp4': 'Jan-Erik Enestam',
+        'jekaterinburg_asbest-BroadbandHigh.mp4': 'Jekaterinburg Asbest',
+        'juhlatilaisuus_haastattelut_export-BroadbandHigh.mp4': 'Sotavangit Ry:n jäsenten risteily M/S Cinderellalla'
+                                                                '29.6.1999',
+        'tserepovets2-BroadbandHigh.mp4': 'Tšerepovets leiri nro 158',
+    }
+
+    links = Graph()
+    documents = Graph()
+
+    video_index = pd.read_csv(input_file, encoding='UTF-8', index_col=False, sep=',', quotechar='"', dtype=str)
+
+    for index, row in video_index.iterrows():
+        prisoner = row['nro']
+        video = row['Videotiedostostojen nimet, joilla henkilö esiintyy/mainitaan']
+        warsa = row['Sotasampo URI']
+
+        prisoner_id = str(prisoner).strip() if pd.notna(prisoner) else None
+        video_files = str(video).strip().split(',') if pd.notna(video) else []
+        warsampo_uri = URIRef(str(warsa).strip()) if pd.notna(warsa) else None
+
+        for video_file in video_files:
+            video_file = video_file.replace(' ', '').strip()
+            if not video_file:
+                continue
+
+            document_uri = MEDIA_NS['video_{video_file}'.format(video_file=slugify(video_file, word_boundary=True))]
+            file_url = URIRef('https://static.sotasampo.fi/videos/prisoners/{video_file}'.format(video_file=video_file))
+
+            if prisoner_id:
+                prisoner_uri = DATA_NS['prisoner_{id}'.format(id=prisoner_id)]
+
+                links.add((prisoner_uri, SCHEMA_WARSA.documented_in_video, document_uri))
+                log.debug('Found video for prisoner %s: %s' % (prisoner_uri, file_url))
+
+            if warsampo_uri:
+                # TODO: Add the document link to persons graph instead of media graph
+                documents.add((warsampo_uri, SCHEMA_WARSA.documented_in_video, document_uri))
+                log.debug('Found video for WarSampo person %s: %s' % (warsampo_uri, file_url))
+
+            # Create video resource
+            label = video_labels[video_file]
+            documents.add((document_uri, SKOS.prefLabel, Literal(label)))
+            documents.add((document_uri, RDF.type, SCHEMA_WARSA.Video))
+            documents.add((document_uri, URIRef('http://schema.org/contentUrl'), file_url))
+
+    log.info('Found %s video links' % (len(links)))
+
+    return links, documents
+
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
     argparser.add_argument("task", help="Linking task to perform",
                            choices=["camps", "occupations", "municipalities", "persons", "ranks", "sotilaan_aani",
-                                    "person_documents"])
+                                    "person_documents", "videos"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
@@ -418,5 +507,11 @@ if __name__ == '__main__':
     elif args.task == 'person_documents':
         log.info('Linking person documents')
         document_links, documents = link_person_documents(input_graph)
+        bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
+        bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))
+
+    elif args.task == 'videos':
+        log.info('Linking videos')
+        document_links, documents = link_videos(input_graph, 'data/video_links.csv')
         bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
         bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))
