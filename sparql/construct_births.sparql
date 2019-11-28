@@ -34,9 +34,9 @@ CONSTRUCT {
   FILTER NOT EXISTS { ?sub crm:P70_documents/^crm:P98_brought_into_life [] . }
   BIND(xsd:date(?bd_) AS ?bd)
   FILTER(BOUND(?bd))
-  BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
+  BIND(REPLACE(STR(?sub), ".*_(\\d+(?:_duplicate)*)$", "wp$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/birth_", ?no)) AS ?birth)
   BIND(STRLANG(CONCAT(?label, " syntyi"), "fi") AS ?bl_fi)
   BIND(STRLANG(CONCAT(?label, " was born"), "en") AS ?bl_en)

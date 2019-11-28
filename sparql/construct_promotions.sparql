@@ -28,6 +28,6 @@ CONSTRUCT {
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)
   BIND(LCASE(REPLACE(STR(?wr), ".*/(.+?)$", "$1")) AS ?wrno)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/", ?wrno, "_", ?no)) AS ?promotion)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(CONCAT(?label, " - ", ?wul) AS ?jlbl)
 }

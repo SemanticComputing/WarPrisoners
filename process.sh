@@ -79,6 +79,7 @@ rm output/prisoners_temp.ttl
 sed -r 's/^(p:.*) cidoc:P70_documents (<.*>)/\2 cidoc:P70i_is_documented_in \1/' output/persons_linked.ttl > output/persons_backlinks.ttl
 
 echo "Linking camps and hospitals"
+
 cat output/prisoners_pseudonymized.ttl output/camps.ttl > output/prisoners_temp.ttl
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_temp.ttl
 rm output/prisoners_temp.ttl
@@ -98,7 +99,8 @@ echo "...Updating db with prisoners"
 s-put $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoners output/prisoners_.ttl
 
 echo "...Constructing people"
-curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/persons/prisoner_persons.ttl
+curl -f --data-urlencode "query=$(cat sparql/construct_people.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/persons/_prisoner_persons.ttl
+rapper -i turtle output/persons/_prisoner_persons.ttl -o turtle > output/persons/prisoner_persons.ttl
 
 echo "...Constructing documents links"
 curl -f --data-urlencode "query=$(cat sparql/construct_documents_links.sparql)" $WARSA_ENDPOINT_URL/sparql -v > output/documents_links.ttl
@@ -111,8 +113,10 @@ rm output/prisoner_people_temp.ttl
 for construct in births promotions unit_joinings captures disappearances deaths
 do
     echo "...Constructing $construct"
-curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/persons/prisoner_$construct.ttl"
+    curl -f --data-urlencode "query=$(cat sparql/construct_$construct.sparql)" $WARSA_ENDPOINT_URL/sparql -v > "output/persons/_prisoner_$construct.ttl"
+    rapper -i turtle "output/persons/_prisoner_$construct.ttl" -o turtle > "output/persons/prisoner_$construct.ttl"
 done
+rm output/persons/_prisoner_*
 
 echo "...Deleting temp graph"
 s-delete $WARSA_ENDPOINT_URL/data http://ldf.fi/warsa/prisoner_persons

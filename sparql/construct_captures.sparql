@@ -32,7 +32,7 @@ CONSTRUCT {
   OPTIONAL { ?sub wsch:family_name ?sn }
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/capture_", ?no)) AS ?capture)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(STRLANG(CONCAT(?label, " jäi vangiksi"), "fi") AS ?cl_fi)
   BIND(STRLANG(CONCAT(?label, " was taken prisoner"), "en") AS ?cl_en)
   OPTIONAL {

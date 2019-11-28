@@ -27,7 +27,7 @@ CONSTRUCT {
   FILTER NOT EXISTS { ?id ^crm:P143_joined ?wu . }
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)
   BIND(REPLACE(STR(?wu), ".*(actor_.*)$", "$1") AS ?wuno)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/joining_", "_", ?no, "_", ?wuno)) AS ?unit_joining)
   BIND(CONCAT(?label, " - ", ?wul) AS ?jlbl)
 }

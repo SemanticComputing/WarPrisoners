@@ -11,14 +11,13 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX dct: <http://purl.org/dc/terms/>
+
 CONSTRUCT {
   ?sub crm:P70_documents ?id .
 }
 {
   ?sub a wsch:PrisonerRecord .
-  OPTIONAL { ?sub wsch:given_names ?fn }
-  OPTIONAL { ?sub wsch:family_name ?sn }
   FILTER NOT EXISTS { ?sub crm:P70_documents [] . }
-  BIND(REPLACE(STR(?sub), ".*_(\\d+)$", "wp$1") AS ?no)
+  BIND(REPLACE(STR(?sub), ".*_(\\d+(?:_duplicate)*)$", "wp$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/actors/person_", ?no)) AS ?id)
 }

@@ -38,7 +38,7 @@ CONSTRUCT {
   FILTER(BOUND(?dd))
   BIND(REPLACE(STR(?id), ".*(person_.+)$", "$1") AS ?no)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/death_", ?no)) AS ?death)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(STRLANG(CONCAT(?label, " kuoli"), "fi") AS ?dl_fi)
   BIND(STRLANG(CONCAT(?label, " died"), "en") AS ?dl_en)
   BIND(STRLANG(?dd_, "en") AS ?date_label_en)

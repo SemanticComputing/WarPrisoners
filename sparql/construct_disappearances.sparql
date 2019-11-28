@@ -36,7 +36,7 @@ CONSTRUCT {
   FILTER(BOUND(?md))
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/disappearance_", ?no)) AS ?disappearance)
   BIND(URI(CONCAT("http://ldf.fi/warsa/events/times/time_", STR(?md), "-", STR(?md))) AS ?vts)
-  BIND(CONCAT(?fn, " ", ?sn) AS ?label)
+  BIND(CONCAT(COALESCE(CONCAT(?fn, " "), ""), ?sn) AS ?label)
   BIND(STRLANG(CONCAT(?label, " katosi"), "fi") AS ?vl_fi)
   BIND(STRLANG(CONCAT(?label, " went missing"), "en") AS ?vl_en)
 
