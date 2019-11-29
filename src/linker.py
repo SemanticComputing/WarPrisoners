@@ -473,11 +473,13 @@ def link_sources(g: Graph, input_file: str):
 
         sources[id] = uri
 
-        g.add((uri, SKOS.prefLabel, Literal(label)))
         g.add((uri, RDF.type, SCHEMA_WARSA.Source))
 
         if description:
-            g.add((uri, DCT.description, Literal(description)))
+            g.add((uri, SKOS.prefLabel, Literal(description)))
+        else:
+            g.add((uri, SKOS.prefLabel, Literal(label)))
+
         if location:
             g.add((uri, SCHEMA_POW.location, Literal(location)))
 
