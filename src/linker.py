@@ -15,13 +15,13 @@ import pandas as pd
 from arpa_linker.arpa import ArpaMimic, Arpa
 from rdflib import Graph, URIRef, RDF, Literal
 from rdflib.exceptions import UniquenessError
-from rdflib.namespace import SKOS
+from rdflib.namespace import SKOS, DC
 from rdflib.util import guess_format
 from slugify import slugify
 
 import rdf_dm as r
 
-from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM, DATA_NS, MEDIA_NS
+from namespaces import SCHEMA_POW, BIOC, SCHEMA_WARSA, bind_namespaces, SCHEMA_ACTORS, CRM, DATA_NS, MEDIA_NS, DCT
 from warsa_linkers.municipalities import link_to_pnr, link_warsa_municipality
 from warsa_linkers.occupations import link_occupations
 from warsa_linkers.person_record_linkage import link_persons, intersection_comparator, activity_comparator, \
@@ -450,12 +450,69 @@ def link_videos(g: Graph, input_file: str):
     return links, documents
 
 
+def link_sources(g: Graph, input_file: str):
+    """
+    Links sources in place.
+    """
+
+    source_index = pd.read_csv(input_file, encoding='UTF-8', index_col=False, sep=',', quotechar='"', dtype=str)
+    sources = {}
+
+    # Create sources from sources spreadsheet
+    for index, row in source_index.iterrows():
+
+        label = str(row['Merkintä']) if pd.notna(row['Merkintä']) else None
+        description = row['Selitys'] if pd.notna(row['Selitys']) else None
+        location = row['Sijainti'] if pd.notna(row['Sijainti']) else None
+
+        if not label:
+            continue
+
+        id = slugify(label.lower().strip())
+        uri = DATA_NS['source_{id}'.format(id=id)]
+
+        sources[id] = uri
+
+        g.add((uri, SKOS.prefLabel, Literal(label)))
+        g.add((uri, RDF.type, SCHEMA_WARSA.Source))
+
+        if description:
+            g.add((uri, DCT.description, Literal(description)))
+        if location:
+            g.add((uri, SCHEMA_POW.location, Literal(location)))
+
+    # Point literal source references to resources
+    for (prisoner, _, obj) in list(g.triples((None, DCT.source, None))):
+        source_id = slugify(str(obj).lower().strip())
+
+        source_uri = sources.get(source_id)
+
+        if not source_uri:
+            # Add new source
+            source_uri = DATA_NS['source_{id}'.format(id=source_id)]
+
+            sources[source_id] = source_uri
+            log.info('Adding new source from reference: %s (%s)' % (source_uri, obj))
+
+            g.add((source_uri, SKOS.prefLabel, Literal(obj)))
+            g.add((source_uri, RDF.type, SCHEMA_WARSA.Source))
+
+        g.remove((prisoner, DCT.source, obj))
+        g.add((prisoner, DCT.source, source_uri))
+
+        log.debug('Pointing literal source %s to URI %s' % (obj, source_uri))
+
+    log.info('Created %s source resources' % len(list(sources)))
+
+    return g
+
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
     argparser.add_argument("task", help="Linking task to perform",
                            choices=["camps", "occupations", "municipalities", "persons", "ranks", "sotilaan_aani",
-                                    "person_documents", "videos"])
+                                    "person_documents", "videos", "sources"])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output file location")
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
@@ -515,3 +572,8 @@ if __name__ == '__main__':
         document_links, documents = link_videos(input_graph, 'data/video_links.csv')
         bind_namespaces(document_links).serialize(args.output, format=guess_format(args.output))
         bind_namespaces(documents).serialize(args.output2, format=guess_format(args.output2))
+
+    elif args.task == 'sources':
+        log.info('Linking sources')
+        sources = link_sources(input_graph, 'output/sources_cropped.csv')
+        bind_namespaces(sources).serialize(args.output, format=guess_format(args.output))
