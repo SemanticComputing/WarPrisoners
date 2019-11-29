@@ -125,6 +125,20 @@ def hide_personal_information(graph: Graph, person: URIRef, common_names: list):
     else:
         graph.add((person, SKOS.prefLabel, graph.value(person, SCHEMA_WARSA.family_name)))
 
+    captivities = list(graph.objects(person, SCHEMA_POW.captivity))
+
+    for captivity in captivities:
+        log.debug('Removing name from captivity resource %s' % captivity)
+        triples += list(graph.triples((captivity, SKOS.prefLabel, None)))
+
+        captivity_label_fi = 'Henkilön sotavankeus' if family_name not in common_names else \
+            'Henkilön {person} sotavankeus'.format(person=family_name)
+        captivity_label_en = 'Person\'s captivity' if family_name not in common_names else \
+            'Person\'s {person} captivity'.format(person=family_name)
+
+        graph.add((captivity, SKOS.prefLabel, Literal(captivity_label_fi)))
+        graph.add((captivity, SKOS.prefLabel, Literal(captivity_label_en)))
+
     graph = remove_triples_and_reifications(graph, triples)
 
     graph.add((person, SCHEMA_POW.personal_information_removed, Literal(True)))
