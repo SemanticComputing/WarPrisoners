@@ -31,10 +31,10 @@ def validate_dates(resolved, original, after=date(1939, 11, 28), before=date(194
             return
 
     if resolved < after:
-        return 'Päivämäärä liian varhainen'
+        return 'Päivämäärä %s liian varhainen (< %s)' % (resolved, after)
 
     if resolved > before:
-        return 'Päivämäärä liian myöhäinen'
+        return 'Päivämäärä %s liian myöhäinen (> %s)' % (resolved, before)
 
     return
 

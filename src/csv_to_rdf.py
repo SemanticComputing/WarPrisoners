@@ -100,7 +100,7 @@ class RDFMapper:
         :return: value, sources, date begin, date end, error
         """
 
-        date_validator = partial(validate_dates, after=datetime.date(1939, 11, 30), before=datetime.date(1960, 1, 1))
+        date_validator = partial(validate_dates, before=datetime.date(1960, 1, 1))
 
         errors = []
         if ': ' in orig_value:

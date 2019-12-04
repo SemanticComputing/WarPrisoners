@@ -29,7 +29,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_WARSA.date_of_birth,
             'converter': convert_dates,
-            'validator': partial(validate_dates, after=date(1860, 1, 1), before=date(1935, 1, 1)),
+            'validator': partial(validate_dates, after=date(1860, 1, 1), before=date(1945, 1, 1)),
             'value_separator': '/',
             'name_fi': 'Syntymäpäivä',
             'name_en': 'Date of birth',
@@ -199,7 +199,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_POW.date_of_return,
             'converter': convert_dates,
-            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date(1980, 1, 1)),
+            'validator': partial(validate_dates, before=date(1980, 1, 1)),
             'value_separator': '/',
             'name_en': 'Date of return from captivity',
             'name_fi': 'Sotavankeudesta palaamisen päivämäärä',
@@ -209,7 +209,7 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_POW.date_of_death,
             'converter': convert_dates,
-            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
+            'validator': partial(validate_dates, before=date.today()),
             'value_separator': '/',
             'name_en': 'Date of death',
             'name_fi': 'Kuolinpäivä',
@@ -271,14 +271,14 @@ PRISONER_MAPPING = {
         {
             'uri': SCHEMA_POW.date_of_death,
             'converter': convert_dates,
-            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
+            'validator': partial(validate_dates, before=date.today()),
             'value_separator': '/'
         },
     'kuolleeksi julistaminen':
         {
             'uri': SCHEMA_POW.date_of_declaration_of_death,
             'converter': convert_dates,
-            'validator': partial(validate_dates, after=date(1939, 11, 30), before=date.today()),
+            'validator': partial(validate_dates, before=date.today()),
             'name_en': 'Date of declaration of death',
             'name_fi': 'Kuolleeksi julistamisen päivämäärä'
         },
