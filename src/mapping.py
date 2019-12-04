@@ -289,13 +289,13 @@ PRISONER_MAPPING = {
             'name_fi': 'Valokuva',
             'name_en': 'Photograph'
         },
-    'valokuva Sotilaan Äänessä':
-        {
-            'uri': SCHEMA_POW.photograph_sotilaan_aani,
-            'value_separator': ';',
-            'name_fi': 'Valokuva Sotilaan Ääni -lehdessä',
-            'name_en': 'Photograph in Sotilaan Ääni magazine'
-        },
+    # 'valokuva Sotilaan Äänessä':
+    #     {
+    #         'uri': SCHEMA_POW.photograph_sotilaan_aani,
+    #         'value_separator': ';',
+    #         'name_fi': 'Valokuva Sotilaan Ääni -lehdessä',
+    #         'name_en': 'Photograph in Sotilaan Ääni magazine'
+    #     },
     'suomalainen paluukuulustelupöytäkirja':
         {
             'uri': SCHEMA_POW.finnish_return_interrogation_file,
